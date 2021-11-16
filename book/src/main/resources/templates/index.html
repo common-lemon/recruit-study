@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <h1>테스트</h1>
-</body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+    <div layout:fragment="content">
+        <div id="app">
+            <ul>
+                <li v-for="item in array">{{ item.text }}</li>
+            </ul>
+        </div>
+
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    array: [
+                        {
+                            id: '1',
+                            text: '안녕'
+                        },
+                        {
+                            id: '2',
+                            text: '안녕2'
+                        }
+                    ]
+                }
+            })
+        </script>
+    </div>
 </html>
