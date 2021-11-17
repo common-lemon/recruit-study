@@ -1,12 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <div layout:fragment="content" class="container">
 
-    <h1>테스트</h1>
+        <h2>도서현황</h2>
 
-</body>
+        <div id="app">
+            <!--search-->
+            <div>
+                <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요">
+                <button v-on:click="onClickSearchBtn">검색</button>
+            </div>
+
+            <!--sort-->
+            <select v-model="selected" @change="onChange($event)">
+                <option v-for="option in options" v-bind:value="option.value">
+                    {{ option.text }}
+                </option>
+            </select>
+
+            <div>총 : {{searchCnt}}</div>
+
+            <!--list-->
+            <ul>
+                <li v-for="book in items" class="book">
+                    <div>
+                        <span>{{book.id}}</span>
+                        <strong>{{book.title}}</strong>
+                    </div>
+                    <div>
+                        <span>도서번호 {{book.bookNo}}</span>
+                        <span>부서명 {{book.deptName}}</span>
+                        <span>권수 {{book.count}}</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+        <script>
+
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    searchText: '',
+                    selected: '',
+                    options: [
+                        { text: '기본순', value: '' },
+                        { text: '부서 (오름차순)', value: 'deptAsc' },
+                        { text: '부서 (내림차순)', value: 'deptDesc' },
+                        { text: '제목 (오름차순)', value: 'titleAsc' },
+                        { text: '제목 (내림차순)', value: 'titleDesc' },
+                    ],
+                    bookList : [],
+                    searchCnt : 0,
+                    items: null
+                },
+                computed: {
+
+                },
+                watch: {
+
+                },
+                beforeCreate: function () {
+                    // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
+                },
+                created: function () {
+                    // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+                },
+                beforeMount: function() {
+                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+                },
+                mounted: function () {
+                    // $el 을 사용할 수 있습니다.
+                    // 모든 화면이 렌더링된 후 호출됩니다.
+
+                    // axios bookList 가져오기
+                    this.getBookListByAsyncAwait();
+                    //this.getBookListByPromise();
+                    //this.getBookListByCallBack();
+                },
+                methods: {
+                    getBookListByAsyncAwait : async function () {
+                        const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
+                        console.log(response.data);
+                        this.bookList = response.data;
+                        this.searchCnt= this.bookList.length;
+                        this.items = this.bookList;
+                    },
+                    getBookListByPromise : function () {
+                        axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
+                            console.log(response.data);
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    },
+                    getBookListByCallBack : function () {
+                        axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
+                            app.callBackGetBookList(response.data);
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    },
+                    callBackGetBookList : function (response) {
+                        console.log(response);
+                    },
+                    onClickSearchBtn: function() {
+                        let value = this.searchText;
+                            value = value.replace(/^\s+|\s+$/gm,'');
+                            value = value.toUpperCase();
+                        let items = this.bookList;
+                        let result = [];
+                        let resultCnt = 0;
+                        console.log("검색값 : " + value);
+
+                        if(value == "") {
+                            // alert("검색어를 입력해 주세요.");
+                            this.searchText = value;
+                            this.$refs.search.focus();
+                            //return;
+                        }
+
+                        // 21.11.17 피드백
+                        // foreach 나 in 으로 변경해서 반복문 돌려보기
+                        // json 에서 데이터 찾을 수 있는지 검색해보기
+                        // (지금은 deptName, title 변수에 담아서 했음)
+                        // 동적 검색 (구글링)
+                        for(let i = 0; i < items.length; i++) {
+                            let deptName = items[i].deptName.toUpperCase();
+                            let title = items[i].title.toUpperCase();
+
+                            if(deptName.indexOf(value) >= 0 || title.indexOf(value) >= 0) {
+                                // console.log("deptName : " + deptName + " || title : " + title);
+                                result.push(items[i]);
+                            }
+                        }
+
+                        console.log(result);
+                        resultCnt = result.length;
+
+                        if(resultCnt == 0) {
+                            //result.push({title : "검색 결과가 없습니다."});
+                        }
+
+                        this.searchCnt = resultCnt;
+                        this.items = result;
+                    },
+                    onChange(event) {
+                        console.log(event.target.value);
+                        let value = event.target.value;
+
+                        if(value == "deptAsc") {
+                            this.items.sort(function(a, b) {
+                                return a.deptName.localeCompare(b.deptName);
+                            });
+                        } else if(value == "deptDesc") {
+                            this.items.sort(function(a, b) {
+                                return b.deptName.localeCompare(a.deptName);
+                            });
+                        } else if(value == "titleAsc") {
+                            this.items.sort(function(a, b) {
+                                return a.title.localeCompare(b.title);
+                            });
+                        } else if(value == "titleDesc") {
+                            this.items.sort(function(a, b) {
+                                return b.title.localeCompare(a.title);
+                            });
+                        } else {
+                            this.items.sort(function(a, b) {
+                                return a.id - b.id;
+                            });
+                        }
+                    }
+                }
+            })
+        </script>
+    </div>
 </html>
