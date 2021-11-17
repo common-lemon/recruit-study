@@ -3,7 +3,8 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="layout/default">
+      layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div layout:fragment="content" class="container">
 
         <h2>도서현황</h2>
@@ -12,14 +13,14 @@
             <!--search-->
             <div>
                 <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요">
-               <!-- <button v-on:click="onClickSearchBtn">검색</button>-->
+                <button v-on:click="onClickSearchBtn">검색</button>
             </div>
 
             <!--sort-->
             <select v-model="selected" @change="onChange($event)">
-                <!--<option v-for="option in options" v-bind:value="option.value">
+                <option v-for="option in options" v-bind:value="option.value">
                     {{ option.text }}
-                </option>-->
+                </option>
             </select>
 
             <div>총 : {{searchCnt}}</div>
