@@ -2,19 +2,19 @@
   <div class="book">
     <div class="info">
       <input type="hidden" class="form-control" id="bookId" v-model="book.id" placeholder="" readonly />
-      <div class="">
-        <label for="title">부서</label>
+      <div class=" mb-3">
+        <label for="title">책번호</label>
         <input type="text" class="form-control" id="bookNo" v-model="book.bookNo" placeholder="" readonly />
       </div>
-      <div class="">
+      <div class=" mb-3">
         <label for="title">부서</label>
         <input type="text" class="form-control" id="deptName" v-model="book.deptName" placeholder="" readonly />
       </div>
-      <div class="">
+      <div class="mb-3">
         <label for="title">제목</label>
         <input type="text" class="form-control" id="title" v-model="book.title" placeholder="" readonly />
       </div>
-      <div class="">
+      <div class="mb-3">
         <label for="count">수량</label>
         <input type="text" class="form-control" id="count" v-model="book.count" placeholder="" readonly />
       </div>
@@ -50,7 +50,7 @@ export default {
     border:6px solid ;
   }
   .info{
-    background-color: rgba(black, .3);
+    background-color: #fff;
     width: 100%;
     height: 100%;
     padding: 14px;
