@@ -12,7 +12,7 @@
         <div id="app">
             <!--search-->
             <div>
-                <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요"
+                <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
                     v-on:keyup.enter="onClickSearchBtn">
                 <button v-on:click="onClickSearchBtn">검색</button>
             </div>
@@ -29,8 +29,8 @@
             <div>총 : {{ items.length }}</div>
 
             <!--list-->
-            <ul>
-                <li v-for="(book, index) in paginatedData" class="book" v-bind:id="book.id">
+            <ul v-if="items.length > 0">
+                <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book">
                     <span class="no">{{ pageNum*pageSize+index+1 }}</span>
                     <div>
                         <strong>{{ book.title }}</strong>
@@ -42,10 +42,10 @@
                     </div>
                 </li>
             </ul>
-            <div v-if="items.length === 0">검색 결과가 없습니다.</div>
+            <div v-else>검색 결과가 없습니다.</div>
 
             <!--paging-->
-            <div v-if="items.length !== 0">
+            <div v-if="items.length > 0">
                 <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
                     이전
                 </button>
@@ -70,18 +70,16 @@
                     pageSize: 10
                 },
                 computed: {
-                    pageCount () {
+                    pageCount : function () {
                         let listLeng = this.items.length;
                         let listSize = this.pageSize;
                         let page = Math.floor(listLeng / listSize);
 
-                        if (listLeng % listSize > 0) {
-                            page += 1;
-                        }
+                        listLeng % listSize > 0 ? page += 1 : '';
 
                         return page;
                     },
-                    paginatedData () {
+                    paginatedData : function () {
                         const start = this.pageNum * this.pageSize;
                         const end = start + this.pageSize;
                         return this.items.slice(start, end);
@@ -132,26 +130,20 @@
                     callBackGetBookList : function (response) {
                         console.log(response);
                     },
-                    onClickSearchBtn: function() {
-                        let searchText = this.searchText;
-                            searchText = searchText.replace(/^\s+|\s+$/gm,'');
-                        let bookList = this.bookList;
+                    onClickSearchBtn : function () {
+                        console.log("검색값 : " + this.searchText);
                         let result = [];
-                        let regExp = new RegExp(searchText, "i");
+                        let regExp = new RegExp(this.searchText, "i");
 
-                        console.log("검색값 : " + searchText);
-                        this.searchText = searchText;
+                        this.$refs.search.blur();
                         this.selected = "";
+                        this.pageNum = 0;
 
-                        if(searchText == "") {
-                            this.$refs.search.focus();
-                        }
-
-                        result = bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
+                        result = this.bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
                         console.log(result);
                         this.items = result;
                     },
-                    onChangeSort(event) {
+                    onChangeSort : function (event) {
                         let value = event.target.value;
                         console.log(value);
 
@@ -177,10 +169,10 @@
                             });
                         }
                     },
-                    nextPage() {
+                    nextPage : function () {
                         this.pageNum += 1;
                     },
-                    prevPage() {
+                    prevPage : function () {
                         this.pageNum -= 1;
                     }
                 }
