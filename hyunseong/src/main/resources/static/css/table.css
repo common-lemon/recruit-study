@@ -1,0 +1,52 @@
+td, th {
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+table {
+    width: 100%;
+    margin: auto;
+    border-collapse: collapse;
+}
+body {
+    padding: 1rem;
+}
+#app {
+    width: 80%;
+    margin: auto;
+}
+#noSearch {
+    text-align: center;
+    font-weight: bold;
+}
+#leftText {
+    float: left;
+    font-size: 1.5em;
+    padding: 6px;
+}
+#rightText {
+    float: right;
+    display: inline-block;
+    padding: 10px;
+}
+#topText {
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+.searchBookInput {
+    width: 50%;
+    font-size: 1.05em;
+}
+
+#middleText {
+    height: 50px;
+    padding-top: 7px;
+    padding-bottom: 10px;
+}
+.orderMenu {
+    cursor: pointer;
+}
+#pageButton {
+    cursor: pointer;
+    text-align: center;
+}

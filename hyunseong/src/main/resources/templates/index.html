@@ -1,10 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello</title>
-</head>
-<body>
-    <div>hi</div>
-</body>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+<div layout:fragment="content">
+    <div id="app">
+        <div id="topText"><input class="searchBookInput" type="text" v-model="search"
+                                 placeholder="검색어를 입력하세요"/>
+            <button v-on:click="searchBook">검색</button>
+        </div>
+        <hr>
+        <div id="middleText">
+            <div id="leftText">도서 현황</div>
+            <div id="rightText">
+                <select v-model="deptSelected" @change="changeDept($event)">
+                    <option value="" selected>부서별 자료</option>
+                    <option v-for="item in deptNameList" :key="item">{{ item }}</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="clear: both; text-align: right"></div>
+
+        <div v-if="searchList.length !== 0">
+            <table>
+                <tr>
+                    <th>구분</th>
+                    <th>도서번호</th>
+                    <th>부서</th>
+                    <th class="orderMenu" v-on:click="sortTitle">{{ bookTitle }}
+                        <!--<img class="arrowImage"
+                             src="./default_arrow.png"
+                             alt="정렬 안되어 있는 화살표">--></th>
+                    <th>권수</th>
+                </tr>
+                <tr v-for="item in searchList" :key="item.id">
+                    <td>{{item.id}}</td>
+                    <td>{{item.bookNo}}</td>
+                    <td>{{item.deptName}}</td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.count}}</td>
+                </tr>
+            </table>
+        </div>
+        <div v-else-if="searchList.length === 0">
+            <p id="noSearch">검색결과가 없습니다.</p>
+        </div>
+        <br>
+
+        <div>
+            <table id="pageBox">
+                <td id="pageButton" v-on:click="addPage">{{ pageText }}</td>
+            </table>
+        </div>
+    </div>
+
+
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                search: '',
+                bookList: [],
+                searchList: [],
+                deptNameList: [],
+                bookTitle: '제목(정렬x)',
+                deptSelected: '',
+                pageText: '',
+                page: 1,
+                limit: 10,
+                total: 0
+            },
+            methods: {
+                getBookListByAsyncAwait: async function () {
+                    const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
+                    this.bookList = response.data;
+                    this.searchList = response.data;
+                    this.searchList = this.bookList.slice(
+                        (this.page - 1) * this.limit,
+                        this.page * this.limit
+                    )
+                    this.total = this.bookList.length;
+                    this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
+                    this.getDept();
+                },
+                searchBook: function () {
+                    this.limit = 10;
+                    const filteredList = this.bookList.filter(item => item.title.includes(this.search));
+                    if (filteredList) {
+                        this.searchList = filteredList;
+                        this.total = this.searchList.length;
+                    }
+                    this.paging();
+                },
+                sortTitle: function () {
+                    if (this.bookTitle == '제목(정렬x)' || this.bookTitle == '제목(내림차순)') {
+                        this.searchList.sort(function (a, b) {
+                            return a.title.localeCompare(b.title);
+                        })
+                        this.bookTitle = '제목(오름차순)';
+                    } else if (this.bookTitle == '제목(오름차순)') {
+                        this.searchList.sort(function (a, b) {
+                            return b.title.localeCompare(a.title);
+                        })
+                        this.bookTitle = '제목(내림차순)';
+                    }
+                },
+                getDept: function () {
+                    for (let i in this.bookList) {
+                        this.deptNameList.push(this.bookList[i].deptName);
+                    }
+                    const test = new Set(this.deptNameList);
+                    this.deptNameList = test;
+                },
+                changeDept: function (event) {
+                    this.limit = 10;
+                    const selectedList = this.bookList.filter(item => item.deptName.includes(event.target.value));
+                    this.searchList = selectedList;
+                    this.total = this.searchList.length;
+                    this.paging();
+                },
+                addPage: function () {
+                    this.limit += 10;
+                    if (this.pageText.substring(this.pageText.indexOf('/')+1, this.pageText.indexOf(')')) == this.total) {
+                        if (this.limit > this.total) {
+                            this.limit = this.total;
+                        }
+                        this.searchList = this.bookList.slice(
+                            (this.page - 1) * this.limit,
+                            this.page * this.limit
+                        )
+                        this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
+                    } else {
+                        this.paging();
+                    }
+                },
+                paging: function () {
+                    if (this.limit > this.total) {
+                        this.limit = this.total;
+                    }
+                    this.searchList = this.searchList.slice(
+                        (this.page - 1) * this.limit,
+                        this.page * this.limit
+                    )
+                    this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
+                }
+            },
+            computed: {},
+            watch: {
+                /*searchList: function (newValue, oldValue) {
+                    console.log(oldValue);
+                    console.log(newValue);
+                }*/
+            },
+            created: function () {
+                // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+            },
+            mounted: function () {
+                // $el 을 사용할 수 있습니다.
+                // 모든 화면이 렌더링된 후 호출됩니다.
+                this.getBookListByAsyncAwait();
+            }
+        })
+    </script>
+</div>
 </html>
