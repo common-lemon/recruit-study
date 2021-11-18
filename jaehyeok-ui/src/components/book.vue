@@ -2,21 +2,14 @@
   <div class="book">
     <div class="info">
       <input type="hidden" class="form-control" id="bookId" v-model="book.id" placeholder="" readonly />
-      <div class=" mb-3">
-        <label for="title">책번호</label>
-        <input type="text" class="form-control" id="bookNo" v-model="book.bookNo" placeholder="" readonly />
+      <div class="row">
+        <div class="title">책번호: &nbsp;</div>  <div>{{book.bookNo}}</div>
       </div>
-      <div class=" mb-3">
-        <label for="title">부서</label>
-        <input type="text" class="form-control" id="deptName" v-model="book.deptName" placeholder="" readonly />
+      <div class="row">
+        <p>{{book.title}}</p>
       </div>
-      <div class="mb-3">
-        <label for="title">제목</label>
-        <input type="text" class="form-control" id="title" v-model="book.title" placeholder="" readonly />
-      </div>
-      <div class="mb-3">
-        <label for="count">수량</label>
-        <input type="text" class="form-control" id="count" v-model="book.count" placeholder="" readonly />
+      <div class="row">
+        <div class="title">부서: &nbsp;</div> <div>{{book.deptName}} &nbsp;|&nbsp; </div><div class="title">수량: &nbsp;</div><div>{{book.count}}권</div>
       </div>
     </div>
   </div>
@@ -33,8 +26,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .book{
-  width: 150px;
-  height: 200px;
+  width: 300px;
+  height: 140px;
   margin: 5px;
   border-radius: 4px;
   background-color: grey;
@@ -60,6 +53,16 @@ export default {
     left:0;
     bottom:0;
     backdrop-filter: blur(10px);
+    .row{
+      padding-left: 10px;
+      padding-top: 10px;
+      p{
+        font-weight: 700;
+      }
+      .title{
+        font-weight: 500;
+      }
+    }
   }
 }
 

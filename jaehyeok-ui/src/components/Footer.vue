@@ -15,7 +15,7 @@ export default {
 
 <style lang="scss" scoped>
 footer{
-  padding: 20px 0;
+  padding: 10px 0;
   text-align: center;
   opacity: .3;
 }
