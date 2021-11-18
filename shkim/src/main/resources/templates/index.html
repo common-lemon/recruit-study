@@ -12,56 +12,80 @@
         <div id="app">
             <!--search-->
             <div>
-                <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요">
+                <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요"
+                    v-on:keyup.enter="onClickSearchBtn">
                 <button v-on:click="onClickSearchBtn">검색</button>
             </div>
 
             <!--sort-->
-            <select v-model="selected" @change="onChange($event)">
-                <option v-for="option in options" v-bind:value="option.value">
-                    {{ option.text }}
-                </option>
+            <select v-model="selected" v-on:change="onChangeSort($event)">
+                <option value="">기본순</option>
+                <option value="deptAsc">부서 (오름차순)</option>
+                <option value="deptDesc">부서 (내림차순)</option>
+                <option value="titleAsc">제목 (오름차순)</option>
+                <option value="titleDesc">제목 (내림차순)</option>
             </select>
 
-            <div>총 : {{searchCnt}}</div>
+            <div>총 : {{ items.length }}</div>
 
             <!--list-->
             <ul>
-                <li v-for="book in items" class="book">
+                <li v-for="(book, index) in paginatedData" class="book" v-bind:id="book.id">
+                    <span class="no">{{ pageNum*pageSize+index+1 }}</span>
                     <div>
-                        <span>{{book.id}}</span>
-                        <strong>{{book.title}}</strong>
-                    </div>
-                    <div>
-                        <span>도서번호 {{book.bookNo}}</span>
-                        <span>부서명 {{book.deptName}}</span>
-                        <span>권수 {{book.count}}</span>
+                        <strong>{{ book.title }}</strong>
+                        <div class="subInfo">
+                            <span>도서번호: {{ book.bookNo }}</span>
+                            <span>부서명: {{ book.deptName }}</span>
+                            <span>권수: {{ book.count }}</span>
+                        </div>
                     </div>
                 </li>
             </ul>
+            <div v-if="items.length === 0">검색 결과가 없습니다.</div>
+
+            <!--paging-->
+            <div v-if="items.length !== 0">
+                <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
+                    이전
+                </button>
+                <span>{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
+                <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
+                    다음
+                </button>
+            </div>
+
         </div>
 
 
         <script>
-
             var app = new Vue({
                 el: '#app',
                 data: {
                     searchText: '',
-                    selected: '',
-                    options: [
-                        { text: '기본순', value: '' },
-                        { text: '부서 (오름차순)', value: 'deptAsc' },
-                        { text: '부서 (내림차순)', value: 'deptDesc' },
-                        { text: '제목 (오름차순)', value: 'titleAsc' },
-                        { text: '제목 (내림차순)', value: 'titleDesc' },
-                    ],
                     bookList : [],
-                    searchCnt : 0,
-                    items: null
+                    items: [],
+                    selected: "",
+                    pageNum: 0,
+                    pageSize: 10
                 },
                 computed: {
+                    pageCount () {
+                        let listLeng = this.items.length;
+                        let listSize = this.pageSize;
+                        let page = Math.floor(listLeng / listSize);
 
+                        if (listLeng % listSize > 0) {
+                            page += 1;
+                        }
+
+                        return page;
+                    },
+                    paginatedData () {
+                        const start = this.pageNum * this.pageSize;
+                        const end = start + this.pageSize;
+                        return this.items.slice(start, end);
+                    }
                 },
                 watch: {
 
@@ -89,7 +113,6 @@
                         const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
                         console.log(response.data);
                         this.bookList = response.data;
-                        this.searchCnt= this.bookList.length;
                         this.items = this.bookList;
                     },
                     getBookListByPromise : function () {
@@ -110,49 +133,27 @@
                         console.log(response);
                     },
                     onClickSearchBtn: function() {
-                        let value = this.searchText;
-                            value = value.replace(/^\s+|\s+$/gm,'');
-                            value = value.toUpperCase();
-                        let items = this.bookList;
+                        let searchText = this.searchText;
+                            searchText = searchText.replace(/^\s+|\s+$/gm,'');
+                        let bookList = this.bookList;
                         let result = [];
-                        let resultCnt = 0;
-                        console.log("검색값 : " + value);
+                        let regExp = new RegExp(searchText, "i");
 
-                        if(value == "") {
-                            // alert("검색어를 입력해 주세요.");
-                            this.searchText = value;
+                        console.log("검색값 : " + searchText);
+                        this.searchText = searchText;
+                        this.selected = "";
+
+                        if(searchText == "") {
                             this.$refs.search.focus();
-                            //return;
                         }
 
-                        // 21.11.17 피드백
-                        // foreach 나 in 으로 변경해서 반복문 돌려보기
-                        // json 에서 데이터 찾을 수 있는지 검색해보기
-                        // (지금은 deptName, title 변수에 담아서 했음)
-                        // 동적 검색 (구글링)
-                        for(let i = 0; i < items.length; i++) {
-                            let deptName = items[i].deptName.toUpperCase();
-                            let title = items[i].title.toUpperCase();
-
-                            if(deptName.indexOf(value) >= 0 || title.indexOf(value) >= 0) {
-                                // console.log("deptName : " + deptName + " || title : " + title);
-                                result.push(items[i]);
-                            }
-                        }
-
+                        result = bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
                         console.log(result);
-                        resultCnt = result.length;
-
-                        if(resultCnt == 0) {
-                            //result.push({title : "검색 결과가 없습니다."});
-                        }
-
-                        this.searchCnt = resultCnt;
                         this.items = result;
                     },
-                    onChange(event) {
-                        console.log(event.target.value);
+                    onChangeSort(event) {
                         let value = event.target.value;
+                        console.log(value);
 
                         if(value == "deptAsc") {
                             this.items.sort(function(a, b) {
@@ -175,9 +176,15 @@
                                 return a.id - b.id;
                             });
                         }
+                    },
+                    nextPage() {
+                        this.pageNum += 1;
+                    },
+                    prevPage() {
+                        this.pageNum -= 1;
                     }
                 }
-            })
+            });
         </script>
     </div>
 </html>
