@@ -12,7 +12,7 @@
         <div id="app">
             <!--search-->
             <div>
-                <input v-model="searchText" ref="search" placeholder="검색어를 입력하세요"
+                <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
                     v-on:keyup.enter="onClickSearchBtn">
                 <button v-on:click="onClickSearchBtn">검색</button>
             </div>
@@ -20,17 +20,17 @@
             <!--sort-->
             <select v-model="selected" v-on:change="onChangeSort($event)">
                 <option value="">기본순</option>
-                <option value="deptAsc">부서 (오름차순)</option>
-                <option value="deptDesc">부서 (내림차순)</option>
-                <option value="titleAsc">제목 (오름차순)</option>
-                <option value="titleDesc">제목 (내림차순)</option>
+                <option value="deptAsc">부서순 ↑</option>
+                <option value="deptDesc">부서순 ↓</option>
+                <option value="titleAsc">제목순 ↑</option>
+                <option value="titleDesc">제목순 ↓</option>
             </select>
 
             <div>총 : {{ items.length }}</div>
 
             <!--list-->
-            <ul>
-                <li v-for="(book, index) in paginatedData" class="book" v-bind:id="book.id">
+            <ul v-if="items.length > 0">
+                <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book">
                     <span class="no">{{ pageNum*pageSize+index+1 }}</span>
                     <div>
                         <strong>{{ book.title }}</strong>
@@ -42,10 +42,10 @@
                     </div>
                 </li>
             </ul>
-            <div v-if="items.length === 0">검색 결과가 없습니다.</div>
+            <div v-else>검색 결과가 없습니다.</div>
 
             <!--paging-->
-            <div v-if="items.length !== 0">
+            <div v-if="items.length > 0">
                 <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
                     이전
                 </button>
@@ -54,36 +54,56 @@
                     다음
                 </button>
             </div>
+        </div>
 
+
+        <div id="app2">
+            <div>라우터 테스트</div>
+            <router-link to="/foo">테스트</router-link>
+            <router-view></router-view>
         </div>
 
 
         <script>
+            const Foo = { template: '<div>foo</div>' }
+
+            const routes = [
+                { path: '/foo', component: Foo }
+            ]
+
+            const router = new VueRouter({
+                routes: routes
+            })
+
+            const app2 = new Vue({
+                router
+            }).$mount('#app2')
+
+
             var app = new Vue({
                 el: '#app',
                 data: {
-                    searchText: '',
+                    searchText : '',
                     bookList : [],
-                    items: [],
-                    selected: "",
-                    pageNum: 0,
-                    pageSize: 10
+                    items : [],
+                    selected : "",
+                    pageNum : 0,
+                    pageSize : 10
                 },
                 computed: {
-                    pageCount () {
+                    pageCount : function () {
                         let listLeng = this.items.length;
                         let listSize = this.pageSize;
                         let page = Math.floor(listLeng / listSize);
 
-                        if (listLeng % listSize > 0) {
-                            page += 1;
-                        }
+                        listLeng % listSize > 0 ? page++ : '';
 
                         return page;
                     },
-                    paginatedData () {
+                    paginatedData : function () {
                         const start = this.pageNum * this.pageSize;
                         const end = start + this.pageSize;
+
                         return this.items.slice(start, end);
                     }
                 },
@@ -132,56 +152,46 @@
                     callBackGetBookList : function (response) {
                         console.log(response);
                     },
-                    onClickSearchBtn: function() {
-                        let searchText = this.searchText;
-                            searchText = searchText.replace(/^\s+|\s+$/gm,'');
-                        let bookList = this.bookList;
+                    onClickSearchBtn : function () {
+                        console.log("검색값 : " + this.searchText);
                         let result = [];
-                        let regExp = new RegExp(searchText, "i");
+                        const regExp = new RegExp(this.searchText, "i");
 
-                        console.log("검색값 : " + searchText);
-                        this.searchText = searchText;
+                        this.$refs.search.blur();
                         this.selected = "";
+                        this.pageNum = 0;
 
-                        if(searchText == "") {
-                            this.$refs.search.focus();
-                        }
-
-                        result = bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
+                        result = this.bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
                         console.log(result);
+
                         this.items = result;
                     },
-                    onChangeSort(event) {
-                        let value = event.target.value;
+                    onChangeSort : function (event) {
+                        const value = event.target.value;
                         console.log(value);
 
-                        if(value == "deptAsc") {
-                            this.items.sort(function(a, b) {
-                                return a.deptName.localeCompare(b.deptName);
-                            });
-                        } else if(value == "deptDesc") {
-                            this.items.sort(function(a, b) {
-                                return b.deptName.localeCompare(a.deptName);
-                            });
-                        } else if(value == "titleAsc") {
-                            this.items.sort(function(a, b) {
-                                return a.title.localeCompare(b.title);
-                            });
-                        } else if(value == "titleDesc") {
-                            this.items.sort(function(a, b) {
-                                return b.title.localeCompare(a.title);
-                            });
-                        } else {
-                            this.items.sort(function(a, b) {
-                                return a.id - b.id;
-                            });
+                        switch(value) {
+                            case "deptAsc":
+                                this.items.sort((a, b) => a.deptName.localeCompare(b.deptName));
+                                break;
+                            case "deptDesc":
+                                this.items.sort((a, b) => b.deptName.localeCompare(a.deptName));
+                                break;
+                            case "titleAsc":
+                                this.items.sort((a, b) => a.title.localeCompare(b.title));
+                                break;
+                            case "titleDesc":
+                                this.items.sort((a, b) => b.title.localeCompare(a.title));
+                                break;
+                            default:
+                                this.items.sort((a, b) => a.id - b.id);
                         }
                     },
-                    nextPage() {
-                        this.pageNum += 1;
+                    nextPage : function () {
+                        this.pageNum++;
                     },
-                    prevPage() {
-                        this.pageNum -= 1;
+                    prevPage : function () {
+                        this.pageNum--;
                     }
                 }
             });
