@@ -7,26 +7,30 @@
       xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div layout:fragment="content" class="container">
 
-        <h2>도서현황</h2>
+        <!--<h2>도서현황</h2>-->
 
         <div id="app">
             <!--search-->
-            <div>
+            <div class="search">
                 <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
                     v-on:keyup.enter="onClickSearchBtn">
-                <button v-on:click="onClickSearchBtn">검색</button>
+                <button v-on:click="onClickSearchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
 
-            <!--sort-->
-            <select v-model="selected" v-on:change="onChangeSort($event)">
-                <option value="">기본순</option>
-                <option value="deptAsc">부서순 ↑</option>
-                <option value="deptDesc">부서순 ↓</option>
-                <option value="titleAsc">제목순 ↑</option>
-                <option value="titleDesc">제목순 ↓</option>
-            </select>
+            <div class="sub">
+                <div>총 {{ items.length }}권</div>
 
-            <div>총 : {{ items.length }}</div>
+                <!--sort-->
+                <select v-model="selected" v-on:change="onChangeSort($event)" class="sort">
+                    <option value="">기본순</option>
+                    <option value="deptAsc">부서순 ↑</option>
+                    <option value="deptDesc">부서순 ↓</option>
+                    <option value="titleAsc">제목순 ↑</option>
+                    <option value="titleDesc">제목순 ↓</option>
+    y           </select>
+            </div>
 
             <!--list-->
             <ul v-if="items.length > 0">
@@ -45,26 +49,36 @@
             <div v-else>검색 결과가 없습니다.</div>
 
             <!--paging-->
-            <div v-if="items.length > 0">
+            <div v-if="items.length > 0" class="paging">
                 <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
-                    이전
+                    <i class="fas fa-chevron-left"></i>
                 </button>
-                <span>{{ pageNum + 1 }} / {{ pageCount }} 페이지</span>
+                <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
+                <div v-on:click="goPage($event)" class="pageNo">
+                    <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
+                          v-bind:id="startPage+no-2">
+                        {{ startPage+no-1 }}
+                    </span>
+                </div>
                 <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
-                    다음
+                    <i class="fas fa-chevron-right"></i>
                 </button>
+
+
             </div>
         </div>
 
 
+<!--
         <div id="app2">
             <div>라우터 테스트</div>
             <router-link to="/foo">테스트</router-link>
             <router-view></router-view>
         </div>
-
+-->
 
         <script>
+/*
             const Foo = { template: '<div>foo</div>' }
 
             const routes = [
@@ -78,6 +92,7 @@
             const app2 = new Vue({
                 router
             }).$mount('#app2')
+*/
 
 
             var app = new Vue({
@@ -105,6 +120,17 @@
                         const end = start + this.pageSize;
 
                         return this.items.slice(start, end);
+                    },
+                    startPage : function () {
+                        //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 1
+                        return this.pageNum - (this.pageNum % 5) + 1;
+                    },
+                    endPage : function () {
+                        //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 페이지하단
+                        let page = this.pageNum - (this.pageNum % 5) + 5;
+                        page > this.pageCount ? page = this.pageCount : '';
+
+                        return page;
                     }
                 },
                 watch: {
@@ -192,6 +218,10 @@
                     },
                     prevPage : function () {
                         this.pageNum--;
+                    },
+                    goPage : function (event) {
+                        console.log(event.target.id);
+                        this.pageNum = parseInt(event.target.id);
                     }
                 }
             });
