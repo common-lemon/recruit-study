@@ -1,11 +1,12 @@
 <template>
-  <footer>
-    <a
-      href="/"
-      target="_blank">
-      (c) LemonHealthCare
-    </a>
-  </footer>
+    <footer>
+        <a href="/"
+           target=""
+          :to="{path: '/home'}"
+          >
+            (c) LemonHealthCare
+        </a>
+    </footer>
 </template>
 <script>
 export default {
@@ -14,9 +15,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a{
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    color: #07223a;
+}
+
 footer{
-  padding: 10px 0;
-  text-align: center;
-  opacity: .3;
+    padding: 20px 0;
+    text-align: center;
+    opacity: .4;
 }
 </style>

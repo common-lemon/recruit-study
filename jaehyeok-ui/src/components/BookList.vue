@@ -1,7 +1,14 @@
 <template>
     <div class="container">
         <div class="inner">
-            <div class="books">
+            <div
+                v-if="message"
+                class="message">
+                {{message}}
+            </div>
+            <div
+                v-else
+                class="books">
                 <Book
                     v-for="book in paginatedData"
                     :key="book.id"
@@ -11,11 +18,19 @@
             </div>
         </div>
         <div class="btn-cover">
-            <button :disabled="pageNum === 0" @click="prevPage" class="page-btn">
+            <button
+                :disabled="pageNum === 0"
+                @click="prevPage"
+                class="page-btn"
+            >
                 이전
             </button>
             <span class="page-count"> {{ pageNum + 1 }} / {{ pageCount }} 페이지 </span>
-            <button :disabled="pageNum >= pageCount - 1" @click="nextPage" class="page-btn">
+            <button
+                :disabled="pageNum >= pageCount - 1"
+                @click="nextPage"
+                class="page-btn"
+            >
                 다음
             </button>
         </div>
@@ -32,8 +47,8 @@ export default {
     },
     data(){
         return {
-          pageNum: 0,
-          pageSize: 5
+            pageNum: 0,
+            pageSize: 5
         }
     },
     methods: {
@@ -47,6 +62,7 @@ export default {
     computed:{
         ...mapState('book',[
             'bookList',
+            'message',
             'sort'
         ]),
         pageCount () {
@@ -54,7 +70,9 @@ export default {
                 listSize = this.pageSize,
                 page = Math.floor(listLeng/listSize);
 
-            if (listLeng %listSize > 0) page += 1;
+            if (listLeng % listSize > 0) page += 1;
+
+            if (page === 0) page += 1;
 
             return page
         },
@@ -70,18 +88,18 @@ export default {
 <style lang="scss" scoped>
 /*common*/
 button {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border: none;
-  background: #134775;
-  color: #f4f2db;
-  font-size: 0.9rem;
-  //padding: 6px 20px;
-  width: 80px;
-  height: 25px;
-  font-weight: bold;
-  border-radius: 30px;
-  cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: none;
+    background: #134775;
+    color: #f4f2db;
+    font-size: 0.9rem;
+    //padding: 6px 20px;
+    width: 80px;
+    height: 25px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
 }
 .container{
      //margin-top: 10px;
@@ -95,6 +113,11 @@ button {
         padding: 10px 0;
         border: 4px;
         text-align: center;
+        .message{
+            line-height: 300px;
+            height: 600px;
+            color: #134775;
+        }
     }
     .books{
         display: flex;
@@ -107,12 +130,12 @@ button {
         text-align: center;
         margin-top: 15px;
         .page-count{
-          font-size: 12px;
-          font-weight: 500;
+            font-size: 12px;
+            font-weight: 500;
         }
         .page-btn{
-          width: 50px;
-          font-size: 12px;
+            width: 45px;
+            font-size: 12px;
         }
     }
 }

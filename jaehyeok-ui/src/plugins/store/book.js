@@ -3,6 +3,7 @@ export default {
     namespaced:true,
     state:()=>({
         bookList:BookList,
+        message: '',
         sort:''
     }),
     getters:{},
@@ -71,8 +72,13 @@ export default {
                     result.push(item)
                 }
             })
+            let message = "";
+            if (result.length < 1){
+                message = "도서를 찾을수 없습니다.";
+            }
             commit('updateState', {
-                bookList:result
+                bookList:result,
+                message: message
             })
         },
         sortList({commit},payload){

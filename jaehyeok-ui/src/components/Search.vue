@@ -87,10 +87,10 @@ button {
   color: #f4f2db;
   font-size: 0.9rem;
   //padding: 6px 20px;
-  width: 60px;
+  width: 70px;
   height: 28px;
   font-weight: bold;
-  border-radius: 20px;
+  border-radius: 10px;
   cursor: pointer;
 }
 select{
@@ -99,7 +99,7 @@ select{
   margin-right: 10px;
   padding: 1px 10px;
   border: 2px solid #b4c1d5;
-  width: 70px;
+  width: 60px;
 }
 .Search-div{
   text-align: center;
@@ -111,7 +111,7 @@ select{
     margin-left: 15px;
     padding: 1px 10px;
     border: 2px solid #b4c1d5;
-    width: 170px;
+    width: 100%;
   }
 }
 </style>
