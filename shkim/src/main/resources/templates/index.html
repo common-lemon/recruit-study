@@ -20,10 +20,10 @@
             <!--sort-->
             <select v-model="selected" v-on:change="onChangeSort($event)">
                 <option value="">기본순</option>
-                <option value="deptAsc">부서 (오름차순)</option>
-                <option value="deptDesc">부서 (내림차순)</option>
-                <option value="titleAsc">제목 (오름차순)</option>
-                <option value="titleDesc">제목 (내림차순)</option>
+                <option value="deptAsc">부서순 ↑</option>
+                <option value="deptDesc">부서순 ↓</option>
+                <option value="titleAsc">제목순 ↑</option>
+                <option value="titleDesc">제목순 ↓</option>
             </select>
 
             <div>총 : {{ items.length }}</div>
@@ -54,20 +54,41 @@
                     다음
                 </button>
             </div>
+        </div>
 
+
+        <div id="app2">
+            <div>라우터 테스트</div>
+            <router-link to="/foo">테스트</router-link>
+            <router-view></router-view>
         </div>
 
 
         <script>
+            const Foo = { template: '<div>foo</div>' }
+
+            const routes = [
+                { path: '/foo', component: Foo }
+            ]
+
+            const router = new VueRouter({
+                routes: routes
+            })
+
+            const app2 = new Vue({
+                router
+            }).$mount('#app2')
+
+
             var app = new Vue({
                 el: '#app',
                 data: {
-                    searchText: '',
+                    searchText : '',
                     bookList : [],
-                    items: [],
-                    selected: "",
-                    pageNum: 0,
-                    pageSize: 10
+                    items : [],
+                    selected : "",
+                    pageNum : 0,
+                    pageSize : 10
                 },
                 computed: {
                     pageCount : function () {
@@ -75,13 +96,14 @@
                         let listSize = this.pageSize;
                         let page = Math.floor(listLeng / listSize);
 
-                        listLeng % listSize > 0 ? page += 1 : '';
+                        listLeng % listSize > 0 ? page++ : '';
 
                         return page;
                     },
                     paginatedData : function () {
                         const start = this.pageNum * this.pageSize;
                         const end = start + this.pageSize;
+
                         return this.items.slice(start, end);
                     }
                 },
@@ -133,7 +155,7 @@
                     onClickSearchBtn : function () {
                         console.log("검색값 : " + this.searchText);
                         let result = [];
-                        let regExp = new RegExp(this.searchText, "i");
+                        const regExp = new RegExp(this.searchText, "i");
 
                         this.$refs.search.blur();
                         this.selected = "";
@@ -141,39 +163,35 @@
 
                         result = this.bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
                         console.log(result);
+
                         this.items = result;
                     },
                     onChangeSort : function (event) {
-                        let value = event.target.value;
+                        const value = event.target.value;
                         console.log(value);
 
-                        if(value == "deptAsc") {
-                            this.items.sort(function(a, b) {
-                                return a.deptName.localeCompare(b.deptName);
-                            });
-                        } else if(value == "deptDesc") {
-                            this.items.sort(function(a, b) {
-                                return b.deptName.localeCompare(a.deptName);
-                            });
-                        } else if(value == "titleAsc") {
-                            this.items.sort(function(a, b) {
-                                return a.title.localeCompare(b.title);
-                            });
-                        } else if(value == "titleDesc") {
-                            this.items.sort(function(a, b) {
-                                return b.title.localeCompare(a.title);
-                            });
-                        } else {
-                            this.items.sort(function(a, b) {
-                                return a.id - b.id;
-                            });
+                        switch(value) {
+                            case "deptAsc":
+                                this.items.sort((a, b) => a.deptName.localeCompare(b.deptName));
+                                break;
+                            case "deptDesc":
+                                this.items.sort((a, b) => b.deptName.localeCompare(a.deptName));
+                                break;
+                            case "titleAsc":
+                                this.items.sort((a, b) => a.title.localeCompare(b.title));
+                                break;
+                            case "titleDesc":
+                                this.items.sort((a, b) => b.title.localeCompare(a.title));
+                                break;
+                            default:
+                                this.items.sort((a, b) => a.id - b.id);
                         }
                     },
                     nextPage : function () {
-                        this.pageNum += 1;
+                        this.pageNum++;
                     },
                     prevPage : function () {
-                        this.pageNum -= 1;
+                        this.pageNum--;
                     }
                 }
             });
