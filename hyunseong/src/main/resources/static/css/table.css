@@ -67,6 +67,12 @@ body {
     cursor: pointer;
     text-align: center;
 }
+#pageButton:hover {
+    background-color: #ffca08;
+}
+#noPageButton {
+    text-align: center;
+}
 #tableTitle {
     background-color: #ffca08;
 }
@@ -85,6 +91,7 @@ body {
 #checkerboard{
     float: left;
     text-align: center;
+    min-width: 50%;
     max-width: 50%;
 }
 #innerCheckerboard {

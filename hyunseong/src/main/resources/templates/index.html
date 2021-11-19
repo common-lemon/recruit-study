@@ -8,8 +8,8 @@
         <div id="topText">
             <a href="http://localhost:8080"><img th:src="@{/images/lemonLogo.png}" title="레몬헬스케어 로고 그림"
                                                  alt="레몬헬스케어 로고 그림" th:width="100px"></a>&nbsp;&nbsp;&nbsp;
-            <input id="searchBookInput" type="text" v-model="search"
-                   placeholder="검색어를 입력해주세요"/>
+            <input id="searchBookInput" type="text" v-model.trim="search"
+                   v-on:keydown.enter="searchBook" placeholder="검색어를 입력해주세요"/>
             <button id="searchButton" v-on:click="searchBook">검색</button>
         </div>
         <hr>
@@ -28,7 +28,7 @@
 
         <div class="clearBox"></div>
 
-        <div v-if="searchList.length !== 0">
+        <div v-if="viewList.length !== 0">
             <div v-if="view === 'tableBoard'">
                 <table id="boardTable">
                     <tr id="tableTitle">
@@ -40,7 +40,7 @@
                                    title="위아래 빈 화살표 그림" alt="정렬이 안되어 있는 것을 알려주는 화살표 그림"></th>
                         <th nowrap>권수</th>
                     </tr>
-                    <tr v-for="item in searchList" :key="item.id">
+                    <tr v-for="item in viewList" :key="item.id">
                         <td>{{item.id}}</td>
                         <td>{{item.bookNo}}</td>
                         <td nowrap>{{item.deptName}}</td>
@@ -51,7 +51,7 @@
 
             </div>
             <div v-else id="cBoard">
-                <div id="checkerboard" v-for="(item, index) in searchList" :key="item.id">
+                <div id="checkerboard" v-for="(item, index) in viewList" :key="item.id">
                     <div id="innerCheckerboard">
                         <img class="bookImage" th:src="@{/images/book.png}" title="책그림"><br>
                         <p style="height: 50px">{{item.title}}</p>
@@ -62,13 +62,18 @@
             </div>
         </div>
 
-        <div v-else-if="searchList.length === 0">
+        <div v-else-if="viewList.length === 0">
             <p id="noSearch">검색결과가 없습니다.</p>
         </div>
 
         </br>
-        <div>
-            <table id="pageBox">
+        <div v-if="total === limit">
+            <table>
+                <td id="noPageButton">{{ pageText }}</td>
+            </table>
+        </div>
+        <div v-if="total !== limit">
+            <table>
                 <td id="pageButton" v-on:click="addPage">{{ pageText }}</td>
             </table>
         </div>
@@ -82,11 +87,11 @@
                 search: '',
                 bookList: [],
                 searchList: [],
+                viewList: [],
                 deptNameList: [],
                 bookTitle: 'default',
                 deptSelected: '',
                 pageText: '',
-                page: 1,
                 limit: 10,
                 total: 0,
                 maxTotal: 0,
@@ -97,6 +102,7 @@
                     const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
                     this.bookList = response.data;
                     this.searchList = response.data;
+                    this.viewList = response.data;
                     this.maxTotal = this.bookList.length;
                     this.total = this.bookList.length;
                     this.paging();
@@ -104,24 +110,26 @@
                 },
                 searchBook: function () {
                     this.limit = 10;
-                    const filteredList = this.bookList.filter(item => item.title.includes(this.search));
+                    let filteredList = this.bookList.filter(item =>
+                        item.title.includes(this.search) || item.deptName.includes(this.search));
                     if (filteredList) {
                         this.searchList = filteredList;
+                        this.viewList = filteredList;
                         this.total = this.searchList.length;
                     }
                     this.paging();
                 },
                 sortTitle: function () {
-                    if (this.bookTitle == 'default' || this.bookTitle == 'd') {
-                        this.searchList.sort(function (a, b) {
+                    if (this.bookTitle === 'default' || this.bookTitle === 'd') {
+                        this.viewList.sort(function (a, b) {
                             return a.title.localeCompare(b.title);
                         })
                         document.getElementById("orderImage").src = "/images/ascending_arrow.png";
                         document.getElementById("orderImage").title = "위쪽 화살표 그림";
                         document.getElementById("orderImage").alt = "오름차순 정렬 되어 있는 것을 알려주는 화살표 그림";
                         this.bookTitle = 'a';
-                    } else if (this.bookTitle == 'a') {
-                        this.searchList.sort(function (a, b) {
+                    } else if (this.bookTitle === 'a') {
+                        this.viewList.sort(function (a, b) {
                             return b.title.localeCompare(a.title);
                         })
                         document.getElementById("orderImage").src = "/images/descending_arrow.png";
@@ -141,7 +149,9 @@
                     this.limit = 10;
                     const selectedList = this.bookList.filter(item => item.deptName.includes(event.target.value));
                     this.searchList = selectedList;
+                    this.viewList = selectedList;
                     this.total = this.searchList.length;
+                    this.search = '';
                     this.paging();
                 },
                 addPage: function () {
@@ -152,10 +162,7 @@
                     if (this.limit > this.total) {
                         this.limit = this.total;
                     }
-                    this.searchList = this.searchList.slice(
-                        (this.page - 1) * this.limit,
-                        this.page * this.limit
-                    )
+                    this.viewList = this.searchList.slice(0, this.limit);
                     this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
                 },
                 changeView: function () {
