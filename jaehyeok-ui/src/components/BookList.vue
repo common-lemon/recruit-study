@@ -103,7 +103,7 @@ button {
 }
 .container{
      //margin-top: 10px;
-     //height: 730px;
+     height: 700px;
      background-color: #e3e9ef;
     .btn-div{
       text-align: right;

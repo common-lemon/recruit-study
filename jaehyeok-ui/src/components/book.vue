@@ -29,7 +29,7 @@ export default {
     width: 300px;
     height: 140px;
     margin: 5px;
-    border-radius: 4px;
+    border-radius: 10px;
     background-color: grey;
     background-size: cover;
     overflow: hidden;

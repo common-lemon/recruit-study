@@ -51,7 +51,6 @@ textarea{
         .form-group{
             display: flex;
             flex-direction: column;
-            margin-left: 15px;
         }
         label {
             color: #134775;
@@ -83,11 +82,11 @@ textarea{
 
         display: flex;
         width: 100%;
-        height: 750px;
+        height: 730px;
         background-color: aliceblue;
         flex-direction: column;
         justify-content: center;
-        //align-items: center;
+        align-items: center;
         color: #134775;
     }
 }

@@ -4,7 +4,7 @@
         v-model="searchText"
         class="form-control"
         type="text"
-        placeholder="제목"
+        placeholder="도서명"
         @keyup.enter="apply"/>
     <button class="btn btn-primary"
             @click="apply">
