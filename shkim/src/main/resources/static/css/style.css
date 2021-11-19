@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin: 10px;
+}
+
+ul {
+    list-style: none;
+}
+
+.book {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #8c959f;
+    padding: 10px 5px;
+}
+
+.book:first-child {
+    border-top: 1px solid #8c959f;
+}
+
+.book .no {
+    margin: 0 5px 0 0;
+}
+
+.book .subInfo {
+    font-size: 14px;
+}
+
+.book .subInfo span {
+    padding: 0 5px 0 0;
+}
