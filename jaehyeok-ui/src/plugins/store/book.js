@@ -4,6 +4,7 @@ export default {
     state:()=>({
         bookList:BookList,
         message: '',
+        loading: false,
         sort:''
     }),
     getters:{},
@@ -63,6 +64,11 @@ export default {
     },
     actions:{
         searchList({commit},payload){
+            commit('updateState',{
+                message:'',
+                loading:true
+            })
+
             let searchText = payload.searchText
             let list = BookList
 
@@ -72,14 +78,18 @@ export default {
                     result.push(item)
                 }
             })
+
             let message = "";
             if (result.length < 1){
                 message = "도서를 찾을수 없습니다.";
             }
+
             commit('updateState', {
                 bookList:result,
-                message: message
+                message: message,
+                loading:false
             })
+
         },
         sortList({commit},payload){
             commit('sortList', {
