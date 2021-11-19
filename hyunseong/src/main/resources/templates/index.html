@@ -5,13 +5,19 @@
       layout:decorator="layout/default">
 <div layout:fragment="content">
     <div id="app">
-        <div id="topText"><input class="searchBookInput" type="text" v-model="search"
-                                 placeholder="검색어를 입력하세요"/>
-            <button v-on:click="searchBook">검색</button>
+        <div id="topText">
+            <a href="http://localhost:8080"><img th:src="@{/images/lemonLogo.png}" title="레몬헬스케어 로고 그림"
+                                                 alt="레몬헬스케어 로고 그림" th:width="100px"></a>&nbsp;&nbsp;&nbsp;
+            <input id="searchBookInput" type="text" v-model="search"
+                   placeholder="검색어를 입력해주세요"/>
+            <button id="searchButton" v-on:click="searchBook">검색</button>
         </div>
         <hr>
         <div id="middleText">
-            <div id="leftText">도서 현황</div>
+            <div id="leftText"><span id="bookTotal">{{ total }}</span> 개</div>
+            <img id="changeTableImage" v-on:click="changeView" th:src="@{/images/boardTable.png}"
+                 title="가로 세 줄이 있는 동그라미 아이콘"
+                 alt="게시글 형식으로 보여주는 아이콘" th:width="32px">
             <div id="rightText">
                 <select v-model="deptSelected" @change="changeDept($event)">
                     <option value="" selected>부서별 자료</option>
@@ -20,34 +26,47 @@
             </div>
         </div>
 
-        <div style="clear: both; text-align: right"></div>
+        <div class="clearBox"></div>
 
         <div v-if="searchList.length !== 0">
-            <table>
-                <tr>
-                    <th>구분</th>
-                    <th>도서번호</th>
-                    <th>부서</th>
-                    <th class="orderMenu" v-on:click="sortTitle">{{ bookTitle }}
-                        <!--<img class="arrowImage"
-                             src="./default_arrow.png"
-                             alt="정렬 안되어 있는 화살표">--></th>
-                    <th>권수</th>
-                </tr>
-                <tr v-for="item in searchList" :key="item.id">
-                    <td>{{item.id}}</td>
-                    <td>{{item.bookNo}}</td>
-                    <td>{{item.deptName}}</td>
-                    <td>{{item.title}}</td>
-                    <td>{{item.count}}</td>
-                </tr>
-            </table>
+            <div v-if="view === 'tableBoard'">
+                <table id="boardTable">
+                    <tr id="tableTitle">
+                        <th nowrap>구분</th>
+                        <th nowrap>도서번호</th>
+                        <th nowrap>부서</th>
+                        <th class="orderMenu" v-on:click="sortTitle">
+                            제목<img id="orderImage" th:src="@{/images/default_arrow.png}"
+                                   title="위아래 빈 화살표 그림" alt="정렬이 안되어 있는 것을 알려주는 화살표 그림"></th>
+                        <th nowrap>권수</th>
+                    </tr>
+                    <tr v-for="item in searchList" :key="item.id">
+                        <td>{{item.id}}</td>
+                        <td>{{item.bookNo}}</td>
+                        <td nowrap>{{item.deptName}}</td>
+                        <td>{{item.title}}</td>
+                        <td>{{item.count}}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div v-else id="cBoard">
+                <div id="checkerboard" v-for="(item, index) in searchList" :key="item.id">
+                    <div id="innerCheckerboard">
+                        <img class="bookImage" th:src="@{/images/book.png}" title="책그림"><br>
+                        <p style="height: 50px">{{item.title}}</p>
+                        <p>{{item.deptName}}</p>
+                    </div>
+                </div>
+                <div class="clearBox"></div>
+            </div>
         </div>
+
         <div v-else-if="searchList.length === 0">
             <p id="noSearch">검색결과가 없습니다.</p>
         </div>
-        <br>
 
+        </br>
         <div>
             <table id="pageBox">
                 <td id="pageButton" v-on:click="addPage">{{ pageText }}</td>
@@ -64,24 +83,23 @@
                 bookList: [],
                 searchList: [],
                 deptNameList: [],
-                bookTitle: '제목(정렬x)',
+                bookTitle: 'default',
                 deptSelected: '',
                 pageText: '',
                 page: 1,
                 limit: 10,
-                total: 0
+                total: 0,
+                maxTotal: 0,
+                view: 'tableBoard'
             },
             methods: {
                 getBookListByAsyncAwait: async function () {
                     const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
                     this.bookList = response.data;
                     this.searchList = response.data;
-                    this.searchList = this.bookList.slice(
-                        (this.page - 1) * this.limit,
-                        this.page * this.limit
-                    )
+                    this.maxTotal = this.bookList.length;
                     this.total = this.bookList.length;
-                    this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
+                    this.paging();
                     this.getDept();
                 },
                 searchBook: function () {
@@ -94,24 +112,30 @@
                     this.paging();
                 },
                 sortTitle: function () {
-                    if (this.bookTitle == '제목(정렬x)' || this.bookTitle == '제목(내림차순)') {
+                    if (this.bookTitle == 'default' || this.bookTitle == 'd') {
                         this.searchList.sort(function (a, b) {
                             return a.title.localeCompare(b.title);
                         })
-                        this.bookTitle = '제목(오름차순)';
-                    } else if (this.bookTitle == '제목(오름차순)') {
+                        document.getElementById("orderImage").src = "/images/ascending_arrow.png";
+                        document.getElementById("orderImage").title = "위쪽 화살표 그림";
+                        document.getElementById("orderImage").alt = "오름차순 정렬 되어 있는 것을 알려주는 화살표 그림";
+                        this.bookTitle = 'a';
+                    } else if (this.bookTitle == 'a') {
                         this.searchList.sort(function (a, b) {
                             return b.title.localeCompare(a.title);
                         })
-                        this.bookTitle = '제목(내림차순)';
+                        document.getElementById("orderImage").src = "/images/descending_arrow.png";
+                        document.getElementById("orderImage").title = "아래쪽 화살표 그림";
+                        document.getElementById("orderImage").alt = "내림차순 정렬 되어 있는 것을 알려주는 화살표 그림";
+                        this.bookTitle = 'd';
                     }
                 },
                 getDept: function () {
                     for (let i in this.bookList) {
                         this.deptNameList.push(this.bookList[i].deptName);
                     }
-                    const test = new Set(this.deptNameList);
-                    this.deptNameList = test;
+                    const deduplication = new Set(this.deptNameList);
+                    this.deptNameList = deduplication;
                 },
                 changeDept: function (event) {
                     this.limit = 10;
@@ -122,18 +146,7 @@
                 },
                 addPage: function () {
                     this.limit += 10;
-                    if (this.pageText.substring(this.pageText.indexOf('/')+1, this.pageText.indexOf(')')) == this.total) {
-                        if (this.limit > this.total) {
-                            this.limit = this.total;
-                        }
-                        this.searchList = this.bookList.slice(
-                            (this.page - 1) * this.limit,
-                            this.page * this.limit
-                        )
-                        this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
-                    } else {
-                        this.paging();
-                    }
+                    this.paging();
                 },
                 paging: function () {
                     if (this.limit > this.total) {
@@ -144,6 +157,21 @@
                         this.page * this.limit
                     )
                     this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
+                },
+                changeView: function () {
+                    if (this.view == 'tableBoard') {
+                        this.view = 'checkerboard';
+                        document.getElementById("changeTableImage").src = "/images/checkerboard.png";
+                        document.getElementById("changeTableImage").title = "네모 네개가 있는 동그라미 아이콘";
+                        document.getElementById("changeTableImage").alt = "바둑판 형식으로 보여주는 아이콘";
+                        this.view = 'checkerboard';
+                    } else if (this.view == 'checkerboard') {
+                        this.view = 'tableBoard';
+                        document.getElementById("changeTableImage").src = "/images/boardTable.png";
+                        document.getElementById("changeTableImage").title = "가로 세 줄이 있는 동그라미 아이콘";
+                        document.getElementById("changeTableImage").alt = "게시글 형식으로 보여주는 아이콘";
+                        this.view = 'tableBoard';
+                    }
                 }
             },
             computed: {},
@@ -154,6 +182,7 @@
                 }*/
             },
             created: function () {
+                /*this.view = "tableBoard";*/
                 // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
             },
             mounted: function () {
