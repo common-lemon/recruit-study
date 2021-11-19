@@ -39,6 +39,7 @@
 <script>
 import {mapState} from 'vuex'
 //import BookList from '../assets/data/json_sample_bookList.json'
+//import Loader from '@/components/Loader'
 import Book from './book'
 
 export default {
@@ -63,6 +64,7 @@ export default {
         ...mapState('book',[
             'bookList',
             'message',
+            'loading',
             'sort'
         ]),
         pageCount () {
@@ -112,6 +114,7 @@ button {
         background-color: #e3e9ef;
         padding: 10px 0;
         border: 4px;
+        border-radius: 10px;
         text-align: center;
         .message{
             line-height: 300px;

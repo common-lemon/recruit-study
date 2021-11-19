@@ -39,6 +39,8 @@ textarea{
     height:150px;
     resize: vertical;  //세로크기만 조절가능
     background-color: #e3e9ef;
+    color: #134775;
+
 }
 .container {
     form {
