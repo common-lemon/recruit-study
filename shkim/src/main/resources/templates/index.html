@@ -112,10 +112,6 @@
                         let listSize = this.pageSize;
                         let page = Math.floor(listLeng / listSize);
 
-                        console.log("listLeng" + listLeng);
-                        console.log("listSize" + listSize);
-                        console.log("page" + page);
-
                         listLeng % listSize > 0 ? page++ : '';
 
                         return page;
@@ -123,8 +119,6 @@
                     paginatedData : function () {
                         const start = this.pageNum * this.pageSize;
                         const end = start + this.pageSize;
-                        console.log("start" + start);
-                        console.log("end" + end);
                         return this.items.slice(start, end);
                     },
                     startPage : function () {
