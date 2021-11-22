@@ -2,6 +2,9 @@ td, th {
     padding: 10px;
     border: 1px solid #ccc;
 }
+#leftImage, #rightInput {
+    display: inline-block;
+}
 table {
     width: 100%;
     margin: auto;
@@ -10,7 +13,7 @@ table {
 body {
     color: #333;
     padding: 1rem;
-    background-color: #fdfdfd;
+    background-color: #fcfcfc;
 }
 #app {
     width: 100%;
@@ -36,13 +39,12 @@ body {
     padding: 5px;
     margin-right: 10px;
 }
-#topText {
+#topBox {
     text-align: center;
     padding-top: 5px;
     margin-bottom: 15px;
 }
 #searchBookInput {
-    width: 50%;
     font-size: 1.05em;
 }
 #searchButton {
@@ -57,7 +59,7 @@ body {
     color: #fdfdfd;
     background-color: #49c6f6;
 }
-#middleText {
+#middleBox {
     height: 40px;
 }
 .orderMenu {
@@ -91,13 +93,19 @@ body {
 #checkerboard{
     float: left;
     text-align: center;
-    min-width: 50%;
-    max-width: 50%;
+    min-width: 25%;
+    max-width: 25%;
 }
 #innerCheckerboard {
     padding: 30px;
     border: 1px solid #ccc;
     border-collapse: collapse;
+}
+#cBoardBookTitle {
+    height: 50px
+}
+#cBoardDeptName {
+
 }
 .clearBox {
     clear: both;
