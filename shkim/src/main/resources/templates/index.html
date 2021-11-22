@@ -56,7 +56,8 @@
                 <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
                 <div v-on:click="goPage($event)" class="pageNo">
                     <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
-                          v-bind:id="startPage+no-2">
+                          v-bind:id="startPage+no-2"
+                          v-bind:class="{ active : pageNum === startPage+no-2 }">
                         {{ startPage+no-1 }}
                     </span>
                 </div>
@@ -111,6 +112,10 @@
                         let listSize = this.pageSize;
                         let page = Math.floor(listLeng / listSize);
 
+                        console.log("listLeng" + listLeng);
+                        console.log("listSize" + listSize);
+                        console.log("page" + page);
+
                         listLeng % listSize > 0 ? page++ : '';
 
                         return page;
@@ -118,7 +123,8 @@
                     paginatedData : function () {
                         const start = this.pageNum * this.pageSize;
                         const end = start + this.pageSize;
-
+                        console.log("start" + start);
+                        console.log("end" + end);
                         return this.items.slice(start, end);
                     },
                     startPage : function () {
@@ -156,9 +162,11 @@
                 },
                 methods: {
                     getBookListByAsyncAwait : async function () {
-                        const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
+                        const response = await axios.get('http://localhost:8080/rest/book/list');
+                       // const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
                         console.log(response.data);
-                        this.bookList = response.data;
+                        console.log(response.data.bookList);
+                        this.bookList = response.data.bookList;
                         this.items = this.bookList;
                     },
                     getBookListByPromise : function () {
