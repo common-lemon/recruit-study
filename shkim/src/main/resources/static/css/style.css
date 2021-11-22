@@ -90,3 +90,8 @@ ul {
 .paging .pageNo span {
     padding: 0 20px;
 }
+
+.paging .active {
+    font-weight: bold;
+    color: #42b983;
+}
