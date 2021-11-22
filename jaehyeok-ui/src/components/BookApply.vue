@@ -1,38 +1,75 @@
 <template>
     <div class="container">
-        <form >
+        <form  >
             <h2>도서 신청</h2>
             <div class="form-group">
-                <label >신청부서</label>
-                <input placeholder="신청부서" required />
+                <label for="deptName" >신청부서</label>
+                <input id="deptName" v-model="deptName" placeholder="신청부서" required />
             </div>
             <div class="form-group">
-                <label >신청자</label>
-                <input placeholder="신청자"  required />
+                <label for="member" >신청자</label>
+                <input id="member" v-model="member" placeholder="신청자"  required />
             </div>
             <div class="form-group">
-                <label >도서명</label>
-                <input placeholder="도서명"  required />
+                <label for="title" >도서명</label>
+                <input id="title" v-model="title" placeholder="도서명"   />
             </div>
             <div class="form-group">
-                <label >출판사</label>
-                <input placeholder="출판사"  required />
+                <label for="pubHouse" >출판사</label>
+                <input id="pubHouse" v-model="pubHouse" placeholder="출판사"   />
             </div>
             <div class="form-group">
-            <label >도서 금액</label>
-            <input placeholder="도서금액"  required />
+            <label for="amount" >도서 금액</label>
+            <input id="amount" v-model="amount" placeholder="도서금액"   />
             </div>
             <div class="form-group">
                 <label >신청사유</label>
-                <textarea id="content"  class="form-control" placeholder="내용을 입력하세요" />
+                <textarea id="content"  class="form-control" v-model="applyText" placeholder="내용을 입력하세요" />
             </div>
             <div class="btn-cover">
-                <button type="submit">신청</button>
+                <button type="button"  @click="submitApply">신청</button>
             </div>
         </form>
     </div>
 </template>
-
+<script>
+import axios from "axios";
+export default {
+    data() {
+        return {
+            deptName:'',
+            member:'',
+            title:'',
+            pubHouse:'',
+            amount:'',
+            applyText:''
+        }
+    },
+    methods:{
+        async submitApply(){
+            const date = new Date()
+            const current = date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
+            let url = '/api/book';
+            const data = {
+                deptName: this.deptName,
+                member: this.member,
+                date: current,
+                pubHouse: this.pubHouse,
+                amount: this.amount,
+                applyText: this.applyText,
+            }
+            await axios.post(url, data)
+                .then(response => {
+                    console.log(response);
+                    //this.$router.push('/Home');
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
+        }
+    }
+}
+</script>
 <style lang="scss" scoped>
 textarea{
     width:350px;

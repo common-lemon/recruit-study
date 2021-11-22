@@ -16,7 +16,7 @@
 </template>
 <script>
 export default {
-        props:{
+    props:{
         book:{
           type: Object,
           default:()=>({})
