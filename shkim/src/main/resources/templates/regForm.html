@@ -139,8 +139,85 @@
 
                         console.log(cnt === 0);
 
+                        this.testFn();
+                        return;
+
                         (cnt === 0) && this.saveBook();
 
+                    },
+                    testFn : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/rest/book/save');
+                        xhr.setRequestHeader('content-type', 'application/json');
+
+                        const data = {
+                            deptName : this.deptName,
+                            registerNm : this.registerNm,
+                            title : this.title,
+                            publisher : this.publisher,
+                            bookPrice : this.bookPrice,
+                            regRsn : this.regRsn
+                        }
+                        // 객체 -> json 포맷의 문자열로 변환 (serializing)
+
+                        console.log(JSON.stringify(data));
+
+                        xhr.send(JSON.stringify(data));
+
+                        xhr.onload = () => {
+                            if(xhr.status === 200 || xhr.status === 201) {
+                                console.log(xhr.response);
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+                    },
+                    putTestFn : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PUT', '/rest/book/detail?id=2');
+                        xhr.setRequestHeader('context-type', 'application/json');
+
+                        const data = {
+
+                        }
+
+                        xhr.send(JSON.stringify(data));
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+                    },
+                    patchTestFn : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PATCH', '');
+                        xhr.setRequestHeader('context-type', 'application/json');
+                        const data = {
+
+                        }
+                        xhr.send(JSON.stringify(data));
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.log('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+
+                    }
+                    deleteTestFn : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('DELETE', '/');
+                        xhr.send();
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
                     }
                 }
             });
