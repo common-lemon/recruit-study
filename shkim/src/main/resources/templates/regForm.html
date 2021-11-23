@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <div layout:fragment="content" class="container">
+
+        <div id="app">
+            <form name="regForm" @submit="checkForm">
+                <p>
+                    <label>신청 부서</label>
+                    <input id="deptName" v-model="deptName" type="text">
+                </p>
+
+                <p>
+                    <label>신청자 이름</label>
+                    <input id="registerNm" v-model="registerNm" type="text">프로
+                </p>
+
+                <p>
+                    <label>* 도서 이름</label>
+                    <input id="title" v-model="title" type="text" ref="title" placeholder="도서 이름을 입력하세요">
+                </p>
+
+                <p>
+                    <label>* 출판사</label>
+                    <input id="publisher" v-model="publisher" type="text" ref="publisher" placeholder="출판사를 입력하세요">
+                </p>
+
+                <p>
+                <label>* 도서 금액</label>
+                    <input id="bookPrice" v-model="bookPrice" type="number" ref="bookPrice" min="0" max="100000"
+                           placeholder="도서 금액을 입력하세요">
+                </p>
+
+                <p>
+                    <label>신청 사유</label>
+                    <textarea id="regRsn" v-model="regRsn" type="text" placeholder="신청 사유를 입력하세요"></textarea>
+                </p>
+
+                <a th:href="@{/}">취소</a>
+                <input type="submit" value="신청">
+            </form>
+        </div>
+
+
+        <script>
+
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    deptName : null,
+                    registerNm : null,
+                    title : null,
+                    publisher : null,
+                    bookPrice : null,
+                    regRsn : null
+                },
+                computed: {
+
+                },
+                watch: {
+
+                },
+                beforeCreate: function () {
+                    // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
+                },
+                created: function () {
+                    // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+                },
+                beforeMount: function() {
+                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+                },
+                mounted: function () {
+                    // $el 을 사용할 수 있습니다.
+                    // 모든 화면이 렌더링된 후 호출됩니다.
+
+                    this.deptName = "공통개발팀";
+                    this.registerNm = "김소희";
+                },
+                methods: {
+                    getBookListByPromise : function () {
+                        axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
+                            console.log(response.data);
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    },
+                    saveBook : function () {
+                        const data = {
+                            deptName : this.deptName,
+                            registerNm : this.registerNm,
+                            title : this.title,
+                            publisher : this.publisher,
+                            bookPrice : this.bookPrice,
+                            regRsn : this.regRsn
+                        }
+
+                        console.log(data);
+
+                        axios.post('http://localhost:8080/rest/book/save', null, {params: data}).then(response => {
+                            console.log(response.data);
+                            alert("정상적으로 등록되었습니다.");
+                            location.replace("/");
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    },
+                    checkForm : function (e) {
+                        // 출판사는 한글만 입력 가능
+                        // 도서 금액은 숫자만 입력, 값의 범위 0 ~ 100000
+                        // 필수 입력 값 (도서 이름, 출판사, 도서 금액)
+                        // 등록 전 유효성 검사 (유효성 검사에 걸린 얘들 알럿 후 포커싱)
+                        // 유효성 검사 통과 시 등록 처리
+
+                        e.preventDefault();
+
+                        let cnt = 0;
+
+                        //!this.title && msg.push("도서 이름");
+                        //!this.publisher && msg.push("출판사");
+                        //!this.bookPrice && msg.push("도서 금액");
+
+                        if(!this.title) {
+                            alert("도서 이름을 입력해 주세요.")
+                            this.$refs.title.focus();
+                            cnt++;
+                        } else if(!this.publisher) {
+                            alert("출판사를 입력해 주세요.")
+                            this.$refs.publisher.focus();
+                            cnt++;
+                        } else if(!this.bookPrice) {
+                            alert("도서 금액을 입력해 주세요.")
+                            this.$refs.bookPrice.focus();
+                            cnt++;
+                        }
+
+                        console.log(cnt === 0);
+
+                        (cnt === 0) && this.saveBook();
+
+                    }
+                }
+            });
+        </script>
+    </div>
+</html>

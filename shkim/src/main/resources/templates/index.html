@@ -29,7 +29,7 @@
                     <option value="deptDesc">부서순 ↓</option>
                     <option value="titleAsc">제목순 ↑</option>
                     <option value="titleDesc">제목순 ↓</option>
-    y           </select>
+               </select>
             </div>
 
             <!--list-->
@@ -64,9 +64,10 @@
                 <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
                     <i class="fas fa-chevron-right"></i>
                 </button>
-
-
             </div>
+
+
+            <a th:href="@{/book/regForm}">등록</a>
         </div>
 
 
@@ -161,7 +162,7 @@
                         console.log(response.data);
                         console.log(response.data.bookList);
                         this.bookList = response.data.bookList;
-                        this.items = this.bookList;
+                        this.items = this.bookList.sort();
                     },
                     getBookListByPromise : function () {
                         axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {

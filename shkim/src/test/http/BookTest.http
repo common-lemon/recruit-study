@@ -51,3 +51,4 @@ Accept: application/json
 ### 책 상세
 GET http://localhost:8080/rest/book/detail?id=2
 Accept: application/json
+
