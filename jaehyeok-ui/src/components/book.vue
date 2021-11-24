@@ -46,7 +46,9 @@ export default {
                 axios.delete('/api/book/' + bookId)
                     .then(response => {
                         console.log(response.data);
-
+                        this.$store.dispatch('book/deleteUpdate', {
+                            searchText : ''
+                        })
                     })
                     .catch(error => {
                         console.log(error);
