@@ -4,11 +4,11 @@
             <h2>도서 신청</h2>
             <div class="form-group">
                 <label for="deptName" >신청부서</label>
-                <input id="deptName" v-model="deptName" placeholder="신청부서" required />
+                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" required/>
             </div>
             <div class="form-group">
                 <label for="registerNm" >신청자</label>
-                <input id="registerNm" v-model="registerNm" placeholder="신청자"  required />
+                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자"  required/>
             </div>
             <div class="form-group">
                 <label for="title" >도서명</label>
@@ -18,9 +18,17 @@
                 <label for="publisher" >출판사</label>
                 <input id="publisher" v-model="publisher" placeholder="출판사"   />
             </div>
-            <div class="form-group">
-            <label for="bookPrice" >도서 금액</label>
-            <input id="bookPrice" v-model="bookPrice" placeholder="도서금액"   />
+            <div class="row">
+                <div class="form-group">
+                    <label for="bookPrice" >도서 금액</label>
+                    <input style="width: 165px;" id="bookPrice" v-model="bookPrice" min="0" maxlength="7" @input="numberOnly"  placeholder="도서금액"   />
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="form-group">
+                    <label for="count" >수량</label>
+                    <input style="width: 165px;" type='number' id="count" v-model="count" min="1" placeholder="수량"/>
+
+                </div>
             </div>
             <div class="form-group">
                 <label>신청사유</label>
@@ -34,7 +42,12 @@
 </template>
 <script>
 import axios from "axios";
+//import Loader from './Loader';
+
 export default {
+    components:{
+       // Loader
+    },
     data() {
         return {
             deptName:'',
@@ -42,7 +55,16 @@ export default {
             title:'',
             publisher:'',
             bookPrice:'',
-            regRsn:''
+            regRsn:'',
+            count:''
+        }
+    },
+    watch: {
+        bookPrice(val){
+            let result =  uncomma(val);
+            if(result > 100000)
+                this.bookPrice = "100,000";
+
         }
     },
     methods:{
@@ -50,25 +72,43 @@ export default {
             const date = new Date()
             const current = date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
             let url = '/api/book';
+            let bookPrice =  uncomma(this.bookPrice);
             const data = {
                 deptName: this.deptName,
                 registerNm: this.registerNm,
                 title: this.title,
                 date: current,
                 publisher: this.publisher,
-                bookPrice: this.bookPrice,
+                bookPrice: bookPrice,
+                count: this.count,
                 regRsn: this.regRsn,
             }
             await axios.post(url, data)
                 .then(response => {
                     console.log(response);
-                    //this.$router.push('/Home');
+                    this.$router.push('/home');
                 })
                 .catch(error =>{
                     console.log(error)
                 })
+        },
+        numberOnly(){
+            let result = comma(this.bookPrice);
+            this.bookPrice = result;
         }
+
     }
+}
+function comma(str) {
+    str = str.replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
+    str = str.replace(/,/g,'');          // ,값 공백처리
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 정규식을 이용해서 3자리 마다 , 추가
+}
+
+//콤마풀기
+function uncomma(str) {
+    str = String(str);
+    return str.replace(/[^\d]+/g, '');
 }
 </script>
 <style lang="scss" scoped>
@@ -78,15 +118,17 @@ textarea{
     resize: vertical;  //세로크기만 조절가능
     background-color: #e3e9ef;
     color: #134775;
-
+    outline: none;
 }
 .container {
     form {
         h2 {
-            font-size: 1.5rem;
+            font-size: 24px;
             margin-bottom: 10px;
-            margin-left: 15px;
             font-family: 'Titillium Web';
+        }
+        .row{
+            margin-top: 5px;
         }
         .form-group{
             display: flex;
@@ -111,23 +153,24 @@ textarea{
                 border: none;
                 background: #134775;
                 color: #f4f2db;
-                font-size: 1.1rem;
-                padding: 15px 60px;
+                font-size: 1rem;
+                padding: 15px 50px;
                 font-weight: bold;
                 border-radius: 30px;
                 cursor: pointer;
-                width: 350px;
+                width: 320px;
             }
         }
 
         display: flex;
         width: 100%;
-        height: 730px;
+        height: 675px;
         background-color: aliceblue;
         flex-direction: column;
-        justify-content: center;
+        //justify-content: center;
         align-items: center;
         color: #134775;
+        font-size: 12px;
     }
 }
 

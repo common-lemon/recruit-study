@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <Loader v-if="loading"/>
         <form >
             <div class="form-title">
                 <router-link to="/home" class="back-link">
@@ -24,9 +25,17 @@
                 <label for="publisher" >출판사</label>
                 <input id="publisher" v-model="publisher" placeholder="출판사"   />
             </div>
-            <div class="form-group">
-                <label for="bookPrice" >도서 금액</label>
-                <input id="bookPrice" v-model="bookPrice" placeholder="도서금액"   />
+            <div class="row">
+                <div class="form-group">
+                    <label for="bookPrice" >도서 금액</label>
+                    <input style="width: 165px;" id="bookPrice" v-model="bookPrice" min="0" maxlength="7" @input="numberOnly"  placeholder="도서금액"   />
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div class="form-group">
+                    <label for="count" >수량</label>
+                    <input style="width: 165px;" type='number' id="count" v-model="count" min="1" placeholder="수량"/>
+
+                </div>
             </div>
             <div class="form-group">
                 <label>신청사유</label>
@@ -42,7 +51,12 @@
 import {mapState} from 'vuex'
 import image from "/src/assets/goBack2.png";
 import axios from "axios";
+import Loader from './Loader';
+
 export default {
+    components:{
+        Loader
+    },
     data() {
         return {
             deptName: '',
@@ -52,10 +66,13 @@ export default {
             bookPrice:'',
             regRsn:'',
             id:'',
+            count:'',
+            loading: false,
             img : image
         }
     },
      async created() {
+        this.loading = true;
          await this.$store.dispatch('book/searchBookWidthId',{
             id: this.$route.params.id
          })
@@ -65,7 +82,9 @@ export default {
          this.title = this.theBook.title;
          this.publisher = this.theBook.publisher;
          this.bookPrice = this.theBook.bookPrice;
+         this.count = this.theBook.count;
          this.regRsn = this.theBook.regRsn;
+         this.loading = false;
     },
     computed:{
         ...mapState('book',[
@@ -77,13 +96,15 @@ export default {
             this.$router.go(-1);
         },
         udtSubmit(){
+            let bookPrice =  uncomma(this.bookPrice);
             let data = {
                 id : this.id,
                 deptName : this.deptName,
                 registerNm : this.registerNm,
                 title : this.title,
                 publisher : this.publisher,
-                bookPrice : this.bookPrice,
+                bookPrice : bookPrice,
+                count: this.count,
                 regRsn : this.regRsn
             };
             axios
@@ -97,8 +118,23 @@ export default {
                     console.log(error)
                     alert("수정에 실패했습니다.");
                 })
+        },
+        numberOnly(){
+            let result = comma(this.bookPrice);
+            this.bookPrice = result;
         }
     }
+}
+function comma(str) {
+    str = str.replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
+    str = str.replace(/,/g,'');          // ,값 공백처리
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 정규식을 이용해서 3자리 마다 , 추가
+}
+
+//콤마풀기
+function uncomma(str) {
+    str = String(str);
+    return str.replace(/[^\d]+/g, '');
 }
 </script>
 <style lang="scss" scoped>
@@ -122,16 +158,19 @@ textarea{
                     position: absolute;
                     left: -100px;
                     top: -6px;
-                    font-size: 35px;
+                    font-size: 32px;
                     font-weight: bold;
                 }
             }
 
             h2 {
-                font-size: 1.5rem;
-                margin-bottom: 15px;
+                font-size: 24px;
+                margin-bottom: 10px;
                 font-family: 'Titillium Web';
             }
+        }
+        .row{
+            margin-top: 5px;
         }
         .form-group{
             display: flex;
@@ -157,23 +196,24 @@ textarea{
                 border: none;
                 background: #134775;
                 color: #f4f2db;
-                font-size: 1.1rem;
-                padding: 15px 60px;
+                font-size: 1rem;
+                padding: 10px 50px;
                 font-weight: bold;
                 border-radius: 30px;
                 cursor: pointer;
-                width: 350px;
+                width: 320px;
             }
         }
 
         display: flex;
         width: 100%;
-        height: 730px;
+        height: 675px;
         background-color: aliceblue;
         flex-direction: column;
-        justify-content: center;
+        //justify-content: center;
         align-items: center;
         color: #134775;
+        font-size: 12px;
     }
 }
 
