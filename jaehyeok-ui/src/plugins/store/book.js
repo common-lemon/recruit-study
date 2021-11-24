@@ -1,8 +1,10 @@
-import BookList from '../../assets/data/json_sample_bookList.json'
+//import BookList from '../../assets/data/json_sample_bookList.json'
+import axios from "axios";
 export default {
     namespaced:true,
     state:()=>({
-        bookList:BookList,
+        bookList:[],
+        theBook:{},
         message: '',
         loading: false,
         sort:''
@@ -15,7 +17,7 @@ export default {
             })
         },
         sortList(state,payload){
-            console.log(payload.sort.sort)
+
             let sort = payload.sort.sort
             let list = state.bookList
             if(sort === "deptDesc") {
@@ -63,14 +65,20 @@ export default {
         }
     },
     actions:{
-        searchList({commit},payload){
+        async searchList({commit},payload){
             commit('updateState',{
                 message:'',
                 loading:true
             })
 
-            let searchText = payload.searchText
-            let list = BookList
+            const res = await _fetchBook(payload);
+
+            commit('updateState', {
+                bookList: res.data.data
+            })
+
+            let searchText = payload.searchText;
+            let list = res.data.data;
 
             let result = [];
             list.forEach(function(item) {
@@ -95,7 +103,34 @@ export default {
             commit('sortList', {
                 sort:payload
             })
+        },
+        async searchBookWidthId({commit}, payload){
+            const res = await _fetchBook(payload)
+            console.log(res.data.data)
+            commit('updateState',{
+                theBook:res.data.data
+            })
         }
     }
 
+}
+function _fetchBook(payload){
+
+    const{id} = payload
+    const url = id
+        ? `/api/book/${id}`
+        : "/api/book"
+
+    return new Promise((resolve, reject) => {
+        axios.get(url)
+            .then(response => {
+                if(response.data.Error){
+                    reject(response.data.Error)
+                }
+                resolve(response)
+            })
+            .catch(error => {
+                reject(error.message)
+            })
+    })
 }

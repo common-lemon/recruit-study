@@ -18,6 +18,11 @@ const routes = [
         name: "BookApply",
         component: () => import("@/components/BookApply"),
     },
+    {
+        path: "/bookdetail/id=:id",
+        name: "BookDetail",
+        component: () => import("@/components/BookDetail"),
+    },
 ]
 const router = new VueRouter({
     mode: "history",

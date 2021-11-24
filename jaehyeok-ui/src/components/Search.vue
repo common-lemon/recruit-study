@@ -64,6 +64,11 @@ export default {
             ]
         }
     },
+    created() {
+        this.$store.dispatch('book/searchList', {
+            searchText: this.searchText
+        })
+    },
     methods:{
         async selectChange(){
             await this.$store.dispatch('book/sortList', {

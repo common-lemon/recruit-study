@@ -7,24 +7,24 @@
                 <input id="deptName" v-model="deptName" placeholder="신청부서" required />
             </div>
             <div class="form-group">
-                <label for="member" >신청자</label>
-                <input id="member" v-model="member" placeholder="신청자"  required />
+                <label for="registerNm" >신청자</label>
+                <input id="registerNm" v-model="registerNm" placeholder="신청자"  required />
             </div>
             <div class="form-group">
                 <label for="title" >도서명</label>
                 <input id="title" v-model="title" placeholder="도서명"   />
             </div>
             <div class="form-group">
-                <label for="pubHouse" >출판사</label>
-                <input id="pubHouse" v-model="pubHouse" placeholder="출판사"   />
+                <label for="publisher" >출판사</label>
+                <input id="publisher" v-model="publisher" placeholder="출판사"   />
             </div>
             <div class="form-group">
-            <label for="amount" >도서 금액</label>
-            <input id="amount" v-model="amount" placeholder="도서금액"   />
+            <label for="bookPrice" >도서 금액</label>
+            <input id="bookPrice" v-model="bookPrice" placeholder="도서금액"   />
             </div>
             <div class="form-group">
-                <label >신청사유</label>
-                <textarea id="content"  class="form-control" v-model="applyText" placeholder="내용을 입력하세요" />
+                <label>신청사유</label>
+                <textarea id="regRsn"  class="form-control" v-model="regRsn" placeholder="내용을 입력하세요" />
             </div>
             <div class="btn-cover">
                 <button type="button"  @click="submitApply">신청</button>
@@ -38,11 +38,11 @@ export default {
     data() {
         return {
             deptName:'',
-            member:'',
+            registerNm:'',
             title:'',
-            pubHouse:'',
-            amount:'',
-            applyText:''
+            publisher:'',
+            bookPrice:'',
+            regRsn:''
         }
     },
     methods:{
@@ -52,11 +52,12 @@ export default {
             let url = '/api/book';
             const data = {
                 deptName: this.deptName,
-                member: this.member,
+                registerNm: this.registerNm,
+                title: this.title,
                 date: current,
-                pubHouse: this.pubHouse,
-                amount: this.amount,
-                applyText: this.applyText,
+                publisher: this.publisher,
+                bookPrice: this.bookPrice,
+                regRsn: this.regRsn,
             }
             await axios.post(url, data)
                 .then(response => {
