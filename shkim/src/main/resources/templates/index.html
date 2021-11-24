@@ -34,10 +34,11 @@
 
     <!--list-->
     <ul v-if="items.length > 0">
-      <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book">
+      <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book" v-on:click="goDetail($event)">
         <span class="no">{{ pageNum*pageSize+index+1 }}</span>
         <div>
           <strong>{{ book.title }}</strong>
+          <span v-if="book.bookNo === null" id="regFlag">신청중</span>
           <div class="subInfo">
             <span>도서번호: {{ book.bookNo }}</span>
             <span>부서명: {{ book.deptName }}</span>
@@ -66,8 +67,7 @@
       </button>
     </div>
 
-
-    <a th:href="@{/book/regForm}">등록</a>
+    <a th:href="@{/book}" class="goFormBtn">등록</a>
   </div>
 
 
@@ -151,7 +151,6 @@
         this.getBookListByAsyncAwait();
         //this.getBookListByPromise();
         //this.getBookListByCallBack();
-        this.testFn2();
       },
       methods: {
         getBookListByAsyncAwait : async function () {
@@ -160,7 +159,8 @@
           console.log(response.data);
           console.log(response.data.bookList);
           this.bookList = response.data.bookList;
-          this.items = this.bookList.sort();
+          this.items = this.bookList;
+          this.items.sort((a, b) => b.id - a.id);
         },
         getBookListByPromise : function () {
           axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
@@ -211,7 +211,7 @@
               this.items.sort((a, b) => b.title.localeCompare(a.title));
               break;
             default:
-              this.items.sort((a, b) => a.id - b.id);
+              this.items.sort((a, b) => b.id - a.id);
           }
         },
         nextPage : function () {
@@ -224,6 +224,22 @@
           console.log(event.target.id);
           this.pageNum = parseInt(event.target.id);
         },
+        goDetail : function (event) {
+/*
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', '/book/'+event.currentTarget.id);
+          xhr.send();
+          xhr.onload = () => {
+            if(xhr.status === 200) {
+              console.log(xhr.response);
+              //console.log(JSON.parse(xhr.response));
+            } else {
+              console.error('Error', xhr.status,  xhr.statusText);
+            }
+          }
+*/
+          location.replace('/book/'+event.currentTarget.id);
+        },
         testFn : function () {
           const xhr = new XMLHttpRequest();
           xhr.open('GET', '/rest/book/list');
@@ -235,19 +251,6 @@
               console.log(JSON.parse(xhr.response));
             } else {
               console.error('Error', xhr.status, xhr.statusText)
-            }
-          }
-        },
-        testFn2 : function () {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', '/rest/book/detail?id=2');
-          xhr.send();
-          xhr.onload = () => {
-            if(xhr.status === 200) {
-              console.log(xhr.response);
-              console.log(JSON.parse(xhr.response));
-            } else {
-              console.error('Error', xhr.status,  xhr.statusText);
             }
           }
         }

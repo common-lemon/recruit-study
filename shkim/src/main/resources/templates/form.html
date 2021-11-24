@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <div layout:fragment="content" class="container">
+
+        <div id="app">
+            <form name="regForm" @submit="checkForm">
+                <p>
+                    <label>신청 부서</label>
+                    <input id="form.deptName" v-model="form.deptName" type="text" readonly>
+                </p>
+
+                <p>
+                    <label>신청자 이름</label>
+                    <input id="form.registerNm" v-model="form.registerNm" type="text" readonly>
+                </p>
+
+                <p>
+                    <label for="form.title"><span>* 도서 이름</span></label>
+                    <input id="form.title" v-model="form.title" type="text" ref="title" maxlength="150"
+                           placeholder="도서 이름을 입력하세요">
+<!--                    <input id="form.title" v-model="form.title" type="text" ref="title" placeholder="도서 이름을 입력하세요">
+                    <label for="form.title"><span>* 도서 이름</span></label>-->
+                </p>
+
+                <p>
+                    <label>* 출판사</label>
+                    <input id="form.publisher" v-model="form.publisher" type="text" ref="publisher" maxlength="25"
+                           placeholder="출판사를 입력하세요">
+                </p>
+
+                <p>
+                    <label>* 도서 금액</label>
+                    <input id="form.bookPrice" v-model="form.bookPrice" type="number" ref="bookPrice" min="0" max="100000"
+                           placeholder="도서 금액을 입력하세요">
+                </p>
+
+                <p>
+                    <label>신청 사유</label>
+                    <textarea id="form.regRsn" v-model="form.regRsn" type="text" placeholder="신청 사유를 입력하세요"></textarea>
+                </p>
+
+                <div id="btnArea">
+                    <a th:href="@{/}">목록</a>
+                    <input type="submit" v-model="submitBtn">
+                </div>
+                <button id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
+            </form>
+
+            <div id="toast"></div>
+
+        </div>
+
+
+        <script th:inline="javascript">
+
+            const bookObj = /*[[ ${book} ]]*/ null;
+            console.log(bookObj);
+
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    form : {
+                        id : null,
+                        deptName : null,
+                        registerNm : null,
+                        title : null,
+                        publisher : null,
+                        bookPrice : null,
+                        regRsn : null
+                    },
+                    submitBtn : ""
+                },
+                computed: {
+
+                },
+                watch: {
+
+                },
+                beforeCreate: function () {
+                    // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
+                },
+                created: function () {
+                    // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+                },
+                beforeMount: function() {
+                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+                },
+                mounted: function () {
+                    // $el 을 사용할 수 있습니다.
+                    // 모든 화면이 렌더링된 후 호출됩니다.
+
+                    this.form.deptName = "공통개발팀";
+                    this.form.registerNm = "김소희";
+                    this.submitBtn = "신청";
+
+                    if( bookObj != null ){
+                        const bookEntity = bookObj.bookEntity;
+                        console.log(bookEntity);
+                        this.form = bookEntity;
+                        this.submitBtn = "수정";
+                    }
+                },
+                methods: {
+                    saveBook : function () {
+
+                        // 1. axios
+/*
+                        axios.post('http://localhost:8080/rest/book/save', {params: this.form}).then(response => {
+                            console.log(response.data);
+                            alert("정상적으로 등록되었습니다.");
+                            location.replace("/");
+                        }).catch(error => {
+                            console.log(error);
+                        });
+*/
+
+                        // 2. XMLHttpRequest()
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', '/rest/book/save');
+                        xhr.setRequestHeader('content-type', 'application/json');
+
+                        console.log(JSON.stringify(this.form));
+
+                        // 객체 -> json 포맷의 문자열로 변환 (serializing)
+                        xhr.send(JSON.stringify(this.form));
+
+                        xhr.onload = () => {
+                            if(xhr.status === 200 || xhr.status === 201) {
+                                console.log(xhr.response);
+                                alert("정상적으로 등록되었습니다.");
+                                location.replace("/");
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+                    },
+                    checkForm : function (e) {
+                        // 출판사는 한글만 입력 가능
+                        // 도서 금액은 숫자만 입력, 값의 범위 0 ~ 100000
+                        // 필수 입력 값 (도서 이름, 출판사, 도서 금액)
+                        // 등록 전 유효성 검사 (유효성 검사에 걸린 애들 알럿 후 포커싱)
+                        // 유효성 검사 통과 시 등록 처리
+
+                        e.preventDefault();
+
+                        let cnt = 0;
+                        let regexp = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g;
+
+                        if(!this.form.title) {
+                            toast("도서 이름을 입력해 주세요");
+                            this.$refs.title.focus();
+                            cnt++;
+                        } else if(!this.form.publisher) {
+                            toast("출판사를 입력해 주세요");
+                            this.$refs.publisher.focus();
+                            cnt++;
+                        } else if(!this.form.bookPrice) {
+                            toast("도서 금액을 입력해 주세요");
+                            this.$refs.bookPrice.focus();
+                            cnt++;
+                        } else if(regexp.test(this.form.publisher)) {
+                            toast("출판사는 한글만 입력해 주세요");
+                            this.$refs.publisher.focus();
+                            cnt++;
+                        }
+
+                        (cnt === 0) && (this.submitBtn === "신청" ? this.saveBook() : this.patchBook());
+
+                    },
+                    putBook : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PUT', 'book/detail?id=2');
+                        xhr.setRequestHeader('context-type', 'application/json');
+
+                        xhr.send(JSON.stringify(this.form));
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+                    },
+                    patchBook : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('PATCH', '/book');
+                        xhr.setRequestHeader('context-type', 'application/json');
+
+                        xhr.send(JSON.stringify(this.form));
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.log('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+
+                    },
+                    deleteBook : function () {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('DELETE', '/book/'+this.form.id);
+                        xhr.send();
+                        xhr.onload = () => {
+                            if(xhr.status === 200) {
+                                console.log(xhr.response);
+                            } else {
+                                console.error('Error', xhr.status, xhr.statusText);
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            let removeToast;
+
+            function toast(string) {
+                const toast = document.getElementById("toast");
+
+                toast.classList.contains("reveal") ?
+                    (clearTimeout(removeToast), removeToast = setTimeout(function () {
+                        document.getElementById("toast").classList.remove("reveal")
+                    }, 1000)) :
+                    removeToast = setTimeout(function () {
+                        document.getElementById("toast").classList.remove("reveal")
+                    }, 1000)
+                toast.classList.add("reveal"),
+                    toast.innerText = string
+            }
+
+        </script>
+    </div>
+</html>

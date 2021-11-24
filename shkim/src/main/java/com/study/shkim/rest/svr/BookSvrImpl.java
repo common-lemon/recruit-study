@@ -91,4 +91,26 @@ public class BookSvrImpl implements BookSvrItf {
 
         return resBook;
     }
+
+    @Override
+    public ResBook update(ReqBookParams reqBookParams) {
+        ResBook resBook = new ResBook();
+        resBook.setResCode("S-001");
+        resBook.setResMsg("정상 처리 되었습니다.");
+
+        BookEntity bookEntity = new BookEntity();
+        BeanUtils.copyProperties(reqBookParams, bookEntity);
+
+        try {
+            resBook.setBookEntity(this.bookRepository.save(bookEntity));
+        }
+        catch (Exception e){
+            log.error(e.getMessage(), e);
+            resBook.setResErr(e.getMessage());
+            resBook.setResCode("F-001");
+            resBook.setResMsg("요청하신 작업이 실패하였습니다.");
+        }
+
+        return resBook;
+    }
 }
