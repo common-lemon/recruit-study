@@ -134,8 +134,8 @@ export default {
                 axios
                     .put("/api/book", data)
                     .then(response => {
-                        console.log(response);
-                        this.$alert("도서정보가 수정되었습니다.","","success");
+                        console.log(response.data);
+                        this.$alert(response.data.resMsg,"","success");
                         this.$router.push('/home');
                     })
                     .catch(error => {

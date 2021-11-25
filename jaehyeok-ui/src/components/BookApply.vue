@@ -101,8 +101,8 @@ export default {
             }else {
                 await axios.post(url, data)
                     .then(response => {
-                        console.log(response);
-                        this.$alert("도서가 신청되었습니다.","","success");
+                        console.log(response.data);
+                        this.$alert(response.data.resMsg,"","success");
                         this.$router.push('/home');
                     })
                     .catch(error => {

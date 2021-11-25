@@ -40,39 +40,22 @@ export default {
     methods:{
         deleteBook(bookId){
             console.log(bookId);
-            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
-            else event.isImmediatePropagationEnabled = false; // IE 대응
-/*            if (!confirm("삭제 하시겠습니까?")) {
-                console.log("삭제취소");
-            } else {
-                axios.delete('/api/book/' + bookId)
-                    .then(response => {
-                        console.log(response.data);
-                        this.$store.dispatch('book/deleteUpdate', {
-                            searchText: ''
+            this.$confirm("삭제 하시겠습니까?", "", "", "question")
+                .then(()  => {
+                    axios.delete('/api/book/' + bookId)
+                        .then(response => {
+                            console.log(response.data);
+                            this.$store.dispatch('book/deleteUpdate', {
+                                searchText : ''
+                            })
+                            this.$alert(response.data.resMsg, "", "success");
                         })
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        alert("삭제를 실패했습니다..");
-                    })
-            }*/
-                this.$confirm("삭제 하시겠습니까?", "", "", "question")
-                    .then(()  => {
-                        axios.delete('/api/book/' + bookId)
-                            .then(response => {
-                                console.log(response.data);
-                                this.$store.dispatch('book/deleteUpdate', {
-                                    searchText : ''
-                                })
-                                this.$alert("삭제되었습니다.", "", "success");
-                            })
-                            .catch(error => {
-                                console.log(error);
-                                alert("삭제를 실패했습니다..");
-                            })
-                    })
-                    .catch(() => console.log("canceled"));
+                        .catch(error => {
+                            console.log(error);
+                            alert("삭제를 실패했습니다..");
+                        })
+                })
+                .catch(() => console.log("canceled"));
 
 
         }

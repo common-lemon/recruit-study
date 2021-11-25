@@ -7,11 +7,15 @@ import com.study.jaehyeok.service.BookService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class BookController {
@@ -34,38 +38,29 @@ public class BookController {
 
     //book 등록
     @PostMapping("/api/book")
-    public CreateBookResponse bookApply(@RequestBody Book reqbook){
-        Long id = bookService.join(reqbook);
-        return new CreateBookResponse(id);
+    public ResponseEntity<ResBook> bookApply(@RequestBody ReqBook reqbook){
+        ResBook resBook = bookService.join(reqbook);
+        return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
 
     //book 수정
     @PutMapping("/api/book")
-    public UpdateBookResponse bookUpdate(@RequestBody Book book){
-        System.err.println(book.getId());
-        bookService.update(book);
-        Book findBook = bookService.findOne(book.getId());
-        return new UpdateBookResponse(findBook.getId());
+    public ResponseEntity<ResBook> bookUpdate(@RequestBody ReqBook reqbook){
+        ResBook resBook = bookService.update(reqbook);
+
+        return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
 
     @DeleteMapping("/api/book/{id}")
-    public DeleteBookResponse deleteBook (@PathVariable long id){
-        Long ids = bookService.delete(id);
-        return new DeleteBookResponse(ids);
+    public ResponseEntity<ResBook> deleteBook (@PathVariable long id){
+        ResBook resBook = bookService.delete(id);
+        return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
 
     @Data
     @AllArgsConstructor
     static class Result<T>{
         private T data;
-    }
-
-    @Data
-    static class CreateBookResponse{
-        private Long id;
-        public CreateBookResponse(Long id){
-            this.id = id;
-        }
     }
 
     @Data
