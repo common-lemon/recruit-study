@@ -2,9 +2,6 @@ td, th {
     padding: 10px;
     border: 1px solid #ccc;
 }
-#leftImage, #rightInput {
-    display: inline-block;
-}
 table {
     width: 100%;
     margin: auto;
@@ -15,25 +12,80 @@ body {
     margin: 0px;
     background-color: #fcfcfc;
 }
-#lemonLogo {
-    vertical-align: bottom;
-}
 #app {
     width: 100%;
     margin: auto;
 }
-#noSearch {
+.clearBox {
+    clear: both;
+}
+
+
+
+#topBox {
     text-align: center;
-    font-weight: bold;
+    padding-top: 15px;
+}
+#leftImage {
+    float: left;
+    text-align: left;
+    min-width: 30%;
+    max-width: 30%;
+    margin-left: 10px;
+}
+#rightInput {
+    text-align: right;
+    float: right;
+    display: inline-block;
+    min-width: 62%;
+    max-width: 62%;
+    margin-right: 10px;
+}
+#lemonLogo {
+    width: 100px;
+    vertical-align: bottom;
+}
+#searchBookInput {
+    width: 67%;
+    font-size: 1.01em;
+}
+#searchButton {
+    border: 1px solid #012921;
+    background-color: #fdfdfd;
+    color: #012921;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#searchButton:hover {
+    color: #fdfdfd;
+    background-color: #012921;
+}
+#voidBox {
+    height: 0.5em;
+}
+#middleBox {
+    height: 40px;
+    padding-top: 5px;
+    vertical-align: middle;
+    padding-top: 5px;
+    border-top: 1px solid #ddd;
 }
 #leftText {
     float: left;
     padding: 5px;
     margin-left: 10px;
 }
-#changeTableImage {
-    float: right;
-    margin-right: 10px;
+#bookTotal {
+    color: #a46546;
+    font-weight: bold;
+}
+#oBtn {
+    border: 1px solid #fdfdfd;
+    background-color: #a46546;
+    color: #fdfdfd;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
 #rightText {
@@ -41,54 +93,25 @@ body {
     display: inline-block;
     padding: 5px;
     margin-right: 10px;
+    vertical-align: middle;
 }
-#topBox {
-    text-align: center;
-    padding-top: 5px;
-    margin-bottom: 15px;
-}
-#searchBookInput {
-    font-size: 1.05em;
-}
-#searchButton {
-    border: 1px solid #49c6f6;
-    background-color: #fdfdfd;
-    color: #49c6f6;
-    padding: 4px 15px 4px 15px;
-    border-radius: 5px;
+#changeTableImage {
+    float: right;
+    margin-left: 10px;
     cursor: pointer;
 }
-#searchButton:hover {
-    color: #fdfdfd;
-    background-color: #49c6f6;
+#deptSelectBox {
+    vertical-align: middle;
 }
-#middleBox {
-    height: 40px;
+#tableTitle {
+    background-color: #f5f1e5;
 }
 .orderMenu {
     cursor: pointer;
 }
-#pageButton {
-    cursor: pointer;
-    text-align: center;
-}
-#pageButton:hover {
-    background-color: #ffca08;
-}
-#noPageButton {
-    text-align: center;
-}
-#tableTitle {
-    background-color: #ffca08;
-}
-#bookTotal {
-    color: #a5cb4e;
-    font-weight: bold;
-}
-.bookImage {
-    border: 1px solid #aaa;
-    width: 70%;
-}
+
+
+
 #cBoard {
     width: 100%;
     margin: auto;
@@ -99,31 +122,144 @@ body {
     min-width: 25%;
     max-width: 25%;
 }
-#innerCheckerboard {
-    padding: 30px;
+.innerCheckerboard {
+    padding: 5px;
     border: 1px solid #ccc;
     border-collapse: collapse;
+    cursor: pointer;
 }
-#cBoardBookTitle {
-    height: 50px
+.bookImage {
+    border: 1px solid #aaa;
+    width: 70%;
+    margin-bottom: 10px;
+}
+.cBoardBookTitle {
+    height: 100px;
+    vertical-align: middle;
+    width: 90%;
+    margin: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    line-height: 1.42;
+    height: 2.84em;
+    text-align: left;
+    word-wrap: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.applyingImage {
+    vertical-align: bottom;
 }
 #cBoardDeptName {
-
+    margin: 10px auto;
+    text-align: left;
+    width: 90%;
+    color: #777;
+    font-size: 0.8em;
 }
-.clearBox {
-    clear: both;
+
+
+
+#noSearch {
+    text-align: center;
+    font-weight: bold;
+}
+#noPageButton {
+    text-align: center;
+}
+#pageButton {
+    cursor: pointer;
+    text-align: center;
+}
+#pageButton:hover {
+    background-color: #f5f1e5;
 }
 
+
+
+.titleBox {
+    width: 60%;
+    margin: 30px auto 10px auto;
+    border-radius: 20px;
+    border: 0px;
+    padding: 10px;
+    text-align: center;
+    color: #a46546;
+    font-weight: bold;
+}
+form table td{
+    border: 0px ;
+}
+.formBox {
+    background-color: #fdfdfd;
+    width: 30%;
+    margin: 10px auto 50px auto;
+    border-radius: 20px;
+    border: 0px;
+    padding: 10px;
+    text-align: center;
+}
+.formTable {
+    padding-right: 10px;
+    width: 30%;
+    margin: auto;
+}
+.tdTitle {
+    text-align: center;
+}
 .redText {
     color: red;
 }
-.clickBookDetail {
+.btnBox {
+    text-align: center;
+    padding: 10px;
+}
+.formBtn {
+    border: 1px solid #a46546;
+    background-color: #f5f1e5;
+    color: #a46546;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
-.clickBookDetail:hover {
-    font-weight: bold;
+
+
+
+ .menu {
+     display : flex;
+     background-color: #d8b274;
+     border-radius: 5px;
+     list-style: none;
+     justify-content: space-around;
+     padding : 10px;
+     margin: 0px;
+ }
+.menu--item {
+    padding : 10px;
 }
-#applyingImage {
-    vertical-align: bottom;
+.menu--item a {
+    user-select: none;
+    cursor: pointer;
+    color : white;
+}
+#header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+#headerBox {
+    height: 61.6px;
+}
+#tb {
+    margin-bottom: 65px;
 }
 
+/*    #footer {
+        margin-top: 30px;
+        margin-bottom: 61.6px;
+        text-align: center;
+        background-color: #a5cb4e;
+        padding: 50px;
+    }*/

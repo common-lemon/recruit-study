@@ -18,7 +18,7 @@
                 <input type="button" id="searchButton" v-on:click="searchBook" value="검색"></input>
             </div>
         </div>
-        <div class="clearBox"></div>
+        <div id="voidBox" class="clearBox"></div>
         <div id="middleBox">
             <div id="leftText"><span id="bookTotal">{{ total }}</span> 개
                 <input type="button" id="oBtn" v-on:click="OrderReverce" value="등록순"></input>
@@ -52,20 +52,24 @@
                         <td id="bookIdData">{{ item.id }}</td>
                         <td id="bookNoData">{{ item.bookNo }}</td>
                         <td nowrap>{{ item.deptName }}</td>
-                        <td v-if="item.isBook === 'Y'" v-on:click="detailBook" class="clickBookDetail" v-bind:id="item.id">{{ item.title }}</td>
-                        <td v-else v-on:click="detailBook" class="clickBookDetail" v-bind:id="item.id">{{ item.title }}
-                            <img id="applyingImage" th:src="@{/images/applying.png}"
-                                 title="신청중이라 적힌 아이콘" alt="책을 신청하고 있다는 것을 알려주는 아이콘"></td>
+                        <td v-if="item.isBook === 'Y'" v-on:click="detailBook(item.id)"
+                            class="clickBookDetail" v-bind:id="item.id">{{ item.title }}</td>
+                        <td v-else v-on:click="detailBook" class="clickBookDetail" v-bind:id="item.id">
+                            <img class="applyingImage" th:src="@{/images/applying.png}"
+                                 title="신청중이라 적힌 아이콘" alt="책을 신청하고 있다는 것을 알려주는 아이콘"> {{ item.title }}</td>
                         <td id="bookCountData">{{ item.count }}</td>
                     </tr>
                 </table>
 
             </div>
             <div v-else id="cBoard">
-                <div id="checkerboard" v-for="(item, index) in viewList" :key="item.id">
-                    <div id="innerCheckerboard" class="clickBookDetail">
+                <div id="checkerboard" v-for="item in viewList" v-bind:key="item.id">
+                    <div class="innerCheckerboard" v-on:click="detailBook(item.id)" v-bind:id="item.id">
                         <img class="bookImage" th:src="@{/images/book.png}" title="책그림"><br>
-                        <p id="cBoardBookTitle">{{item.title}}</p>
+                        <p v-if="item.isBook === 'Y'" class="cBoardBookTitle">{{item.title}}</p>
+                        <p v-else class="cBoardBookTitle">
+                            <img class="applyingImage" th:src="@{/images/applying.png}"
+                                 title="신청중이라 적힌 아이콘" alt="책을 신청하고 있다는 것을 알려주는 아이콘"> {{item.title}}</p>
                         <p id="cBoardDeptName">{{item.deptName}}</p>
                     </div>
                 </div>
@@ -120,6 +124,7 @@
                 },
                 OrderReverce: function (e) {
                     this.viewList = this.searchList.reverse();
+                    this.paging();
                     if (e.target.value === "등록순") {
                         e.target.value = "최신순"
                     } else if (e.target.value === "최신순") {
@@ -198,8 +203,8 @@
                         this.view = 'tableBoard';
                     }
                 },
-                detailBook: function (e) {
-                    location.href = "/book/detail/" + e.target.getAttribute('id');
+                detailBook: function (id) {
+                    location.href = "/book/detail/" + id;
                 }
             },
             computed: {},
