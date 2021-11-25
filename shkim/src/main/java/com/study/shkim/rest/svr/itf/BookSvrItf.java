@@ -13,6 +13,4 @@ public interface BookSvrItf {
 
     ResBook detail(ReqBookParams reqBookParams);
 
-    ResBook update(ReqBookParams reqBookParams);
-
 }

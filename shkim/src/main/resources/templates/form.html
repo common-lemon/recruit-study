@@ -48,7 +48,7 @@
                     <a th:href="@{/}">목록</a>
                     <input type="submit" v-model="submitBtn">
                 </div>
-                <button id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
+                <button type="button" id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
             </form>
 
             <div id="toast"></div>
@@ -86,14 +86,6 @@
                 },
                 created: function () {
                     // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
-                },
-                beforeMount: function() {
-                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
-                },
-                mounted: function () {
-                    // $el 을 사용할 수 있습니다.
-                    // 모든 화면이 렌더링된 후 호출됩니다.
-
                     this.form.deptName = "공통개발팀";
                     this.form.registerNm = "김소희";
                     this.submitBtn = "신청";
@@ -105,40 +97,14 @@
                         this.submitBtn = "수정";
                     }
                 },
+                beforeMount: function() {
+                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+                },
+                mounted: function () {
+                    // $el 을 사용할 수 있습니다.
+                    // 모든 화면이 렌더링된 후 호출됩니다.
+                },
                 methods: {
-                    saveBook : function () {
-
-                        // 1. axios
-/*
-                        axios.post('http://localhost:8080/rest/book/save', {params: this.form}).then(response => {
-                            console.log(response.data);
-                            alert("정상적으로 등록되었습니다.");
-                            location.replace("/");
-                        }).catch(error => {
-                            console.log(error);
-                        });
-*/
-
-                        // 2. XMLHttpRequest()
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('POST', '/rest/book/save');
-                        xhr.setRequestHeader('content-type', 'application/json');
-
-                        console.log(JSON.stringify(this.form));
-
-                        // 객체 -> json 포맷의 문자열로 변환 (serializing)
-                        xhr.send(JSON.stringify(this.form));
-
-                        xhr.onload = () => {
-                            if(xhr.status === 200 || xhr.status === 201) {
-                                console.log(xhr.response);
-                                alert("정상적으로 등록되었습니다.");
-                                location.replace("/");
-                            } else {
-                                console.error('Error', xhr.status, xhr.statusText);
-                            }
-                        }
-                    },
                     checkForm : function (e) {
                         // 출판사는 한글만 입력 가능
                         // 도서 금액은 숫자만 입력, 값의 범위 0 ~ 100000
@@ -169,45 +135,54 @@
                             cnt++;
                         }
 
-                        (cnt === 0) && (this.submitBtn === "신청" ? this.saveBook() : this.patchBook());
+                        (cnt === 0) && this.saveBook();
 
                     },
-                    putBook : function () {
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('PUT', 'book/detail?id=2');
-                        xhr.setRequestHeader('context-type', 'application/json');
+                    saveBook : function () {
+                        // 1. axios
+    /*
+                        axios.post('http://localhost:8080/rest/book/save', this.form).then(response => {
+                            console.log(response.data);
+                            alert("정상적으로 등록되었습니다.");
+                            location.replace("/");
+                        }).catch(error => {
+                            console.log(error);
+                        });
+    */
 
+                        // 2. XMLHttpRequest()
+                        const xhr = new XMLHttpRequest();
+                        // xhr.open('POST', '/rest/book/save');
+                        xhr.open('POST', '/book');
+                        xhr.setRequestHeader('content-type', 'application/json');
+
+                        console.log(JSON.stringify(this.form));
+
+                        // 객체 -> json 포맷의 문자열로 변환 (serializing)
                         xhr.send(JSON.stringify(this.form));
                         xhr.onload = () => {
-                            if(xhr.status === 200) {
+                            if(xhr.status === 200 || xhr.status === 201) {
                                 console.log(xhr.response);
+                                let msg = this.form.id == null ? "등록" : "수정";
+                                alert(`정상적으로 ${msg}되었습니다.`);
+                                location.replace("/");
                             } else {
                                 console.error('Error', xhr.status, xhr.statusText);
                             }
                         }
                     },
-                    patchBook : function () {
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('PATCH', '/book');
-                        xhr.setRequestHeader('context-type', 'application/json');
-
-                        xhr.send(JSON.stringify(this.form));
-                        xhr.onload = () => {
-                            if(xhr.status === 200) {
-                                console.log(xhr.response);
-                            } else {
-                                console.log('Error', xhr.status, xhr.statusText);
-                            }
-                        }
-
-                    },
                     deleteBook : function () {
+                        console.log(this.form.id);
                         const xhr = new XMLHttpRequest();
-                        xhr.open('DELETE', '/book/'+this.form.id);
+                        //xhr.open('GET', '/rest/book/delete?id='+this.form.id);
+                        xhr.open('DELETE', '/book/' + this.form.id);
+
                         xhr.send();
                         xhr.onload = () => {
                             if(xhr.status === 200) {
                                 console.log(xhr.response);
+                                alert("정상적으로 삭제되었습니다.");
+                                location.replace("/");
                             } else {
                                 console.error('Error', xhr.status, xhr.statusText);
                             }
@@ -215,7 +190,6 @@
                     }
                 }
             });
-
 
             let removeToast;
 

@@ -7,255 +7,257 @@
       xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container">
 
-  <!--<h2>도서현황</h2>-->
+    <!--<h2>도서현황</h2>-->
 
-  <div id="app">
-    <!--search-->
-    <div class="search">
-      <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
-             v-on:keyup.enter="onClickSearchBtn">
-      <button v-on:click="onClickSearchBtn">
-        <i class="fas fa-search"></i>
-      </button>
-    </div>
-
-    <div class="sub">
-      <div>총 {{ items.length }}권</div>
-
-      <!--sort-->
-      <select v-model="selected" v-on:change="onChangeSort($event)" class="sort">
-        <option value="">기본순</option>
-        <option value="deptAsc">부서순 ↑</option>
-        <option value="deptDesc">부서순 ↓</option>
-        <option value="titleAsc">제목순 ↑</option>
-        <option value="titleDesc">제목순 ↓</option>
-      </select>
-    </div>
-
-    <!--list-->
-    <ul v-if="items.length > 0">
-      <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book" v-on:click="goDetail($event)">
-        <span class="no">{{ pageNum*pageSize+index+1 }}</span>
-        <div>
-          <strong>{{ book.title }}</strong>
-          <span v-if="book.bookNo === null" id="regFlag">신청중</span>
-          <div class="subInfo">
-            <span>도서번호: {{ book.bookNo }}</span>
-            <span>부서명: {{ book.deptName }}</span>
-            <span>권수: {{ book.count }}</span>
-          </div>
+    <div id="app">
+        <!--search-->
+        <div class="search">
+            <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
+                   v-on:keyup.enter="onClickSearchBtn">
+            <button v-on:click="onClickSearchBtn">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
-      </li>
-    </ul>
-    <div v-else>검색 결과가 없습니다.</div>
 
-    <!--paging-->
-    <div v-if="items.length > 0" class="paging">
-      <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
-        <i class="fas fa-chevron-left"></i>
-      </button>
-      <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
-      <div v-on:click="goPage($event)" class="pageNo">
+        <div class="sub">
+            <div>총 {{ items.length }}권</div>
+
+            <!--sort-->
+            <select v-model="selected" v-on:change="onChangeSort($event)" class="sort">
+                <option value="">기본순</option>
+                <option value="deptAsc">부서순 ↑</option>
+                <option value="deptDesc">부서순 ↓</option>
+                <option value="titleAsc">제목순 ↑</option>
+                <option value="titleDesc">제목순 ↓</option>
+            </select>
+        </div>
+
+        <!--list-->
+        <ul v-if="items.length > 0">
+            <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book" v-on:click="detailBook($event)">
+                <span class="no">{{ pageNum*pageSize+index+1 }}</span>
+                <div>
+                    <strong>{{ book.title }}</strong>
+                    <span v-if="book.bookNo === null" id="regFlag">신청중</span>
+                    <div class="subInfo">
+                        <span>도서번호: {{ book.bookNo }}</span>
+                        <span>부서명: {{ book.deptName }}</span>
+                        <span>권수: {{ book.count }}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div v-else>검색 결과가 없습니다.</div>
+
+        <!--paging-->
+        <div v-if="items.length > 0" class="paging">
+            <button v-bind:disabled="pageNum === 0" v-on:click="prevPage">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
+            <div v-on:click="goPage($event)" class="pageNo">
                     <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
                           v-bind:id="startPage+no-2"
                           v-bind:class="{ active : pageNum === startPage+no-2 }">
                         {{ startPage+no-1 }}
                     </span>
-      </div>
-      <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
-        <i class="fas fa-chevron-right"></i>
-      </button>
+            </div>
+            <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <a th:href="@{/book}" class="goFormBtn">등록</a>
     </div>
 
-    <a th:href="@{/book}" class="goFormBtn">등록</a>
-  </div>
 
+    <!--
+            <div id="app2">
+                <div>라우터 테스트</div>
+                <router-link to="/foo">테스트</router-link>
+                <router-view></router-view>
+            </div>
+    -->
 
-  <!--
-          <div id="app2">
-              <div>라우터 테스트</div>
-              <router-link to="/foo">테스트</router-link>
-              <router-view></router-view>
-          </div>
-  -->
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                searchText : '',
+                bookList : [],
+                items : [],
+                selected : "",
+                pageNum : 0,
+                pageSize : 10
+            },
+            computed: {
+                pageCount : function () {
+                    let listLeng = this.items.length;
+                    let listSize = this.pageSize;
+                    let page = Math.floor(listLeng / listSize);
 
-  <script>
-    /*
-                const Foo = { template: '<div>foo</div>' }
-                const routes = [
-                    { path: '/foo', component: Foo }
-                ]
-                const router = new VueRouter({
-                    routes: routes
-                })
-                const app2 = new Vue({
-                    router
-                }).$mount('#app2')
-    */
+                    listLeng % listSize > 0 ? page++ : '';
 
+                    return page;
+                },
+                paginatedData : function () {
+                    const start = this.pageNum * this.pageSize;
+                    const end = start + this.pageSize;
+                    return this.items.slice(start, end);
+                },
+                startPage : function () {
+                    //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 1
+                    return this.pageNum - (this.pageNum % 5) + 1;
+                },
+                endPage : function () {
+                    //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 페이지하단
+                    let page = this.pageNum - (this.pageNum % 5) + 5;
+                    page > this.pageCount ? page = this.pageCount : '';
 
-    var app = new Vue({
-      el: '#app',
-      data: {
-        searchText : '',
-        bookList : [],
-        items : [],
-        selected : "",
-        pageNum : 0,
-        pageSize : 10
-      },
-      computed: {
-        pageCount : function () {
-          let listLeng = this.items.length;
-          let listSize = this.pageSize;
-          let page = Math.floor(listLeng / listSize);
+                    return page;
+                }
+            },
+            watch: {
 
-          listLeng % listSize > 0 ? page++ : '';
+            },
+            beforeCreate: function () {
+                // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
+            },
+            created: function () {
+                // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+                //this.getBookListByAsyncAwait();
+                this.listBook();
+            },
+            beforeMount: function() {
+                // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+            },
+            mounted: function () {
+                // $el 을 사용할 수 있습니다.
+                // 모든 화면이 렌더링된 후 호출됩니다.
+            },
+            methods: {
+                listBook : function () {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', '/rest/book/list');
+                    xhr.send();
+                    xhr.onload = () => {
+                        if(xhr.status === 200) {
+                            console.log(xhr.response);
+                            // 문자열 -> 객체로 변환 (deserializing)
+                            console.log(JSON.parse(xhr.response));
+                            console.log(JSON.parse(xhr.response).bookList)
+                            this.bookList = JSON.parse(xhr.response).bookList;
+                            this.items = this.bookList;
+                            this.items.sort((a, b) => b.id - a.id);
+                        } else {
+                            console.error('Error', xhr.status, xhr.statusText)
+                        }
+                    }
+                },
+                onClickSearchBtn : function () {
+                    console.log("검색값 : " + this.searchText);
+                    let result = [];
+                    const regExp = new RegExp(this.searchText, "i");
 
-          return page;
-        },
-        paginatedData : function () {
-          const start = this.pageNum * this.pageSize;
-          const end = start + this.pageSize;
-          return this.items.slice(start, end);
-        },
-        startPage : function () {
-          //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 1
-          return this.pageNum - (this.pageNum % 5) + 1;
-        },
-        endPage : function () {
-          //현재나의페이지 - 현재나의페이지_나누기_5의_나머지 + 페이지하단
-          let page = this.pageNum - (this.pageNum % 5) + 5;
-          page > this.pageCount ? page = this.pageCount : '';
+                    this.$refs.search.blur();
+                    this.selected = "";
+                    this.pageNum = 0;
 
-          return page;
-        }
-      },
-      watch: {
+                    result = this.bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
+                    console.log(result);
 
-      },
-      beforeCreate: function () {
-        // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
-      },
-      created: function () {
-        // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
-      },
-      beforeMount: function() {
-        // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
-      },
-      mounted: function () {
-        // $el 을 사용할 수 있습니다.
-        // 모든 화면이 렌더링된 후 호출됩니다.
+                    this.items = result;
+                },
+                onChangeSort : function (event) {
+                    const value = event.target.value;
+                    console.log(value);
 
-        // axios bookList 가져오기
-        this.getBookListByAsyncAwait();
-        //this.getBookListByPromise();
-        //this.getBookListByCallBack();
-      },
-      methods: {
-        getBookListByAsyncAwait : async function () {
-          const response = await axios.get('http://localhost:8080/rest/book/list');
-          // const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
-          console.log(response.data);
-          console.log(response.data.bookList);
-          this.bookList = response.data.bookList;
-          this.items = this.bookList;
-          this.items.sort((a, b) => b.id - a.id);
-        },
-        getBookListByPromise : function () {
-          axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
-            console.log(response.data);
-          }).catch(error => {
-            console.log(error);
-          })
-        },
-        getBookListByCallBack : function () {
-          axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
-            app.callBackGetBookList(response.data);
-          }).catch(error => {
-            console.log(error);
-          })
-        },
-        callBackGetBookList : function (response) {
-          console.log(response);
-        },
-        onClickSearchBtn : function () {
-          console.log("검색값 : " + this.searchText);
-          let result = [];
-          const regExp = new RegExp(this.searchText, "i");
-
-          this.$refs.search.blur();
-          this.selected = "";
-          this.pageNum = 0;
-
-          result = this.bookList.filter(book => regExp.test(book.deptName) || regExp.test(book.title));
-          console.log(result);
-
-          this.items = result;
-        },
-        onChangeSort : function (event) {
-          const value = event.target.value;
-          console.log(value);
-
-          switch(value) {
-            case "deptAsc":
-              this.items.sort((a, b) => a.deptName.localeCompare(b.deptName));
-              break;
-            case "deptDesc":
-              this.items.sort((a, b) => b.deptName.localeCompare(a.deptName));
-              break;
-            case "titleAsc":
-              this.items.sort((a, b) => a.title.localeCompare(b.title));
-              break;
-            case "titleDesc":
-              this.items.sort((a, b) => b.title.localeCompare(a.title));
-              break;
-            default:
-              this.items.sort((a, b) => b.id - a.id);
-          }
-        },
-        nextPage : function () {
-          this.pageNum++;
-        },
-        prevPage : function () {
-          this.pageNum--;
-        },
-        goPage : function (event) {
-          console.log(event.target.id);
-          this.pageNum = parseInt(event.target.id);
-        },
-        goDetail : function (event) {
+                    switch(value) {
+                        case "deptAsc":
+                            this.items.sort((a, b) => a.deptName.localeCompare(b.deptName));
+                            break;
+                        case "deptDesc":
+                            this.items.sort((a, b) => b.deptName.localeCompare(a.deptName));
+                            break;
+                        case "titleAsc":
+                            this.items.sort((a, b) => a.title.localeCompare(b.title));
+                            break;
+                        case "titleDesc":
+                            this.items.sort((a, b) => b.title.localeCompare(a.title));
+                            break;
+                        default:
+                            this.items.sort((a, b) => b.id - a.id);
+                    }
+                },
+                nextPage : function () {
+                    this.pageNum++;
+                },
+                prevPage : function () {
+                    this.pageNum--;
+                },
+                goPage : function (event) {
+                    console.log(event.target.id);
+                    this.pageNum = parseInt(event.target.id);
+                },
+                detailBook : function (event) {
 /*
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', '/book/'+event.currentTarget.id);
-          xhr.send();
-          xhr.onload = () => {
-            if(xhr.status === 200) {
-              console.log(xhr.response);
-              //console.log(JSON.parse(xhr.response));
-            } else {
-              console.error('Error', xhr.status,  xhr.statusText);
-            }
-          }
+                      const xhr = new XMLHttpRequest();
+                      xhr.open('GET', '/book/'+event.currentTarget.id);
+                      xhr.send();
+                      xhr.onload = () => {
+                        if(xhr.status === 200) {
+                          console.log(xhr.response);
+                          //console.log(JSON.parse(xhr.response));
+                        } else {
+                          console.error('Error', xhr.status,  xhr.statusText);
+                        }
+                      }
 */
-          location.replace('/book/'+event.currentTarget.id);
-        },
-        testFn : function () {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', '/rest/book/list');
-          xhr.send();
-          xhr.onload = () => {
-            if(xhr.status === 200) {
-              console.log(xhr.response);
-              // 문자열 -> 객체로 변환 (deserializing)
-              console.log(JSON.parse(xhr.response));
-            } else {
-              console.error('Error', xhr.status, xhr.statusText)
+                    location.replace('/book/'+event.currentTarget.id);
+                },
+                getBookListByAsyncAwait : async function () {
+                    const response = await axios.get('http://localhost:8080/rest/book/list');
+                    // const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
+                    console.log(response.data);
+                    console.log(response.data.bookList);
+                    this.bookList = response.data.bookList;
+                    this.items = this.bookList;
+                    this.items.sort((a, b) => b.id - a.id);
+                },
+                getBookListByPromise : function () {
+                    axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
+                        console.log(response.data);
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                },
+                getBookListByCallBack : function () {
+                    axios.get('http://localhost:8080/data/json_sample_bookList.json').then(response => {
+                        app.callBackGetBookList(response.data);
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                },
+                callBackGetBookList : function (response) {
+                    console.log(response);
+                }
             }
-          }
-        }
-      }
-    });
-  </script>
+        });
+
+        /*
+            const Foo = { template: '<div>foo</div>' }
+            const routes = [
+                { path: '/foo', component: Foo }
+            ]
+            const router = new VueRouter({
+                routes: routes
+            })
+            const app2 = new Vue({
+                router
+            }).$mount('#app2')
+        */
+
+
+    </script>
 </div>
 </html>

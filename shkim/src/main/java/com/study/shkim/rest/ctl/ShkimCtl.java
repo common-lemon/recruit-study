@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,23 +33,20 @@ public class ShkimCtl {
         return "form";
     }
 
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<ResBook> save(@RequestBody ReqBookParams params){
+        log.info("[정보] params : {}", params.toString());
+        return new ResponseEntity<>(this.bookSvr.save(params), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ModelAndView detail(ReqBookParams params, HttpServletResponse response){
         log.info("[정보] params : {}", params.toString());
         ModelAndView mav = new ModelAndView();
         mav.setViewName("form.html");
         response.setStatus(200);
-
         mav.addObject("book", this.bookSvr.detail(params));
-        log.info("여기임 : {}", this.bookSvr.detail(params));
         return mav;
-    }
-
-    @RequestMapping(value = "", method = RequestMethod.PATCH)
-    @ResponseBody
-    public ResponseEntity<ResBook> update(ReqBookParams params){
-        log.info("[정보] params : {}", params.toString());
-        return new ResponseEntity<>(this.bookSvr.update(params), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
