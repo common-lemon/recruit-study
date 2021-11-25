@@ -8,7 +8,7 @@ export default {
         message: '',
         loading: false,
         searchText: '',
-        sort:''
+        sort: ''
     }),
     getters:{},
     mutations: {
@@ -163,10 +163,7 @@ function fn_sortBook (sort, list) {
             b = b.count.toString().toLowerCase();
             return b - a
         });
-    } else {
-        list.sort(function(a, b) {
-            return a.id - b.id;
-        });
     }
+
     return list;
 }

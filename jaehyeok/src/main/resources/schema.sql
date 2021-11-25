@@ -9,5 +9,6 @@ create table BOOKS
  REG_RSN varchar(255), 
  REGISTER_NM varchar(30), 
  TITLE varchar(300),
+ DATE DATE,
  primary key (id) 
 );

@@ -12,6 +12,7 @@
                 :to="`/bookdetail/id=${book.id}`"
                 class="btn-link"
             >
+
                 <div class="row">
                     <p>{{book.title}}</p>
                 </div>
@@ -21,6 +22,7 @@
                     </div><div class="title">수량: &nbsp;
                     </div><div>{{book.count}}권</div>
                 </div>
+
             </RouterLink>
         </div>
     </div>
@@ -40,21 +42,39 @@ export default {
             console.log(bookId);
             if (event.stopImmediatePropagation) event.stopImmediatePropagation();
             else event.isImmediatePropagationEnabled = false; // IE 대응
-            if (!confirm("삭제 하시겠습니까?")) {
+/*            if (!confirm("삭제 하시겠습니까?")) {
                 console.log("삭제취소");
             } else {
                 axios.delete('/api/book/' + bookId)
                     .then(response => {
                         console.log(response.data);
                         this.$store.dispatch('book/deleteUpdate', {
-                            searchText : ''
+                            searchText: ''
                         })
                     })
                     .catch(error => {
                         console.log(error);
                         alert("삭제를 실패했습니다..");
                     })
-            }
+            }*/
+                this.$confirm("삭제 하시겠습니까?", "", "", "question")
+                    .then(()  => {
+                        axios.delete('/api/book/' + bookId)
+                            .then(response => {
+                                console.log(response.data);
+                                this.$store.dispatch('book/deleteUpdate', {
+                                    searchText : ''
+                                })
+                                this.$alert("삭제되었습니다.", "", "success");
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                alert("삭제를 실패했습니다..");
+                            })
+                    })
+                    .catch(() => console.log("canceled"));
+
+
         }
     }
 }

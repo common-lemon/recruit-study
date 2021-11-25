@@ -18,7 +18,7 @@ public class BookService {
     private final BookRepository bookRepository;
 
     public List<Book> findBook(){
-        return bookRepository.findAll();
+        return bookRepository.findAllByOrderByDateDesc();
     };
 
     public Book findOne(long id) {

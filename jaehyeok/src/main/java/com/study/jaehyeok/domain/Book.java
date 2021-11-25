@@ -1,9 +1,11 @@
 package com.study.jaehyeok.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Getter @Setter
@@ -27,6 +29,8 @@ public class Book {
     @Column(length = 255)
     private String regRsn;
     private int count;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
+    private Date date;
 
 
     public void update(Book book) {
