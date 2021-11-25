@@ -62,6 +62,7 @@ export default {
                 sort:payload
             })
         },
+
         pageSize({commit},payload){
             console.log(payload)
             commit('updateState', {
