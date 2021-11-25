@@ -8,7 +8,8 @@ export default {
         message: '',
         loading: false,
         searchText: '',
-        sort: ''
+        sort: '',
+        pageSize: 5
     }),
     getters:{},
     mutations: {
@@ -59,6 +60,12 @@ export default {
         sortList({commit},payload){
             commit('sortList', {
                 sort:payload
+            })
+        },
+        pageSize({commit},payload){
+            console.log(payload)
+            commit('updateState', {
+                pageSize:payload.pageSize
             })
         },
         async searchBookWidthId({commit}, payload){
