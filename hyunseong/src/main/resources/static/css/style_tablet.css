@@ -21,6 +21,9 @@ body {
     padding: 1rem;
     background-color: #fcfcfc;
 }
+#lemonLogo {
+    vertical-align: bottom;
+}
 #app {
     width: 100%;
     margin: auto;
@@ -118,4 +121,14 @@ body {
 }
 .clearBox {
     clear: both;
+}
+
+.redText {
+    color: red;
+}
+.clickBookDetail {
+    cursor: pointer;
+}
+#applyingImage {
+    vertical-align: bottom;
 }

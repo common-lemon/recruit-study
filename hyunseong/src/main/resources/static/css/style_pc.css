@@ -12,8 +12,11 @@ table {
 }
 body {
     color: #333;
-    padding: 1rem;
+    margin: 0px;
     background-color: #fcfcfc;
+}
+#lemonLogo {
+    vertical-align: bottom;
 }
 #app {
     width: 100%;
@@ -110,3 +113,17 @@ body {
 .clearBox {
     clear: both;
 }
+
+.redText {
+    color: red;
+}
+.clickBookDetail {
+    cursor: pointer;
+}
+.clickBookDetail:hover {
+    font-weight: bold;
+}
+#applyingImage {
+    vertical-align: bottom;
+}
+

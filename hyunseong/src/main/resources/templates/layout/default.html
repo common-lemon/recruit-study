@@ -16,12 +16,72 @@
     <th:block th:replace="~{fragments/config :: configFragment}"></th:block>
 </head>
 
-<header>
-    <th:block layout:fragment="header"></th:block>
-</header>
 <body>
-    <th:block layout:fragment="content"></th:block>
+<header id="header">
+    <div id="headerBox">
+    <nav>
+        <ul class="menu">
+            <li class="menu--item"><a href="/"><img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage"></a></li>
+            <li class="menu--item"><a href="/"><img th:src="@{/images/home.png}" title="" alt="" th:width="20px" id="homeImage"></a></li>
+            <li class="menu--item"><a href="/book/insert"><img th:src="@{/images/add.png}" title="" alt="" th:width="20px" id="addImage"></a></li>
+        </ul>
+    </nav>
+    </div>
+</header>
+<th:block layout:fragment="content"></th:block>
+<div id="box"></div>
+<!--<footer id="footer">
+    <div>
+        footer
+    </div>
+</footer>-->
 </body>
-<footer>
-    <th:block layout:fragment="footer"></th:block>
-</footer>
+
+<script>
+/*    let header = new Vue({
+        el: '#header',
+        data(){
+            return {
+                menus : ['Home', 'Products', 'About', 'QnA']
+            }
+        }
+    })*/
+</script>
+
+<style>
+    .menu {
+        display : flex;
+        background-color: #ffca08;
+        border-radius: 5px;
+        list-style: none;
+        justify-content: space-around;
+        padding : 10px;
+        margin: 0px;
+    }
+    .menu--item {
+        padding : 10px;
+    }
+    .menu--item a {
+        user-select: none;
+        cursor: pointer;
+        color : white;
+    }
+    #header {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+    }
+    #headerBox {
+        height: 61.6px;
+    }
+    #box {
+        margin-bottom: 80px;
+    }
+/*    #footer {
+        margin-top: 30px;
+        margin-bottom: 61.6px;
+        text-align: center;
+        background-color: #a5cb4e;
+        padding: 50px;
+    }*/
+</style>

@@ -10,6 +10,6 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<BookEntity, Long> {
 
     List<BookEntity> findByTitleContains(String title);
-
+    /*BookEntity findFirstByBookNoOrderByIdDesc();*/
 
 }

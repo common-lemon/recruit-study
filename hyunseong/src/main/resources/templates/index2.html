@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml"
       layout:decorator="layout/default">
 <div layout:fragment="content">
     <div id="app">
@@ -14,17 +15,19 @@
             <div id="rightInput">
                 <input id="searchBookInput" type="text" v-model.trim="search"
                        :keydown.enter="searchBook" placeholder="검색어를 입력해주세요."/>
-                <button id="searchButton" :click="searchBook">검색</button>
+                <input type="button" id="searchButton" v-on:click="searchBook" value="검색"></input>
             </div>
         </div>
-        <hr>
+        <div class="clearBox"></div>
         <div id="middleBox">
-            <div id="leftText"><span id="bookTotal">{{ total }}</span> 개</div>
-            <img id="changeTableImage" :click="changeView" th:src="@{/images/boardTable.png}"
-                 title="가로 세 줄이 있는 동그라미 아이콘"
-                 alt="게시글 형식으로 보여주는 아이콘" th:width="32px">
+            <div id="leftText"><span id="bookTotal">{{ total }}</span> 개
+                <input type="button" id="oBtn" v-on:click="OrderReverce" value="등록순"></input>
+            </div>
             <div id="rightText">
-                <select v-model="deptSelected" @change="changeDept($event)">
+                <img id="changeTableImage" v-on:click="changeView" th:src="@{/images/boardTable.png}"
+                     title="가로 세 줄이 있는 동그라미 아이콘"
+                     alt="게시글 형식으로 보여주는 아이콘" th:width="32px">
+                <select id="deptSelectBox" v-model="deptSelected" @change="changeDept($event)">
                     <option value="" selected>부서별 자료</option>
                     <option v-for="item in deptNameList" :key="item">{{ item }}</option>
                 </select>
@@ -40,24 +43,27 @@
                         <th id="bookId" nowrap>구분</th>
                         <th id="bookNo" nowrap>도서번호</th>
                         <th nowrap>부서</th>
-                        <th class="orderMenu" :click="sortTitle">
+                        <th class="orderMenu" v-on:click="sortTitle">
                             제목<img id="orderImage" th:src="@{/images/default_arrow.png}"
                                    title="위아래 빈 화살표 그림" alt="정렬이 안되어 있는 것을 알려주는 화살표 그림"></th>
                         <th id="bookCount" nowrap>권수</th>
                     </tr>
-                    <tr v-for="item in viewList" :key="item.id">
-                        <td id="bookIdData">{{item.id}}</td>
-                        <td id="bookNoData">{{item.bookNo}}</td>
-                        <td nowrap>{{item.deptName}}</td>
-                        <td>{{item.title}}</td>
-                        <td id="bookCountData">{{item.count}}</td>
+                    <tr v-for="item in viewList" v-bind:key="item.id">
+                        <td id="bookIdData">{{ item.id }}</td>
+                        <td id="bookNoData">{{ item.bookNo }}</td>
+                        <td nowrap>{{ item.deptName }}</td>
+                        <td v-if="item.isBook === 'Y'" v-on:click="detailBook" class="clickBookDetail" v-bind:id="item.id">{{ item.title }}</td>
+                        <td v-else v-on:click="detailBook" class="clickBookDetail" v-bind:id="item.id">{{ item.title }}
+                            <img id="applyingImage" th:src="@{/images/applying.png}"
+                                 title="신청중이라 적힌 아이콘" alt="책을 신청하고 있다는 것을 알려주는 아이콘"></td>
+                        <td id="bookCountData">{{ item.count }}</td>
                     </tr>
                 </table>
 
             </div>
             <div v-else id="cBoard">
                 <div id="checkerboard" v-for="(item, index) in viewList" :key="item.id">
-                    <div id="innerCheckerboard">
+                    <div id="innerCheckerboard" class="clickBookDetail">
                         <img class="bookImage" th:src="@{/images/book.png}" title="책그림"><br>
                         <p id="cBoardBookTitle">{{item.title}}</p>
                         <p id="cBoardDeptName">{{item.deptName}}</p>
@@ -79,7 +85,7 @@
         </div>
         <div v-if="total !== limit">
             <table>
-                <td id="pageButton" :click="addPage">{{ pageText }}</td>
+                <td id="pageButton" v-on:click="addPage">{{ pageText }}</td>
             </table>
         </div>
     </div>
@@ -103,7 +109,6 @@
             },
             methods: {
                 getBookListByAsyncAwait: async function () {
-                    /*const response = await axios.get('http://localhost:8080/rest/book/list');*/
                     const response = await axios.get('http://localhost:8080/rest/book/list');
                     console.log(response.data.bookList);
                     this.bookList = response.data.bookList;
@@ -112,6 +117,14 @@
                     this.total = this.bookList.length;
                     this.paging();
                     this.getDept();
+                },
+                OrderReverce: function (e) {
+                    this.viewList = this.searchList.reverse();
+                    if (e.target.value === "등록순") {
+                        e.target.value = "최신순"
+                    } else if (e.target.value === "최신순") {
+                        e.target.value = "등록순"
+                    }
                 },
                 searchBook: function () {
                     this.limit = 10;
@@ -150,9 +163,9 @@
                     const deduplication = new Set(this.deptNameList);
                     this.deptNameList = deduplication;
                 },
-                changeDept: function (event) {
+                changeDept: function (e) {
                     this.limit = 10;
-                    const selectedList = this.bookList.filter(item => item.deptName.includes(event.target.value));
+                    const selectedList = this.bookList.filter(item => item.deptName.includes(e.target.value));
                     this.searchList = selectedList;
                     this.viewList = selectedList;
                     this.total = this.searchList.length;
@@ -184,6 +197,9 @@
                         document.getElementById("changeTableImage").alt = "게시글 형식으로 보여주는 아이콘";
                         this.view = 'tableBoard';
                     }
+                },
+                detailBook: function (e) {
+                    location.href = "/book/detail/" + e.target.getAttribute('id');
                 }
             },
             computed: {},

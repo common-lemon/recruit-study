@@ -16,17 +16,19 @@ public class BookEntity {
     private Long id;
     @Column(length = 30)
     private String bookNo;
+    private int bookPrice;
+    private int count;
     @Column(length = 30)
     private String deptName;
-    @Column(length = 255)
-    private String title;
-    @Column(length = 30)
-    private String registerNm;
     @Column(length = 50)
     private String publisher;
-    private int bookPrice;
     @Column(length = 255)
     private String regRsn;
-    private int count;
+    @Column(length = 30)
+    private String registerNm;
+    @Column(length = 255)
+    private String title;
+    @Column(length = 1)
+    private String isBook;
 
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      layout:decorator="layout/default">
+<div layout:fragment="content">
+    <div id="app">
+        <div style="background-color: antiquewhite">
+            <form v-on:submit.prevent="submitForm" method="post">
+                <table>
+                    <tr>
+                        <td><label for="deptName">신청 부서</label></td>
+                        <td><input type="text" id="deptName" v-model="deptName" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="registerNm">신청자 이름</label></td>
+                        <td><input type="text" id="registerNm" v-model="registerNm" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="title"><span class="redText">*</span>도서 이름</label></td>
+                        <td><input type="text" id="title" v-model="title" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="publisher"><span class="redText">*</span>출판사</label></td>
+                        <td><input type="text" id="publisher" :value="publisher" @input="bindKor"
+                                   required pattern="^[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z]+$" title="한글만 입력 가능합니다."></td>
+                    </tr>
+                    <tr>
+                        <td><label for="bookPrice"><span class="redText">*</span>도서 금액</label></td>
+                        <td><input type="text" id="bookPrice" :value="bookPrice" @input="bindNum"
+                                   required pattern="^[0-9]+$" title="숫자만 입력 가능합니다."></td>
+                    </tr>
+                    <tr>
+                        <td><label for="count"><span class="redText">*</span>신청 권수</label></td>
+                        <td><input type="texta" id="count" v-model="count"
+                                   required pattern="^[0-9]+$" title="숫자만 입력 가능합니다."></td>
+                    </tr>
+                    <tr>
+                        <td><label for="regRsn">신청 사유</label></td>
+                        <td><textarea id="regRsn" v-model="regRsn" cols="" rows="6"></textarea></td>
+                    </tr>
+                </table>
+                <input type="button" value="뒤로가기" v-on:click="back"/>
+                <input type="submit" value="도서신청">
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+
+        let app = new Vue({
+            el: '#app',
+            data: function () {
+                return {
+                    bookNo: '',
+                    deptName: '공통개발팀',
+                    registerNm: '고현성 프로',
+                    title: '',
+                    publisher: '',
+                    bookPrice: '',
+                    count: '1',
+                    regRsn: '',
+                    errors: []
+                }
+            },
+            methods: {
+                submitForm: function () {
+                    if (this.bookPrice < 0 || this.bookPrice > 100000) {
+                        alert("100,000원 이하로 작성해주세요.")
+                    } else {
+                    const url = "http://localhost:8080/rest/book/save";
+                    const data = {
+                        deptName: this.deptName,
+                        registerNm: this.registerNm,
+                        title: this.title,
+                        publisher: this.publisher,
+                        bookPrice: this.bookPrice,
+                        count: this.count,
+                        regRsn: this.regRsn
+                    }
+                    axios.post(url, data)
+                        .then(function (response) {
+                            console.log(response);
+                            alert('도서 신청이 완료되었습니다.');
+                            location.href = "/";
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        })
+                    }
+                },
+                back: function () {
+                    location.href = "/";
+                },
+                bindNum(e) {
+                    this.bookPrice = e.target.value;
+                },
+                bindKor(e) {
+                    this.publisher = e.target.value;
+                }
+            },
+            computed: {},
+            watch: {
+                /*bookPrice(val) {
+                    const reg = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z]/;
+                    if (reg.exec(val) !== null) {
+                        this.number = val.replace(/[^0-9]/g, '');
+                    }
+                },
+                publisher(val) {
+                    const reg = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣|a-z]/;
+                    if (reg.exec(val) !== null) {
+                        this.number = val.replace(/[^0-9]/g, '');
+                    }
+                }*/
+            },
+            created: function () {
+                /*this.view = "tableBoard";*/
+                // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
+            },
+            mounted: function () {
+                // $el 을 사용할 수 있습니다.
+                // 모든 화면이 렌더링된 후 호출됩니다.
+            }
+        })
+    </script>
+</div>
+</html>

@@ -8,8 +8,26 @@ td, th {
 #bookIdData, #bookNoData, #bookCountData {
     display: none;
 }
+#lemonLogo {
+    vertical-align: bottom;
+}
 #leftImage {
-    display: none;
+    float: left;
+    min-width: 20%;
+    max-width: 20%;
+    margin-left: 10px;
+}
+#rightInput {
+    text-align: right;
+    float: right;
+    display: inline-block;
+    min-width: 70%;
+    max-width: 70%;
+    margin-right: 10px;
+}
+#deptSelectBox {
+    vertical-align: middle;
+    padding-top: 10px;
 }
 table {
     width: 100%;
@@ -18,7 +36,7 @@ table {
 }
 body {
     color: #333;
-    padding: 1rem;
+    margin: 0px;
     background-color: #fcfcfc;
 }
 #app {
@@ -36,7 +54,7 @@ body {
 }
 #changeTableImage {
     float: right;
-    margin-right: 10px;
+    margin-left: 10px;
     cursor: pointer;
 }
 #rightText {
@@ -44,20 +62,29 @@ body {
     display: inline-block;
     padding: 5px;
     margin-right: 10px;
+    vertical-align: middle;
 }
 #topBox {
     text-align: center;
-    padding-top: 5px;
-    margin-bottom: 15px;
+    padding-top: 15px;
 }
 #searchBookInput {
+    width: 60%;
     font-size: 1.05em;
 }
 #searchButton {
     border: 1px solid #49c6f6;
     background-color: #fdfdfd;
     color: #49c6f6;
-    padding: 4px 15px 4px 15px;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#oBtn {
+    border: 1px solid #fdfdfd;
+    background-color: #a5cb4e;
+    color: #fdfdfd;
+    padding: 4px 10px 4px 10px;
     border-radius: 5px;
     cursor: pointer;
 }
@@ -66,7 +93,10 @@ body {
     background-color: #49c6f6;
 }
 #middleBox {
+    border-top: 1px solid #ddd;
     height: 40px;
+    padding-top: 5px;
+    vertical-align: middle;
 }
 .orderMenu {
     cursor: pointer;
@@ -82,7 +112,7 @@ body {
     text-align: center;
 }
 #tableTitle {
-    background-color: #ffca08;
+    background-color: #ddd;
 }
 #bookTotal {
     color: #a5cb4e;
@@ -129,4 +159,14 @@ body {
 }
 .clearBox {
     clear: both;
+}
+
+.redText {
+    color: red;
+}
+.clickBookDetail {
+    cursor: pointer;
+}
+#applyingImage {
+    vertical-align: bottom;
 }

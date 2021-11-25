@@ -7,9 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -29,8 +30,15 @@ public class BookCtl {
         return new ResponseEntity<>(this.bookSvr.list(params), HttpStatus.OK);
     }
 
+    /*@RequestMapping(value = "/findFirstOne", method = RequestMethod.GET)
+    public ResponseEntity<ResBook> findFirstOne(ReqBookParams params) {
+        log.info("[정보] params : {}", params.toString());
+        return new ResponseEntity<>(this.bookSvr.findFirstOne(params), HttpStatus.OK);
+    }*/
+
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public ResponseEntity<ResBook> save(ReqBookParams params) {
+    public ResponseEntity<ResBook> save(@RequestBody ReqBookParams params) {
+        /*System.err.println(params);*/
         log.info("[정보] params : {}", params.toString());
         return new ResponseEntity<>(this.bookSvr.save(params), HttpStatus.OK);
     }
