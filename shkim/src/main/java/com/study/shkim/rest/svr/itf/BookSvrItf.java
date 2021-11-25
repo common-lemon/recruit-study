@@ -12,5 +12,5 @@ public interface BookSvrItf {
     ResBook delete(ReqBookParams reqBookParams);
 
     ResBook detail(ReqBookParams reqBookParams);
-    
+
 }

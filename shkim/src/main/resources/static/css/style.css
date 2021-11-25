@@ -17,12 +17,23 @@ ul {
     list-style: none;
 }
 
-.search {
+input
+,textarea
+,select{
+    outline: none;
+}
+
+.search
+,[name=regForm] p
+{
     margin: 10px 0;
     border-bottom: 1px solid black;
 }
 
-.search input {
+.search input
+,[name=regForm] input
+,[name=regForm] textarea
+{
     background-color: white;
     border: none;
     width: 88%;
@@ -95,3 +106,112 @@ ul {
     font-weight: bold;
     color: #42b983;
 }
+
+#regFlag {
+    font-size: 13px;
+    color: white;
+    background-color: #42b983;
+    border-radius: 30px;
+    padding: 2px 10px;
+}
+
+
+
+/* 스타일 */
+/*p { position:relative; } !* 기본세팅 *!
+p input { box-sizing:border-box; padding:20px 0 0; width:100%; height:100%; border:0 none; color:#595f63; outline:none; }
+p label { position:absolute; left:0%; bottom:0; width:100%; height:100%; border-bottom:1px solid #000; text-align:left; pointer-events:none; }
+p label:after { content:""; position:absolute; left:0; bottom:-1px; width:0; height:100%; border-bottom:3px solid #5fa8d3; transition:all .3s ease; } !* 파란색 가로줄 *!
+p label span { position:absolute; left:0; bottom:5px; transition:all .3s ease; }
+p input:focus + label span,
+p input:valid + label span { transform:translateY(-150%); font-size:14px; color:#5fa8d3; }  !* input에 글을 입력하고 포커스가 지나간 상태에서 제어하려면 valid 선택자를 써야한다. *!
+!* 포커스 될 때 label span(name)이 위로 올라감 *!
+p input:focus + label::after,
+p input:valid + label::after { width:100%; transform:translateX(0); }*/
+
+
+[name=regForm] p label {
+    font-size: 12px;
+    color: gray;
+    padding-bottom : 5px;
+}
+
+[name=regForm] p {
+    margin: 0 0 20px 0;
+}
+
+[name=regForm] input
+,[name=regForm] textarea
+,[name=regForm] textarea::placeholder{
+    font-size: 14px;
+}
+
+#btnArea {
+    display: flex;
+}
+
+#btnArea a {
+    flex-grow: 1;
+}
+
+#btnArea input {
+    flex-grow: 1;
+}
+
+#btnArea a
+,#btnArea input[type=submit]
+,.goFormBtn {
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+#btnArea a {
+    background-color: gray;
+    margin-right: 10px;
+    line-height: 40px;
+    width: 100px;
+}
+
+#btnArea input[type=submit]
+,.goFormBtn {
+    background-color: #42b983;
+}
+
+.goFormBtn {
+    width: 100%;
+    display: inline-block;
+    padding: 8px 0;
+    margin: 10px 0;
+}
+
+#deleteBtn {
+    display: block;
+}
+
+/* toast message */
+#toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    padding: 15px 15px;
+    transform: translate(-50%, 10px);
+    border-radius: 30px;
+    overflow: hidden;
+    font-size: .8rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s, visibility .5s, transform .5s;
+    background: rgba(0, 0, 0, .35);
+    color: #fff;
+    z-index: 10000;
+}
+
+#toast.reveal {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0)
+}
+

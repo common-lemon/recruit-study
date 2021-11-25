@@ -45,10 +45,17 @@ GET http://localhost:8080/rest/book/list?title=5.1
 Accept: application/json
 
 ### 삭제
-GET http://localhost:8080/rest/book/delete?id=1
+GET http://localhost:8080/rest/book/delete?id=45
 Accept: application/json
 
 ### 책 상세
-GET http://localhost:8080/rest/book/detail?id=42
+GET http://localhost:8080/rest/book/detail?id=1
 Accept: application/json
 
+### 수정
+PATCH http://localhost:8080/book
+Accept: application/json
+
+### 삭제
+DELETE http://localhost:8080/book/1
+Accept: application/json

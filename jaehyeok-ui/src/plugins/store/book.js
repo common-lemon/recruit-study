@@ -7,6 +7,7 @@ export default {
         theBook:{},
         message: '',
         loading: false,
+        searchText: '',
         sort:''
     }),
     getters:{},
@@ -18,49 +19,10 @@ export default {
         },
         sortList(state,payload){
 
-            let sort = payload.sort.sort
-            let list = state.bookList
-            if(sort === "deptDesc") {
-                list.sort(function(a, b) {
-                    a = a.deptName.toString().toLowerCase();
-                    b = b.deptName.toString().toLowerCase();
-                    return ( a < b ) ? -1 : ( a == b ) ? 0 : 1;
-                });
-            } else if(sort === "deptAsc") {
-                list.sort(function(a, b) {
-                    a = a.deptName.toString().toLowerCase();
-                    b = b.deptName.toString().toLowerCase();
-                    return ( b < a ) ? -1 : ( b == a ) ? 0 : 1;
-                });
-            } else if(sort === "titleDesc") {
-                list.sort(function(a, b) {
-                    a = a.title.toString().toLowerCase();
-                    b = b.title.toString().toLowerCase();
-                    return ( a < b ) ? -1 : ( a == b ) ? 0 : 1;
-                });
-            } else if(sort === "titleAsc") {
-                list.sort(function(a, b) {
-                    a = a.title.toString().toLowerCase();
-                    b = b.title.toString().toLowerCase();
-                    return ( b < a ) ? -1 : ( b == a ) ? 0 : 1;
-                });
-            } else if(sort === "cntAsc") {
-                list.sort(function(a, b) {
-                    a = a.count.toString().toLowerCase();
-                    b = b.count.toString().toLowerCase();
-                    return a - b
-                });
-            } else if(sort === "cntDesc") {
-                list.sort(function(a, b) {
-                    a = a.count.toString().toLowerCase();
-                    b = b.count.toString().toLowerCase();
-                    return b - a
-                });
-            } else {
-                list.sort(function(a, b) {
-                    return a.id - b.id;
-                });
-            }
+            let list = state.bookList;
+            this.sort = payload.sort.sort
+
+            fn_sortBook(this.sort, list);
 
         }
     },
@@ -74,18 +36,13 @@ export default {
             const res = await _fetchBook(payload);
 
             commit('updateState', {
-                bookList: res.data.data
+                bookList: res.data.data,
+                searchText: payload.searchText
             })
 
             let searchText = payload.searchText;
             let list = res.data.data;
-
-            let result = [];
-            list.forEach(function(item) {
-                if (item.title.indexOf(searchText) >= 0 ){
-                    result.push(item)
-                }
-            })
+            let result = fn_searchBook(searchText, list);
 
             let message = "";
             if (result.length < 1){
@@ -110,6 +67,29 @@ export default {
             commit('updateState',{
                 theBook:res.data.data
             })
+        },
+        async deleteUpdate({commit, state}, payload){
+            const res = await _fetchBook(payload);
+
+            commit('updateState', {
+                bookList: res.data.data,
+            })
+
+            let searchText = state.searchText;
+            let list = res.data.data;
+
+            let result = fn_searchBook(searchText, list);
+
+            let message = "";
+            if (result.length < 1){
+                message = "도서를 찾을수 없습니다.";
+            }
+
+            commit('updateState', {
+                bookList:result,
+                message: message
+            })
+            fn_sortBook(this.sort, result);
         }
     }
 
@@ -133,4 +113,60 @@ function _fetchBook(payload){
                 reject(error.message)
             })
     })
+}
+
+function fn_searchBook (searchText , list) {
+    let result = []
+    list.forEach(function(item) {
+        if (item.title.indexOf(searchText) >= 0 ){
+            result.push(item)
+        }
+    })
+    return result;
+}
+
+function fn_sortBook (sort, list) {
+
+    if(sort === "deptDesc") {
+        list.sort(function(a, b) {
+            a = a.deptName.toString().toLowerCase();
+            b = b.deptName.toString().toLowerCase();
+            return ( a < b ) ? -1 : ( a == b ) ? 0 : 1;
+        });
+    } else if(sort === "deptAsc") {
+        list.sort(function(a, b) {
+            a = a.deptName.toString().toLowerCase();
+            b = b.deptName.toString().toLowerCase();
+            return ( b < a ) ? -1 : ( b == a ) ? 0 : 1;
+        });
+    } else if(sort === "titleDesc") {
+        list.sort(function(a, b) {
+            a = a.title.toString().toLowerCase();
+            b = b.title.toString().toLowerCase();
+            return ( a < b ) ? -1 : ( a == b ) ? 0 : 1;
+        });
+    } else if(sort === "titleAsc") {
+        list.sort(function(a, b) {
+            a = a.title.toString().toLowerCase();
+            b = b.title.toString().toLowerCase();
+            return ( b < a ) ? -1 : ( b == a ) ? 0 : 1;
+        });
+    } else if(sort === "cntAsc") {
+        list.sort(function(a, b) {
+            a = a.count.toString().toLowerCase();
+            b = b.count.toString().toLowerCase();
+            return a - b
+        });
+    } else if(sort === "cntDesc") {
+        list.sort(function(a, b) {
+            a = a.count.toString().toLowerCase();
+            b = b.count.toString().toLowerCase();
+            return b - a
+        });
+    } else {
+        list.sort(function(a, b) {
+            return a.id - b.id;
+        });
+    }
+    return list;
 }

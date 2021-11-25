@@ -23,7 +23,7 @@ a{
 }
 
 footer{
-    padding: 30px 0;
+    padding: 20px 0;
     text-align: center;
     opacity: .4;
 }

@@ -24,7 +24,7 @@ export default {
         return {
             links:[
                 {'id': 1, 'text': '도서 현황', 'url': '/home'},
-                {'id': 2, 'text': '도서 신청', 'url': '/bookapply'},
+                {'id': 2, 'text': '도서 신청', 'url': '/bookapply'}
             ],
             closeOnClick: true
 
