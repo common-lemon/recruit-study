@@ -11,19 +11,19 @@
             <input type="hidden" id="id" v-model="id"  required readonly />
             <div class="form-group">
                 <label for="deptName" >신청부서</label>
-                <input id="deptName" v-model="deptName" placeholder="신청부서" required readonly />
+                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" maxlength="30" required readonly />
             </div>
             <div class="form-group">
                 <label for="registerNm" >신청자</label>
-                <input id="registerNm" v-model="registerNm" placeholder="신청자"  required readonly />
+                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자" maxlength="30" required readonly />
             </div>
             <div class="form-group">
                 <label for="title" >도서명</label>
-                <input id="title" v-model="title" placeholder="도서명"   />
+                <input id="title" v-model="title" placeholder="도서명"  maxlength="255" />
             </div>
             <div class="form-group">
                 <label for="publisher" >출판사</label>
-                <input id="publisher" v-model="publisher" placeholder="출판사"   />
+                <input id="publisher" v-model="publisher" maxlength="50" placeholder="출판사"   />
             </div>
             <div class="row">
                 <div class="form-group">
@@ -33,13 +33,13 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <div class="form-group">
                     <label for="count" >수량</label>
-                    <input style="width: 165px;" type='number' id="count" v-model="count" min="1" placeholder="수량"/>
+                    <input style="width: 165px;" type='text' id="count" v-model="count" maxlength="3" placeholder="수량"/>
 
                 </div>
             </div>
             <div class="form-group">
                 <label>신청사유</label>
-                <textarea id="regRsn"  class="form-control" v-model="theBook.regRsn" placeholder="내용을 입력하세요" />
+                <textarea id="regRsn"  class="form-control" v-model="theBook.regRsn" maxlength="255"  placeholder="내용을 입력하세요" />
             </div>
             <div class="btn-cover">
                 <button type="button"  @click="udtSubmit">수정</button>
@@ -81,10 +81,24 @@ export default {
          this.registerNm = this.theBook.registerNm;
          this.title = this.theBook.title;
          this.publisher = this.theBook.publisher;
-         this.bookPrice = this.theBook.bookPrice;
+         let bookPrice = comma(this.theBook.bookPrice);
+         this.bookPrice = bookPrice;
          this.count = this.theBook.count;
          this.regRsn = this.theBook.regRsn;
          this.loading = false;
+    },
+    watch: {
+        count(){
+            return this.count = this.count.replace(/[^0-9]/g,'');
+        },
+        publisher(){
+            return this.publisher = this.publisher.replace(/[0-9]/g,'');
+        },
+        bookPrice(val){
+            let result =  uncomma(val);
+            if(result > 100000)
+                this.bookPrice = "100,000";
+        }
     },
     computed:{
         ...mapState('book',[
@@ -96,7 +110,7 @@ export default {
             this.$router.go(-1);
         },
         udtSubmit(){
-            let bookPrice =  uncomma(this.bookPrice);
+            let bookPrice = uncomma(this.bookPrice);
             let data = {
                 id : this.id,
                 deptName : this.deptName,
@@ -107,17 +121,29 @@ export default {
                 count: this.count,
                 regRsn : this.regRsn
             };
-            axios
-                .put( "/api/book", data)
-                .then(response => {
-                    console.log(response);
-                    alert("도서정보가 수정되었습니다.");
-                    this.$router.push('/home');
-                })
-                .catch(error =>{
-                    console.log(error)
-                    alert("수정에 실패했습니다.");
-                })
+            if(this.title === ""){
+                alert("도서명을 입력해주세요.")
+                return false
+            }else if(this.publisher === "") {
+                alert("출판사를 입력해주세요.")
+                return false
+            }else if(this.bookPrice===""){
+                alert("도서 금액을 입력해주세요.");
+                return false
+            }else {
+                axios
+                    .put("/api/book", data)
+                    .then(response => {
+                        console.log(response.data);
+                        this.$alert(response.data.resMsg,"","success");
+                        this.$router.push('/home');
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        this.$alert("수정에 실패했습니다.","","error");
+
+                    })
+            }
         },
         numberOnly(){
             let result = comma(this.bookPrice);
@@ -126,9 +152,9 @@ export default {
     }
 }
 function comma(str) {
-    str = str.replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
-    str = str.replace(/,/g,'');          // ,값 공백처리
-    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 정규식을 이용해서 3자리 마다 , 추가
+    str = str.toString().replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
+    str = str.toString().replace(/,/g,'');          // ,값 공백처리
+    return str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 정규식을 이용해서 3자리 마다 , 추가
 }
 
 //콤마풀기
@@ -141,7 +167,7 @@ function uncomma(str) {
 textarea{
     width:350px;
     height:150px;
-    resize: none;  //세로크기만 조절가능
+    resize: none;
     background-color: #e3e9ef;
     color: #134775;
     outline: none;

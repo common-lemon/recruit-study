@@ -48,8 +48,7 @@ export default {
     },
     data(){
         return {
-            pageNum: 0,
-            pageSize: 5
+            pageNum: 0
         }
     },
     methods: {
@@ -65,7 +64,8 @@ export default {
             'bookList',
             'message',
             'loading',
-            'sort'
+            'sort',
+            'pageSize'
         ]),
         pageCount () {
             let listLeng = this.bookList.length,

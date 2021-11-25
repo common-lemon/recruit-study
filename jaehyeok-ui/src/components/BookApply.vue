@@ -4,19 +4,19 @@
             <h2>도서 신청</h2>
             <div class="form-group">
                 <label for="deptName" >신청부서</label>
-                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" required/>
+                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" maxlength="30" required/>
             </div>
             <div class="form-group">
                 <label for="registerNm" >신청자</label>
-                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자"  required/>
+                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자" maxlength="30" required/>
             </div>
             <div class="form-group">
                 <label for="title" >도서명</label>
-                <input id="title" v-model="title" placeholder="도서명"   />
+                <input id="title" v-model="title" placeholder="도서명"  maxlength="255" />
             </div>
             <div class="form-group">
                 <label for="publisher" >출판사</label>
-                <input id="publisher" v-model="publisher" placeholder="출판사"   />
+                <input id="publisher" v-model="publisher" maxlength="50" placeholder="출판사" />
             </div>
             <div class="row">
                 <div class="form-group">
@@ -26,13 +26,13 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <div class="form-group">
                     <label for="count" >수량</label>
-                    <input style="width: 165px;" type='number' id="count" v-model="count" min="1" placeholder="수량"/>
+                    <input style="width: 165px;" type='text' id="count" v-model="count" maxlength="3" placeholder="수량"/>
 
                 </div>
             </div>
             <div class="form-group">
                 <label>신청사유</label>
-                <textarea id="regRsn"  class="form-control" v-model="regRsn" placeholder="내용을 입력하세요" />
+                <textarea id="regRsn"  class="form-control" v-model="regRsn" maxlength="255" placeholder="내용을 입력하세요" />
             </div>
             <div class="btn-cover">
                 <button type="button"  @click="submitApply">신청</button>
@@ -60,8 +60,14 @@ export default {
         }
     },
     watch: {
+        count(){
+            return this.count = this.count.replace(/[^0-9]/g,'');
+        },
+        publisher(){
+            return this.publisher = this.publisher.replace(/[0-9]/g,'');
+        },
         bookPrice(val){
-            let result =  uncomma(val);
+            let result = uncomma(val);
             if(result > 100000)
                 this.bookPrice = "100,000";
 
@@ -83,14 +89,26 @@ export default {
                 count: this.count,
                 regRsn: this.regRsn,
             }
-            await axios.post(url, data)
-                .then(response => {
-                    console.log(response);
-                    this.$router.push('/home');
-                })
-                .catch(error =>{
-                    console.log(error)
-                })
+            if(this.title === ""){
+                await this.$alert("도서명을 입력해주세요.", "", "warning");
+                return false
+            }else if(this.publisher === "") {
+                await this.$alert("출판사를 입력해주세요.", "", "warning");
+                return false
+            }else if(this.bookPrice===""){
+                await this.$alert("도서 금액을 입력해주세요.", "", "warning");
+                return false
+            }else {
+                await axios.post(url, data)
+                    .then(response => {
+                        console.log(response.data);
+                        this.$alert(response.data.resMsg,"","success");
+                        this.$router.push('/home');
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
         },
         numberOnly(){
             let result = comma(this.bookPrice);

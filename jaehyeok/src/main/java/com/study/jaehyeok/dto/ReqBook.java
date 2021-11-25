@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Data
+import java.util.Date;
+
+
 @Getter @Setter
 @ToString
 public class ReqBook {
@@ -19,5 +21,5 @@ public class ReqBook {
     private int bookPrice;
     private String regRsn;
     private int count;
-
+    private Date date;
 }

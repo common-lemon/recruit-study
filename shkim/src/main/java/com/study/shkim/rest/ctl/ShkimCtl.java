@@ -28,12 +28,28 @@ public class ShkimCtl {
         this.bookSvr = bookSvr;
     }
 
-    @RequestMapping(value = "")
+/*    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ResponseEntity<ResBook> list(ReqBookParams params){
+        log.info("[정보] params : {}", params.toString());
+        return new ResponseEntity<>(this.bookSvr.list(params), HttpStatus.OK);
+    }*/
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ModelAndView list(ReqBookParams params, HttpServletResponse response){
+        log.info("[정보] params : {}", params.toString());
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("index.html");
+        response.setStatus(200);
+        mav.addObject("books", this.bookSvr.list(params));
+        return mav;
+    }
+
+    @RequestMapping(value = "/save", method=RequestMethod.GET)
     public String goRegForm(){
         return "form";
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     public ResponseEntity<ResBook> save(@RequestBody ReqBookParams params){
         log.info("[정보] params : {}", params.toString());
         return new ResponseEntity<>(this.bookSvr.save(params), HttpStatus.OK);

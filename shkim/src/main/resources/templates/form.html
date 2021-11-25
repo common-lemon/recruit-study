@@ -45,7 +45,7 @@
                 </p>
 
                 <div id="btnArea">
-                    <a th:href="@{/}">목록</a>
+                    <a th:href="@{/book/list}">목록</a>
                     <input type="submit" v-model="submitBtn">
                 </div>
                 <button type="button" id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
@@ -153,7 +153,7 @@
                         // 2. XMLHttpRequest()
                         const xhr = new XMLHttpRequest();
                         // xhr.open('POST', '/rest/book/save');
-                        xhr.open('POST', '/book');
+                        xhr.open('POST', '/book/save');
                         xhr.setRequestHeader('content-type', 'application/json');
 
                         console.log(JSON.stringify(this.form));
@@ -165,7 +165,7 @@
                                 console.log(xhr.response);
                                 let msg = this.form.id == null ? "등록" : "수정";
                                 alert(`정상적으로 ${msg}되었습니다.`);
-                                location.replace("/");
+                                location.replace("/book/list");
                             } else {
                                 console.error('Error', xhr.status, xhr.statusText);
                             }
@@ -182,7 +182,7 @@
                             if(xhr.status === 200) {
                                 console.log(xhr.response);
                                 alert("정상적으로 삭제되었습니다.");
-                                location.replace("/");
+                                location.replace("/book/list");
                             } else {
                                 console.error('Error', xhr.status, xhr.statusText);
                             }

@@ -21,6 +21,7 @@
     "vue-property-decorator": "^8.0.0",
     "vue-resize-directive": "^1.2.0",
     "vue-router": "^3.2.0",
+    "vue-simple-alert": "^1.1.1",
     "vue-style-loader": "^4.1.2",
     "vue2-perfect-scrollbar": "^1.5.0",
     "vuetify": "^2.4.9",
