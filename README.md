@@ -10,6 +10,7 @@ FrontEnd
 BackEnd
 - Spring Boot
 - Spring Data JPA
+- Spring Security
 
 ---
 2021-11-16 추가사항
