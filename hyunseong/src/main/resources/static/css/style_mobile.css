@@ -24,26 +24,41 @@ body {
 
 #topBox {
     text-align: center;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 #leftImage {
     float: left;
     text-align: left;
-    min-width: 30%;
-    max-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
     margin-left: 10px;
 }
-#rightInput {
+.rightLogin {
     text-align: right;
     float: right;
     display: inline-block;
-    min-width: 62%;
-    max-width: 62%;
+    min-width: 55%;
+    max-width: 55%;
     margin-right: 10px;
 }
 #lemonLogo {
     width: 80px;
     vertical-align: bottom;
+}
+.userButton {
+    border: 1px solid #fdfdfd;
+    background-color: #012921;
+    color: #fdfdfd;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#searchBox {
+    width: 100%;
+    margin: auto;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    padding: 10px 0px;
 }
 #searchBookInput {
     width: 67%;
@@ -62,7 +77,7 @@ body {
     background-color: #012921;
 }
 #voidBox {
-    height: 0.5em;
+    height: 0.7em;
 }
 #middleBox {
     height: 40px;
@@ -216,7 +231,10 @@ form table td{
     text-align: center;
 }
 .redText {
-    color: red;
+    color: rgba(255, 0, 0, 0.65);
+}
+#totalCount {
+    text-align: left;
 }
 .btnBox {
     text-align: center;
@@ -261,21 +279,5 @@ form table td{
 #db {
     margin-bottom: 80px;
 }
-/*    #footer {
-        margin-top: 30px;
-        margin-bottom: 61.6px;
-        text-align: center;
-        background-color: #a5cb4e;
-        padding: 50px;
-    }*/
 
-/*
-#userImage {
-    display: none;
-}
-#homeImage {
-    display: none;
-}
-#addImage {
-    display: none;
-}*/
+
