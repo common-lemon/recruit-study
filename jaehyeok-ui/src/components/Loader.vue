@@ -1,20 +1,20 @@
 <template>
     <div class="spinner-border">
-        <img :src="img" alt="로딩" style="width: 80px; height: 80px" />
+        <v-progress-circular
+            :size="50"
+            indeterminate
+            color="primary"
+        ></v-progress-circular>
     </div>
 </template>
 
 <script>
-import image from "/src/assets/loading.gif";
-export default {
-    data(){
-        return {
-            img: image
-        }
-    }
-}
+
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
+.v-progress-circular--indeterminate .v-progress-circular__overlay{
+    color: #134775;
+}
 .spinner-border{
     margin:auto;
 /*    top:0;

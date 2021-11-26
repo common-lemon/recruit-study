@@ -71,7 +71,7 @@ export default {
             img : image
         }
     },
-     async created() {
+     async mounted() {
         this.loading = true;
          await this.$store.dispatch('book/searchBookWidthId',{
             id: this.$route.params.id

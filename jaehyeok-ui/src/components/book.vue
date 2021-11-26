@@ -8,11 +8,14 @@
                 <div style="width: 210px">{{book.bookNo}}</div>
                 <button :id="book.id" class="btn btn-danger" @click="deleteBook(book.id)">X</button>
             </div>
+            <v-badge
+                v-if="this.today === book.date"
+                content="new"
+                ></v-badge>
             <RouterLink
                 :to="`/bookdetail/id=${book.id}`"
                 class="btn-link"
             >
-
                 <div class="row">
                     <p>{{book.title}}</p>
                 </div>
@@ -31,11 +34,21 @@
 <script>
 import axios from "axios";
 export default {
+    data(){
+      return{
+          today: ''
+      }
+    },
     props:{
         book:{
           type: Object,
           default:()=>({})
         }
+    },
+    mounted() {
+        const date = new Date()
+        const current = date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
+        this.today = current
     },
     methods:{
         deleteBook(bookId){
@@ -62,7 +75,12 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
+.v-badge__badge{
+    color: #f7f5f5;
+    background: #e32e26;
+    top: -28px !important;
+}
 .book{
     width: 300px;
     height: 140px;
