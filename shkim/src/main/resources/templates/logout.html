@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+    <div layout:fragment="content" class="container">
+    <h1>Logout</h1>
+    <form action="/logout" method="post" th:action="@{/logout}">
+        <p><input type="submit" value="Logout"></p>
+    </form>
+    </div>
+</html>

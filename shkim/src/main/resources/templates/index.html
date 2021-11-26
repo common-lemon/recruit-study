@@ -7,7 +7,13 @@
       xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container">
 
-    <!--<h2>도서현황</h2>-->
+    <div th:if="${#authorization.expr('isAuthenticated()')}">
+        <h2 th:text="${#authentication.name}">Name</h2>
+        <a href="/logout" th:href="@{/logout}">Logout</a>
+    </div>
+    <div th:unless="${#authorization.expr('isAuthenticated()')}">
+        <a href="/login" th:href="@{/login}">Login</a>
+    </div>
 
     <div id="app">
         <!--search-->
@@ -34,7 +40,7 @@
 
         <!--list-->
         <ul v-if="items.length > 0">
-            <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book" v-on:click="detailBook($event)">
+            <li v-for="(book, index) in paginatedData" v-bind:key="book.id" v-bind:id="book.id" class="book" v-on:click="detailBook(book.id)">
                 <span class="no">{{ pageNum*pageSize+index+1 }}</span>
                 <div>
                     <strong>{{ book.title }}</strong>
@@ -192,10 +198,10 @@
                     console.log(event.target.id);
                     this.pageNum = parseInt(event.target.id);
                 },
-                detailBook : function (event) {
+                detailBook : function (id) {
 /*
                       const xhr = new XMLHttpRequest();
-                      xhr.open('GET', '/book/'+event.currentTarget.id);
+                      xhr.open('GET', '/book/'+ id);
                       xhr.send();
                       xhr.onload = () => {
                         if(xhr.status === 200) {
@@ -206,7 +212,7 @@
                         }
                       }
 */
-                    location.replace('/book/'+event.currentTarget.id);
+                    location.replace('/book/'+ id);
                 },
                 getBookListByAsyncAwait : async function () {
                     const response = await axios.get('http://localhost:8080/rest/book/list');

@@ -7,9 +7,9 @@
     <meta charset="UTF-8"/>
     <title>레몬헬스케어 도서현황</title>
     <link rel="stylesheet" media="screen and (min-width:1024px)" href="../../css/style_pc.css">
-    <link rel="stylesheet" media="screen and (min-width:768px) and (max-width:1023px)"
-          href="../../css/style_tablet.css">
-    <link rel="stylesheet" media="screen and (min-width:320px) and (max-width:767px)" href="../../css/style_mobile.css">
+    <!--<link rel="stylesheet" media="screen and (min-width:768px) and (max-width:1023px)"
+          href="../../css/style_tablet.css">-->
+    <link rel="stylesheet" media="screen and (min-width:320px) and (max-width:1023px)" href="../../css/style_mobile.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- config fragment 사용 -->
@@ -21,67 +21,19 @@
     <div id="headerBox">
     <nav>
         <ul class="menu">
-            <li class="menu--item"><a href="/"><img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage"></a></li>
-            <li class="menu--item"><a href="/"><img th:src="@{/images/home.png}" title="" alt="" th:width="20px" id="homeImage"></a></li>
-            <li class="menu--item"><a href="/book/insert"><img th:src="@{/images/add.png}" title="" alt="" th:width="20px" id="addImage"></a></li>
+            <li class="menu--item" id="mi1"><a href="/"><img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage"></a></li>
+            <li class="menu--item" id="mi2"><a href="/"><img th:src="@{/images/home.png}" title="" alt="" th:width="20px" id="homeImage"></a></li>
+            <li class="menu--item" id="mi3"><a href="/book/insert"><img th:src="@{/images/add.png}" title="" alt="" th:width="20px" id="addImage"></a></li>
         </ul>
     </nav>
     </div>
 </header>
+<div id="tb"></div>
 <th:block layout:fragment="content"></th:block>
-<div id="box"></div>
+<div id="db"></div>
 <!--<footer id="footer">
     <div>
         footer
     </div>
 </footer>-->
 </body>
-
-<script>
-/*    let header = new Vue({
-        el: '#header',
-        data(){
-            return {
-                menus : ['Home', 'Products', 'About', 'QnA']
-            }
-        }
-    })*/
-</script>
-
-<style>
-    .menu {
-        display : flex;
-        background-color: #ffca08;
-        border-radius: 5px;
-        list-style: none;
-        justify-content: space-around;
-        padding : 10px;
-        margin: 0px;
-    }
-    .menu--item {
-        padding : 10px;
-    }
-    .menu--item a {
-        user-select: none;
-        cursor: pointer;
-        color : white;
-    }
-    #header {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-    }
-    #headerBox {
-        height: 61.6px;
-    }
-    #box {
-        margin-bottom: 80px;
-    }
-/*    #footer {
-        margin-top: 30px;
-        margin-bottom: 61.6px;
-        text-align: center;
-        background-color: #a5cb4e;
-        padding: 50px;
-    }*/
-</style>

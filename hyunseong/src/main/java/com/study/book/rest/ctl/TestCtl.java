@@ -9,7 +9,7 @@ public class TestCtl {
 
     @RequestMapping("/")
     public String index() {
-        return "index2";
+        return "index";
     }
 
     @RequestMapping("/book/insert")
