@@ -4,21 +4,25 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
-      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container">
 
     <div th:if="${#authorization.expr('isAuthenticated()')}">
-        <h2 th:text="${#authentication.name}">Name</h2>
-        <a href="/logout" th:href="@{/logout}">Logout</a>
+        <span th:text="${#authentication.name}">Name</span>
+        <a href="/logout" th:href="@{/logout}">로그아웃</a>
     </div>
     <div th:unless="${#authorization.expr('isAuthenticated()')}">
-        <a href="/login" th:href="@{/login}">Login</a>
+        <a href="/login" th:href="@{/login}">로그인</a>
+        <a href="/signup" th:href="@{/signup}">회원가입</a>
+    </div>
+    <div sec:authorize="hasRole('ADMIN')">
+        <a href="/admin" th:href="@{/admin}">관리자페이지</a>
     </div>
 
     <div id="app">
         <!--search-->
         <div class="search">
-            <input v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
+            <input type="text" v-model.trim="searchText" ref="search" placeholder="검색어를 입력하세요"
                    v-on:keyup.enter="onClickSearchBtn">
             <button v-on:click="onClickSearchBtn">
                 <i class="fas fa-search"></i>
@@ -62,11 +66,11 @@
             </button>
             <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
             <div v-on:click="goPage($event)" class="pageNo">
-                    <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
-                          v-bind:id="startPage+no-2"
-                          v-bind:class="{ active : pageNum === startPage+no-2 }">
-                        {{ startPage+no-1 }}
-                    </span>
+                <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
+                      v-bind:id="startPage+no-2"
+                      v-bind:class="{ active : pageNum === startPage+no-2 }">
+                    {{ startPage+no-1 }}
+                </span>
             </div>
             <button v-bind:disabled="pageNum >= pageCount - 1" v-on:click="nextPage">
                 <i class="fas fa-chevron-right"></i>
