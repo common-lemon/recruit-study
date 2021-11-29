@@ -159,8 +159,9 @@
                     })
                 },
                 OrderReverce: function (e) {
-                    this.page = 1;
                     this.viewList = this.searchList.reverse();
+                    this.page = 1;
+                    this.getBooks();
                     /*this.paging();*/
                     if (e.target.value === "등록순") {
                         e.target.value = "최신순"
@@ -169,7 +170,6 @@
                     }
                 },
                 searchBook: function () {
-                    this.page = 1;
                     let filteredList = this.bookList.filter(item =>
                         item.title.includes(this.search) || item.deptName.includes(this.search));
                     if (filteredList) {
@@ -177,6 +177,8 @@
                         this.viewList = filteredList;
                         this.total = this.searchList.length;
                     }
+                    this.page = 1;
+                    this.getBooks();
                     /*this.paging();*/
                 },
                 sortTitle: function () {
@@ -206,11 +208,12 @@
                     this.deptNameList = deduplication;
                 },
                 changeDept: function (e) {
-                    this.limit = 10;
                     const selectedList = this.bookList.filter(item => item.deptName.includes(e.target.value));
                     this.searchList = selectedList;
-                    this.viewList = selectedList;
                     this.total = this.searchList.length;
+                    this.page = 1;
+                    this.limit = 10;
+                    this.getBooks();
                     this.search = '';
                     /*this.paging();*/
                 },

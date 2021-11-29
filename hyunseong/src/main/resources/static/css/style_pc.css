@@ -1,5 +1,8 @@
+html {
+    scroll-behavior: smooth;
+}
 td, th {
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #ccc;
 }
 table {
@@ -24,26 +27,41 @@ body {
 
 #topBox {
     text-align: center;
-    padding-top: 15px;
+    padding-top: 10px;
 }
 #leftImage {
     float: left;
     text-align: left;
-    min-width: 30%;
-    max-width: 30%;
+    min-width: 35%;
+    max-width: 35%;
     margin-left: 10px;
 }
-#rightInput {
+.rightLogin {
     text-align: right;
     float: right;
     display: inline-block;
-    min-width: 62%;
-    max-width: 62%;
+    min-width: 55%;
+    max-width: 55%;
     margin-right: 10px;
 }
 #lemonLogo {
-    width: 100px;
+    width: 80px;
     vertical-align: bottom;
+}
+.userButton {
+    border: 1px solid #fdfdfd;
+    background-color: #012921;
+    color: #fdfdfd;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#searchBox {
+    width: 100%;
+    margin: auto;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    padding: 10px 0px;
 }
 #searchBookInput {
     width: 67%;
@@ -62,7 +80,7 @@ body {
     background-color: #012921;
 }
 #voidBox {
-    height: 0.5em;
+    height: 0.7em;
 }
 #middleBox {
     height: 40px;
@@ -194,7 +212,7 @@ form table td{
 }
 .formBox {
     background-color: #fdfdfd;
-    width: 30%;
+    width: 40%;
     margin: 10px auto 50px auto;
     border-radius: 20px;
     border: 0px;
@@ -203,14 +221,17 @@ form table td{
 }
 .formTable {
     padding-right: 10px;
-    width: 30%;
     margin: auto;
+    width: 30%;
 }
 .tdTitle {
     text-align: center;
 }
 .redText {
-    color: red;
+    color: rgba(255, 0, 0, 0.65);
+}
+#totalCount {
+    text-align: left;
 }
 .btnBox {
     text-align: center;
@@ -227,15 +248,15 @@ form table td{
 
 
 
- .menu {
-     display : flex;
-     background-color: #d8b274;
-     border-radius: 5px;
-     list-style: none;
-     justify-content: space-around;
-     padding : 10px;
-     margin: 0px;
- }
+.menu {
+    display : flex;
+    background-color: #d8b274;
+    border-radius: 5px;
+    list-style: none;
+    justify-content: space-around;
+    padding : 10px;
+    margin: 0px;
+}
 .menu--item {
     padding : 10px;
 }
@@ -246,20 +267,28 @@ form table td{
 }
 #header {
     position: fixed;
-    top: 0;
+    bottom: 0;
     width: 100%;
 }
 #headerBox {
     height: 61.6px;
 }
-#tb {
-    margin-bottom: 65px;
+#db {
+    margin-bottom: 80px;
 }
 
-/*    #footer {
-        margin-top: 30px;
-        margin-bottom: 61.6px;
-        text-align: center;
-        background-color: #a5cb4e;
-        padding: 50px;
-    }*/
+.selectBox {
+    width: 100%;
+}
+
+.button-bottom {
+    width: 30px;
+    height: 30px;
+    position: fixed;
+    right: 8vw;
+    bottom: 16vh;
+    border-radius: 50%;
+    background-color: #d8b274;
+    border: 1px solid #012921;
+    color: #012921;
+}

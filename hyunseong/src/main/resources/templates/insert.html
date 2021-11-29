@@ -87,7 +87,7 @@
                     if (this.bookPrice < 0 || this.bookPrice > 100000) {
                         alert("100,000원 이하로 작성해주세요.")
                     } else {
-                        const url = "http://localhost:8080/rest/book/save";
+                        const url = "/rest/book/save";
                         const data = {
                             deptName: this.deptName,
                             registerNm: this.registerNm,

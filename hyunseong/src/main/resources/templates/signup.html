@@ -53,13 +53,15 @@
             },
             methods: {
                 getBookListByAsyncAwait: async function () {
-                    const response = await axios.get('http://localhost:8080/rest/book/list');
+                    const response = await axios.get('/rest/book/list');
                     this.bookList = response.data.bookList;
                     for (let i in this.bookList) {
                         this.deptNameList.push(this.bookList[i].deptName);
                     }
                     const deduplication = new Set(this.deptNameList);
                     this.deptNameList = deduplication;
+                    document.getElementById("hDeptname").value = this.bookList[0].deptName;
+                    document.getElementById("hRole").value = this.roleList[0];
                 },
                 back: function () {
                     location.href = "/";
