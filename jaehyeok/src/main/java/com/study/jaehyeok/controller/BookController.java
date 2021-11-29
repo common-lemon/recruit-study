@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -47,10 +46,9 @@ public class BookController {
     @PutMapping("/api/book")
     public ResponseEntity<ResBook> bookUpdate(@RequestBody ReqBook reqbook){
         ResBook resBook = bookService.update(reqbook);
-
         return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
-
+    //book 삭제
     @DeleteMapping("/api/book/{id}")
     public ResponseEntity<ResBook> deleteBook (@PathVariable long id){
         ResBook resBook = bookService.delete(id);
@@ -63,17 +61,4 @@ public class BookController {
         private T data;
     }
 
-    @Data
-    static class UpdateBookResponse {
-        private Long id;
-        public UpdateBookResponse(Long id){
-            this.id = id;
-        }
-    }
-    @Data
-
-    static class DeleteBookResponse {
-        private Long id;
-        public DeleteBookResponse(Long id){ this.id = id; }
-    }
 }
