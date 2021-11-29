@@ -35,6 +35,11 @@ public class SampleController {
         return "index";
     }
 
+    @GetMapping("/test")
+    public String test(Model model, Principal principal) {
+        return "test";
+    }
+
     @GetMapping("/book/insert")
     public String bookInsert(Model model, Principal principal) {
         AccountContext.setAccount(accountRepository.findByUsername(principal.getName()));

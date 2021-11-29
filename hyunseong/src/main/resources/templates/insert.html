@@ -73,7 +73,7 @@
                     count: 1,
                     regRsn: '',
                     totalCount: 0,
-                    errors: []
+                    errors: [],
                 }
             },
             methods: {
@@ -83,7 +83,6 @@
                     this.registerNm = hErum;
                     this.deptName = hDeptname;
                 },
-
                 submitForm: function () {
                     if (this.bookPrice < 0 || this.bookPrice > 100000) {
                         alert("100,000원 이하로 작성해주세요.")
