@@ -5,7 +5,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
       xmlns:v-bind="http://www.w3.org/1999/xhtml">
-    <div layout:fragment="content" class="container">
+    <div layout:fragment="content" class="container" autocomplete="off">
         <h1>Login</h1>
         <div th:if="${param.error}">
             Invalid username or password.
