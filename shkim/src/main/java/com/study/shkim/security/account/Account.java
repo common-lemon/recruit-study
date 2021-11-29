@@ -24,8 +24,9 @@ public class Account {
 
     private String role;
 
-    @Column(name="deptName")
     private String deptName;
+
+    private String registerNm;
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);

@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    font-family: "Noto Sans KR", sans-serif;
 }
 
 header {
@@ -19,29 +20,48 @@ ul {
 
 input
 ,textarea
-,select{
+,select
+,textarea::placeholder {
     outline: none;
+    font-size: 14px;
+}
+
+.search input {
+    font-size: 16px;
 }
 
 .search
-,[name=regForm] p
+,p
 {
     margin: 10px 0;
     border-bottom: 1px solid black;
 }
 
-.search input
-,[name=regForm] input
-,[name=regForm] textarea
+.none {
+    border-bottom : none;
+}
+
+input
+,textarea
 {
     background-color: white;
     border: none;
-    width: 88%;
+    width: 100%;
     display: inline-block;
     padding: 8px;
-    font-size: 16px;
 }
 
+input[type=text]
+,textarea
+{
+    width: 88%;
+}
+
+input[type=checkbox]
+{
+    width: auto;
+    display: inline;
+}
 .search button
 ,.paging button {
     background: white;
@@ -130,21 +150,16 @@ p input:focus + label::after,
 p input:valid + label::after { width:100%; transform:translateX(0); }*/
 
 
-[name=regForm] p label {
+p label {
     font-size: 12px;
     color: gray;
     padding-bottom : 5px;
 }
 
-[name=regForm] p {
+p {
     margin: 0 0 20px 0;
 }
 
-[name=regForm] input
-,[name=regForm] textarea
-,[name=regForm] textarea::placeholder{
-    font-size: 14px;
-}
 
 #btnArea {
     display: flex;
@@ -159,7 +174,7 @@ p input:valid + label::after { width:100%; transform:translateX(0); }*/
 }
 
 #btnArea a
-,#btnArea input[type=submit]
+,input[type=submit]
 ,.goFormBtn {
     border: none;
     color: white;
@@ -175,7 +190,7 @@ p input:valid + label::after { width:100%; transform:translateX(0); }*/
     width: 100px;
 }
 
-#btnArea input[type=submit]
+input[type=submit]
 ,.goFormBtn {
     background-color: #42b983;
 }
@@ -189,12 +204,20 @@ p input:valid + label::after { width:100%; transform:translateX(0); }*/
 
 #deleteBtn {
     display: block;
+    width: auto;
 }
 
 textarea {
     overflow: hidden;
     overflow-wrap: break-word;
-    height: 19px;
+    height: 16px;
+}
+
+.signup select {
+    display: block;
+    width: 95%;
+    border: none;
+    padding: 8px;
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */

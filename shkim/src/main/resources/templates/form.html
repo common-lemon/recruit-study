@@ -4,7 +4,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
-      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <div layout:fragment="content" class="container">
 
         <div id="app">
@@ -33,8 +33,18 @@
 
                 <p>
                     <label>* 도서 금액</label>
-                    <input id="form.bookPrice" v-model="form.bookPrice" type="number" ref="bookPrice" min="0" max="100000"
+                    <input id="form.bookPrice" v-model.number="form.bookPrice" type="number" ref="bookPrice" min="0" max="100000"
                            placeholder="도서 금액을 입력하세요">
+                </p>
+
+                <p>
+                    <label>권수</label>
+                    <input id="form.count" v-model.number="form.count" type="number" placeholder="권수를 입력하세요">
+                </p>
+
+                <p>
+                    <label>도서 합계</label>
+                    {{ sum }}
                 </p>
 
                 <p>
@@ -42,11 +52,18 @@
                     <textarea id="form.regRsn" v-model="form.regRsn" type="text" placeholder="신청 사유를 입력하세요"></textarea>
                 </p>
 
+                <div sec:authorize="hasRole('ADMIN')">
+                    <p>
+                        <label>도서 번호</label>
+                        <input id="form.bookNo" v-model="form.bookNo" type="text" placeholder="도서 번호를 입력하세요">
+                    </p>
+                </div>
+
                 <div id="btnArea">
                     <a th:href="@{/book/list}">목록</a>
                     <input type="submit" v-model="submitBtn">
                 </div>
-                <button type="button" id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
+                <input type="button" id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook" value="삭제">
             </form>
 
             <div id="snackbar"></div>
@@ -69,12 +86,16 @@
                         title : null,
                         publisher : null,
                         bookPrice : null,
-                        regRsn : null
+                        regRsn : null,
+                        bookNo : null,
+                        count : null
                     },
                     submitBtn : ""
                 },
                 computed: {
-
+                    sum : function () {
+                        return this.form.bookPrice * this.form.bookNo;
+                    }
                 },
                 watch: {
 
@@ -170,7 +191,6 @@
                         }
                     },
                     deleteBook : function () {
-
                         if(!confirm("삭제 하시겠습니까?")) { return; }
 
                         console.log(this.form.id);
