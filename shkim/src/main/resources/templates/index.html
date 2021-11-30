@@ -7,25 +7,28 @@
       xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container">
 
-    <div th:if="${#authorization.expr('isAuthenticated()')}">
-        <span th:text="${#authentication.name}">Name</span>
-        <a href="/logout" th:href="@{/logout}">로그아웃</a>
-    </div>
-    <div th:unless="${#authorization.expr('isAuthenticated()')}">
-        <a href="/login" th:href="@{/login}">로그인</a>
-        <a href="/signup" th:href="@{/signup}">회원가입</a>
-    </div>
-    <div sec:authorize="hasRole('ADMIN')">
-        <a href="/admin" th:href="@{/admin}">관리자페이지</a>
+    <!-- 로그인 -->
+    <div class="loginArea">
+        <div th:if="${#authorization.expr('isAuthenticated()')}">
+            <span th:text="${#authentication.name}">Name</span>
+            <a href="/logout" th:href="@{/logout}">로그아웃</a>
+        </div>
+        <div th:unless="${#authorization.expr('isAuthenticated()')}">
+            <a href="/login" th:href="@{/login}">로그인</a>
+            <a href="/signup" th:href="@{/signup}">회원가입</a>
+        </div>
+<!--        <div sec:authorize="hasRole('ADMIN')">
+            <a href="/admin" th:href="@{/admin}">관리자페이지</a>
+        </div>-->
     </div>
 
     <div id="app">
         <!--search-->
         <div class="search">
             <input type="text" v-model.trim="searchText" ref="search"
-                   v-on:keyup.enter="onClickSearchBtn"
+                   v-on:keyup.enter="onClickSearch"
                    placeholder="검색어를 입력하세요">
-            <button v-on:click="onClickSearchBtn">
+            <button v-on:click="onClickSearch">
                 <i class="fas fa-search"></i>
             </button>
         </div>
@@ -80,7 +83,7 @@
             </button>
         </div>
 
-        <a th:href="@{/book/save}" class="goFormBtn">등록</a>
+        <a th:href="@{/book/save}" class="goFormBtn">신청하기</a>
     </div>
 
     <script th:inline="javascript">
@@ -95,7 +98,7 @@
                 items : [],
                 selected : "",
                 pageNum : 0,
-                pageSize : 10
+                pageSize : 7
             },
             computed: {
                 pageCount : function () {
@@ -124,17 +127,8 @@
                     return page;
                 }
             },
-            watch: {
-
-            },
-            beforeCreate: function () {
-                // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
-            },
             created: function () {
                 // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
-                //this.getBookListByAsyncAwait();
-                //this.listBook();
-
                 if( booksObj != null ){
                     console.log(booksObj.bookList);
                     this.bookList = booksObj.bookList;
@@ -142,15 +136,8 @@
                     this.items.sort((a, b) => b.id - a.id);
                 }
             },
-            beforeMount: function() {
-                // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
-            },
-            mounted: function () {
-                // $el 을 사용할 수 있습니다.
-                // 모든 화면이 렌더링된 후 호출됩니다.
-            },
             methods: {
-                onClickSearchBtn : function () {
+                onClickSearch : function () {
                     console.log("검색값 : " + this.searchText);
                     let result = [];
                     const regExp = new RegExp(this.searchText, "i");

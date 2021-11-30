@@ -11,39 +11,37 @@
             <form name="regForm" @submit.prevent="checkForm" autocomplete="off">
                 <div class="deptNameAndregisterNmArea">
                     <p>
-                        <label>신청 부서</label>
+                        <label for="form.deptName">신청 부서</label>
                         <input id="form.deptName" v-model="form.deptName" type="text" readonly>
                     </p>
 
                     <p>
-                        <label>신청자 이름</label>
+                        <label for="form.registerNm">신청자 이름</label>
                         <input id="form.registerNm" v-model="form.registerNm" type="text" readonly>
                     </p>
                 </div>
 
                 <p>
-                    <label for="form.title"><span>* 도서 이름</span></label>
+                    <label for="form.title">* 도서 이름</label>
                     <textarea id="form.title"
                               v-bind:value="form.title"
-                              v-on:input="form.title = $event.target.value"
-                              v-bind:style="inputStyle"
-                              v-on:keydown="resize"
+                              v-on:input="[form.title = $event.target.value, resize($event)]"
                               type="text" ref="title" maxlength="150"
                               placeholder="도서 이름을 입력하세요"></textarea>
                 </p>
 
                 <p>
-                    <label>* 출판사</label>
+                    <label for="form.publisher">* 출판사</label>
                     <textarea id="form.publisher"
                               v-bind:value="form.publisher"
-                              v-on:input="form.publisher = $event.target.value"
+                              v-on:input="[form.publisher = $event.target.value, resize($event)]"
                               type="text" ref="publisher" maxlength="25"
                               placeholder="출판사를 입력하세요"></textarea>
                 </p>
 
                 <div class="bookPriceAndCountArea">
                     <p>
-                        <label>* 도서 금액</label>
+                        <label for="form.bookPrice">* 도서 금액</label>
                         <input id="form.bookPrice"
                                v-bind:value="form.bookPrice"
                                v-on:input="form.bookPrice = $event.target.value"
@@ -52,7 +50,7 @@
                     </p>
 
                     <p>
-                        <label>권수</label>
+                        <label for="form.count">권수</label>
                         <input id="form.count" v-model.number="form.count" type="number" placeholder="권수">
                     </p>
 
@@ -63,19 +61,21 @@
                 </div>
 
                 <p>
-                    <label>신청 사유</label>
+                    <label for="form.regRsn">신청 사유</label>
                     <textarea id="form.regRsn" v-bind:value="form.regRsn"
-                              v-on:input="form.regRsn = $event.target.value"
+                              v-on:input="[form.regRsn = $event.target.value, resize($event)]"
                               type="text" placeholder="신청 사유를 입력하세요"></textarea>
                 </p>
 
                 <p>
-                    <label>도서 번호</label>
-                    <input id="form.bookNo" v-model="form.bookNo" type="text" placeholder="도서 번호를 입력하세요">
+                    <label for="form.bookNo">도서 번호</label>
+                    <input id="form.bookNo" v-bind:value="form.bookNo"
+                           v-on:input="[form.bookNo = $event.target.value, resize($event)]"
+                           type="text" placeholder="도서 번호를 입력하세요">
                 </p>
 
                 <div id="btnArea">
-                    <div v-if="meFlag" class="btnSubArea">
+                    <div v-if="isMe" class="btnSubArea">
                         <input type="button" v-if="submitBtn === '수정'" @click="deleteBook" value="삭제" class="deleteBtn">
                         <input type="submit" v-model="submitBtn">
                     </div>
@@ -111,7 +111,7 @@
                         count : null
                     },
                     submitBtn : "신청",
-                    meFlag : false,
+                    isMe : false,
                     inputHeight : '16'
                 },
                 computed: {
@@ -119,9 +119,6 @@
                         const bookPrice = this.form.bookPrice;
                         const count = this.form.count;
                         return !(bookPrice && count) ? 0 : bookPrice*count;
-                    },
-                    inputStyle : function () {
-                        return {'height': this.inputHeight }
                     }
                 },
                 filters: {
@@ -140,12 +137,12 @@
                         this.submitBtn = "수정";
                     }
 
-                    if(login.registerNm === this.form.registerNm && login.deptName === this.form.deptName) {
-                        this.meFlag = true;
-                    }
+                    login.role === "ADMIN" || (login.registerNm === this.form.registerNm
+                            && login.deptName === this.form.deptName) ? this.isMe = true : '';
+
                 },
                 mounted () {
-
+                    this.resizeAll();
                 },
                 methods: {
                     checkForm : function (e) {
@@ -173,7 +170,7 @@
                         (cnt === 0) && this.saveBook();
                     },
                     saveBook : function () {
-                        let msg = this.form.id == null ? "등록" : "수정";
+                        let msg = this.form.id == null ? "신청" : "수정";
                         if(!confirm(`${msg} 하시겠습니까?`)) { return; }
                         console.log(this.form)
 
@@ -197,9 +194,16 @@
                             console.log(error);
                         });
                     },
-                    resize : function (e) {
-                        console.log(e.target.scrollHeight-18);
-                        this.inputHeight = `${e.target.scrollHeight-18}px`
+                    resize : function (event) {
+                        const id = document.getElementById(event.target.id);
+                        console.log(id);
+                        id.style.height = `${event.target.scrollHeight-18}px`
+                    },
+                    resizeAll : function() {
+                        let tar = document.getElementsByTagName('textarea');
+                        for(const item of tar) {
+                            item.style.height = `${item.scrollHeight-18}px`;
+                        }
                     }
                 }
             });
