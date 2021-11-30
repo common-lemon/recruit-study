@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.authorizeRequests()
-                .mvcMatchers("/", "/info", "/account/**", "/signup", "/h2-console/**",
+                .mvcMatchers("/", "/info", "/account/**", "/signup", "/h2-console/**", "/rest/book/findOne",
                         "/rest/book/list", "/rest/book/save", "/rest/book/delete", "/rest/book/detail").permitAll()
                 .mvcMatchers("/admin").hasRole("ADMIN")
                 .mvcMatchers("/user").hasRole("USER")

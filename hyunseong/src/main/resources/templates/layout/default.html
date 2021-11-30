@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lagn="ko"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:v-on="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8"/>
@@ -22,7 +22,7 @@
     <nav>
         <ul class="menu">
             <li class="menu--item" id="mi1" th:if="${#authorization.expr('isAuthenticated()')}">
-                <a href="/" th:href="@{/}"><img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage"></a></li>
+               <img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage" v-on:click="mypage"></li>
             <li class="menu--item" id="mi1" th:unless="${#authorization.expr('isAuthenticated()')}">
                 <a href="/login" th:href="@{/login}"><img th:src="@{/images/user.png}" title="" alt="" th:width="20px" id="userImage"></a></li>
             <li class="menu--item" id="mi2"><a href="/"><img th:src="@{/images/home.png}" title="" alt="" th:width="20px" id="homeImage"></a></li>
@@ -40,3 +40,13 @@
     </div>
 </footer>-->
 </body>
+<script>
+    let headerBox = new Vue({
+        el: '#headerBox',
+        methods: {
+            mypage: function () {
+                location.href = "/user/mypage";
+            },
+        }
+    })
+</script>

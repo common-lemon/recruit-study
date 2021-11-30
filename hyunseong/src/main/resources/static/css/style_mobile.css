@@ -204,7 +204,8 @@ body {
 
 
 .titleBox {
-    width: 60%;
+    vertical-align: middle;
+    width: 80%;
     margin: 30px auto 10px auto;
     border-radius: 20px;
     border: 0px;
@@ -212,6 +213,9 @@ body {
     text-align: center;
     color: #a46546;
     font-weight: bold;
+}
+.bookInfoTitle {
+    margin-bottom: 10px;
 }
 form table td{
     border: 0px ;
@@ -251,6 +255,15 @@ form table td{
     border-radius: 5px;
     cursor: pointer;
 }
+.formCBtn {
+    border: 1px solid #f5f1e5;
+    background-color: #a46546;
+    color: #f5f1e5;
+    padding: 4px 10px 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+}
 
 
 
@@ -269,7 +282,10 @@ form table td{
 .menu--item a {
     user-select: none;
     cursor: pointer;
-    color : white;
+}
+.menu--item img {
+    user-select: none;
+    cursor: pointer;
 }
 #header {
     position: fixed;

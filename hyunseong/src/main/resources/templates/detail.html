@@ -8,6 +8,7 @@
         <div class="titleBox">
             도서정보
         </div>
+        <div class="clearBox"></div>
         <div class="formBox">
             <form v-on:submit.prevent="submitForm" method="post">
                 <table class="formTable">
@@ -36,22 +37,22 @@
                     <tr>
                         <td class="tdTitle"><label for="count"><span class="redText">*</span>신청 권수</label></td>
                         <td><input type="texta" id="count" v-model="count"
-                                   required pattern="^[0-9]+$" title="숫자만 입력 가능합니다." disabled></td>
+                                   required pattern="^[0-9]+$" title="숫자만 입력 가능합니다."></td>
                     </tr>
                     <tr>
                         <td class="tdTitle"><label for="regRsn">신청 사유</label></td>
                         <td><textarea id="regRsn" v-model="regRsn" cols="" rows="6" disabled></textarea></td>
                     </tr>
                 </table>
-                <div v-if="role === 'admin'" class="btnBox">
+                <div v-if="role === 'admin' || registerNm === userErum" class="btnBox">
                     <input class="formBtn" type="button" value="뒤로가기" v-on:click="back"/>
                     <input class="formBtn" type="button" value="삭제하기" v-on:click="deleteBook"/>
-                    <input class="formBtn" type="submit" value="도서수정">
-                </div>
-                <div v-else>
-                    <input class="formBtn" type="button" value="뒤로가기" v-on:click="back"/>
+                    <input class="formBtn" type="submit" value="도서수정"><br>
+                    <input v-if="role === 'admin' && isBook === 'N'" class="formCBtn" type="button" value="신청완료"
+                           v-on:click="completed"/>
                 </div>
                 <input id="hiddenRole" type="hidden" th:value="${role}">
+                <input id="hiddenErum" type="hidden" th:value="${erum}">
             </form>
         </div>
     </div>
@@ -74,17 +75,20 @@
                     count: '1',
                     regRsn: '',
                     isBook: '',
-                    role: 'user'
+                    role: 'user',
+                    userErum: ''
                 }
             },
             methods: {
                 autoAdd: function () {
                     const hRole = document.getElementById("hiddenRole").value;
+                    const hErum = document.getElementById("hiddenErum").value;
                     this.role = hRole;
+                    this.userErum = hErum;
                 },
                 getBookListByAsyncAwait: async function () {
                     let detailNum = document.location.href;
-                    detailNum = detailNum.substring(detailNum.lastIndexOf("detail/")+7);
+                    detailNum = detailNum.substring(detailNum.lastIndexOf("detail/") + 7);
                     this.id = detailNum;
                     const response = await axios.get('/rest/book/detail?id=' + this.id);
                     this.book = response.data.bookEntity;
@@ -99,6 +103,57 @@
                     this.isBook = this.book.isBook;
                 },
                 submitForm: function () {
+                    const result = confirm("정말로 도서 정보를 수정하시겠습니까?");
+                    if (result) {
+                        const url = "/rest/book/save";
+                        const data = {
+                            id: this.id,
+                            bookNo: this.bookNo,
+                            bookPrice: this.bookPrice,
+                            count: this.count,
+                            deptName: this.deptName,
+                            publisher: this.publisher,
+                            regRsn: this.regRsn,
+                            registerNm: this.registerNm,
+                            title: this.title,
+                            regRsn: this.book.regRsn,
+                            isBook: this.isBook
+                        }
+                        axios.post(url, data)
+                            .then(function (response) {
+                                console.log(response);
+                                alert('도서 수정이 완료되었습니다.');
+                                location.href = "/";
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    } else {
+                        alert('수정이 취소되었습니다.')
+                    }
+                },
+                back: function () {
+                    location.href = "/";
+                },
+                deleteBook: function () {
+                    const result = confirm("정말로 도서를 삭제하시겠습니까?");
+                    if (result) {
+                        const url = "/rest/book/delete?id=" + this.id;
+                        console.log(url)
+                        axios.get(url)
+                            .then(function (response) {
+                                console.log(response);
+                                alert('도서 삭제가 완료되었습니다.');
+                                location.href = "/";
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    } else {
+                        alert('삭제가 취소되었습니다.')
+                    }
+                },
+                completed: function () {
                     const url = "/rest/book/save";
                     const data = {
                         id: this.id,
@@ -111,28 +166,12 @@
                         registerNm: this.registerNm,
                         title: this.title,
                         regRsn: this.book.regRsn,
-                        isBook: this.isBook
+                        isBook: 'Y'
                     }
                     axios.post(url, data)
                         .then(function (response) {
                             console.log(response);
-                            alert('도서 수정이 완료되었습니다.');
-                            location.href = "/";
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        })
-                },
-                back: function () {
-                    location.href = "/";
-                },
-                deleteBook: function () {
-                    const url = "/rest/book/delete?id=" + this.id;
-                    console.log(url)
-                    axios.get(url)
-                        .then(function (response) {
-                            console.log(response);
-                            alert('도서 삭제가 완료되었습니다.');
+                            alert('신청완료 처리하였습니다.');
                             location.href = "/";
                         })
                         .catch(function (error) {
