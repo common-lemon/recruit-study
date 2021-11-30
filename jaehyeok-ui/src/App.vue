@@ -21,9 +21,9 @@ export default {
         if (storage.getItem('token') === null){
             this.$router.push('/login');
         }else if (storage.getItem('token') !== null || storage.getItem('token') !== ""){
-            this.$store.dispatch('member/reflashToken',{
+            this.$store.dispatch('member/refreshToken',{
                 token: storage.getItem('token'),
-                authentication: storage.getItem('authentication'),
+                authentication: JSON.parse(storage.getItem('authentication')),
             })
 
         }

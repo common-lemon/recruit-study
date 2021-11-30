@@ -1,5 +1,6 @@
 package com.study.jaehyeok.dto;
 
+import com.study.jaehyeok.domain.BookStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +23,5 @@ public class ReqBook {
     private String regRsn;
     private int count;
     private Date date;
+    private BookStatus status;
 }

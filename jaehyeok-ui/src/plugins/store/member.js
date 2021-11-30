@@ -22,17 +22,18 @@ export default {
         async login({commit},payload){
             console.log( payload.data.data);
             storage.setItem('token' ,payload.data.data.token);
-            storage.setItem('authentication' ,payload.data.data.authentication);
+            storage.setItem('authentication' ,JSON.stringify(payload.data.data.authentication));
             commit('updateState', {
                 userName: payload.data.data.authentication.userName,
                 authority: payload.data.data.authentication.authority,
                 token: payload.data.data.token,
             })
         },
-        reflashToken({commit},payload){
+        refreshToken({commit},payload){
             commit('updateState', {
                 token: payload.token,
-                authentication: payload.authentication
+                authority: payload.authentication.authority,
+                userName:payload.authentication.userName
             })
         }
     }

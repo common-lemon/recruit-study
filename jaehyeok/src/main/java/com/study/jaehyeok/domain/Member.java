@@ -30,5 +30,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-
+    public void update(Member member) {
+        this.password = member.password;
+        this.name = member.name;
+        this.deptName = member.deptName;
+    }
 }

@@ -18,6 +18,7 @@
 
 <script>
 import axios from "axios";
+import {mapState} from 'vuex'
 export default {
     name: "Login",
     data: () => ({
@@ -26,6 +27,12 @@ export default {
         passwordFieldType : 'password',
         keyShow: 'SHOW'
     }),
+    computed:{
+        ...mapState('member',[
+            'token',
+            'authority',
+        ]),
+    },
     methods: {
         switchVisibility(){
             if (this.passwordFieldType === "password"){
@@ -48,7 +55,11 @@ export default {
                         await this.$store.dispatch('member/login', {
                             data: response
                         })
-                        await this.$router.push('/home');
+                        if (this.authority === "ROLE_ADMIN") {
+                            await this.$router.push('/applyList');
+                        }else{
+                            await this.$router.push('/home');
+                        }
                     } else {
                         await this.$alert("로그인에 실패했습니다.", "", "warning");
                     }

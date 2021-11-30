@@ -32,11 +32,15 @@ public class Book {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private Date date;
 
+    @Enumerated(EnumType.STRING)
+    private BookStatus status;
+
 
     public void update(Book book) {
         this.title = book.title;
         this.publisher = book.publisher;
         this.bookPrice = book.bookPrice;
         this.count = book.count;
+        this.status = book.status;
     }
 }

@@ -6,21 +6,47 @@
             direction="left"
             :opacity="0.5"
             :links=this.links
+            v-if="authority === 'ROLE_USER'"
         >
-
         </slider>
-
+        <slider
+            :width="300"
+            format="overlay"
+            direction="left"
+            :opacity="0.5"
+            :links=this.linksAdmin
+            v-if="authority === 'ROLE_ADMIN'"
+        >
+        </slider>
         <h2>Lemon library</h2>
-        <div class="authMenu">
+        <div class="login" v-if="!token">
             <RouterLink to="/login" class="login">
                 로그인
             </RouterLink>
         </div>
+        <div class="authMenu" v-else>
+            <RouterLink to="/myinfo" class="myPage">
+                MY페이지
+            </RouterLink>
+            <button class="logout" v-on:click="logout">
+                로그아웃
+            </button>
+        </div>
+<!--        <div class="authMenu" v-else-if="authority === 'ROLE_ADMIN'">
+            <RouterLink to="/adminpage" class="adminpage">
+                관리자페이지
+            </RouterLink>
+            <button class="logout" v-on:click="logout">
+                로그아웃
+            </button>
+        </div>-->
     </header>
 </template>
 
 <script>
 import Slider from '@jeremyhamm/vue-slider'
+import {mapState} from 'vuex'
+const storage = window.sessionStorage;
 export default {
     components:{
         'slider': Slider
@@ -31,12 +57,32 @@ export default {
                 {'id': 1, 'text': '도서 현황', 'url': '/home'},
                 {'id': 2, 'text': '도서 신청', 'url': '/bookapply'}
             ],
+            linksAdmin:[
+                {'id': 1, 'text': '도서 관리', 'url': '/applyList'}
+            ],
             closeOnClick: true
-
         }
     },
-    methods:{
+    computed:{
+        ...mapState('member',[
+            'token',
+            'authority',
+        ]),
+    },
+    async mounted() {
 
+
+    },
+    methods:{
+        logout(){
+            storage.removeItem("token");
+            storage.removeItem("authentication");
+            this.$store.dispatch('member/refreshToken',{
+                token: "",
+                authentication: "",
+            })
+            this.$router.push('/login');
+        }
     }
 }
 </script>
@@ -64,15 +110,29 @@ header{
         a {
             color: aliceblue;
             text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 14px;
+            font-family: 'Titillium Web';
+        }
+        button{
+            color: aliceblue;
+            font-size: 14px;
+            font-family: 'Titillium Web';
+        }
+    }
+    .login{
+        width: 30%;
+        text-align: right;
+        a {
+            color: aliceblue;
+            text-decoration: none;
+            font-size: 14px;
             font-family: 'Titillium Web';
         }
     }
     h2{
         color: aliceblue;
         font-family: 'Titillium Web';
-        width: 250px;
+        width: 200px;
     }
 }
 </style>

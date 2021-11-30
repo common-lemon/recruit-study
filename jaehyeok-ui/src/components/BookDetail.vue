@@ -37,6 +37,7 @@
 
                 </div>
             </div>
+
             <div class="form-group">
                 <label>신청사유</label>
                 <textarea id="regRsn"  class="form-control" v-model="theBook.regRsn" maxlength="255"  placeholder="내용을 입력하세요" />
@@ -67,6 +68,7 @@ export default {
             regRsn:'',
             id:'',
             count:'',
+            status:'',
             loading: false,
             img : image
         }
@@ -84,6 +86,7 @@ export default {
          let bookPrice = comma(this.theBook.bookPrice);
          this.bookPrice = bookPrice;
          this.count = this.theBook.count;
+         this.status = this.theBook.status;
          this.regRsn = this.theBook.regRsn;
          this.loading = false;
     },
@@ -119,16 +122,17 @@ export default {
                 publisher : this.publisher,
                 bookPrice : bookPrice,
                 count: this.count,
+                status: this.status,
                 regRsn : this.regRsn
             };
             if(this.title === ""){
-                alert("도서명을 입력해주세요.")
+                this.$alert("도서명을 입력해주세요.", "", "warning");
                 return false
             }else if(this.publisher === "") {
-                alert("출판사를 입력해주세요.")
+                this.$alert("출판사를 입력해주세요.", "", "warning");
                 return false
             }else if(this.bookPrice===""){
-                alert("도서 금액을 입력해주세요.");
+                this.$alert("도서 금액을 입력해주세요.", "", "warning");
                 return false
             }else {
                 axios

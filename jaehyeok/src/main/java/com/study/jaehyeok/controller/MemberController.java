@@ -1,6 +1,7 @@
 package com.study.jaehyeok.controller;
 
 import com.study.jaehyeok.domain.Member;
+import com.study.jaehyeok.dto.ReqMember;
 import com.study.jaehyeok.dto.TokenDto;
 import com.study.jaehyeok.dto.ResMember;
 import com.study.jaehyeok.jwt.Account;
@@ -44,6 +45,23 @@ public class MemberController {
         return new Result(findMember);
     }
 
+    //비밀번호 체크
+    @PostMapping(value = "/api/passwordcheck")
+    public boolean PasswordCheck(@RequestBody Member member){
+        String id = member.getUserName();
+        String password = member.getPassword();
+        Member findMember = memberService.findOne(id);
+
+        String encodedPassword = findMember.getPassword();
+        boolean result = false;
+        if(passwordEncoder.matches(password, encodedPassword)){
+            result = true;
+        }else if(!passwordEncoder.matches(password, encodedPassword )){
+            result = false;
+        }
+        return result;
+    }
+
     // 로그인
     @PostMapping(value = "/api/login")
     public ResponseEntity<TokenDto> login(@RequestBody Account account) {
@@ -58,6 +76,13 @@ public class MemberController {
         return new ResponseEntity<>(new TokenDto(jwt,authentication), httpHeaders ,HttpStatus.OK );
     }
 
+    @PutMapping(value = "/api/member")
+    public ResponseEntity<ResMember> UpdateMember(@RequestBody ReqMember reqMember){
+
+        ResMember resMember = memberService.update(reqMember);
+        System.err.println(resMember.getResMsg());
+        return new ResponseEntity<>(resMember, HttpStatus.OK);
+    }
 
 
     @Data
