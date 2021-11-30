@@ -6,23 +6,25 @@
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
       xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div layout:fragment="content" class="container">
-        <h1>Login</h1>
-        <div th:if="${param.error}">
-            Invalid username or password.
-        </div>
-        <form action="/login" method="post" th:action="@{/login}">
+        <h2>로그인</h2>
+        <form action="/login" method="post" th:action="@{/login}" autocomplete="off">
             <p>
-                <label>아이디</label>
-                <input type="text" name="username" placeholder="아이디 입력"/>
+                <label for="username">아이디</label>
+                <input type="text" name="username" id="username" placeholder="아이디 입력"/>
             </p>
             <p>
-                <label>비밀번호</label>
-                <input type="password" name="password" placeholder="비밀번호 입력"/>
+                <label for="password">비밀번호</label>
+                <input type="password" name="password" id="password" placeholder="비밀번호 입력"/>
             </p>
+
             <p class="none">
-                <label>로그인 상태 유지</label>
-                <input type="checkbox" name="remember-me" />
+                <label for="remember-me">로그인 상태 유지</label>
+                <input type="checkbox" name="remember-me" id="remember-me" />
             </p>
+
+            <div th:if="${param.error}">
+                아이디와 비밀번호가 일치하지 않습니다.
+            </div>
 
             <input type="submit" value="로그인">
         </form>

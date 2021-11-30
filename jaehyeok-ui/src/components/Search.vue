@@ -25,7 +25,7 @@
                 @click="apply">
           검색
         </button>
-        <div class="selects">
+        <div class="form-group">
             <select
                 id="categories"
                 v-model="sort"
@@ -141,6 +141,7 @@ select{
     padding: 1px 10px;
     border: 2px solid #b4c1d5;
     width: 70px;
+    outline: none;
 }
 .Search-div{
     text-align: center;

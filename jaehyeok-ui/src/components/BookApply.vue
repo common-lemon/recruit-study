@@ -163,6 +163,7 @@ textarea{
             border: none;
             background-color: #e3e9ef;
             color: #134775;
+            outline: none;
         }
         .btn-cover{
             text-align: center;

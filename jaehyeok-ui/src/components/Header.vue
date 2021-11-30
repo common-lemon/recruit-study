@@ -11,6 +11,11 @@
         </slider>
 
         <h2>Lemon library</h2>
+        <div class="authMenu">
+            <RouterLink to="/login" class="login">
+                로그인
+            </RouterLink>
+        </div>
     </header>
 </template>
 
@@ -51,14 +56,23 @@ export default {
 header{
   height: 60px;
   background-color: #134775;
-  color: #f4f2db;
-  padding: 0 40px;
+  color: #f4f2db;padding-left: 40px;
   display: flex;
   align-items: center;
   position: relative;
-  h2{
-    color: aliceblue;
-    font-family: 'Titillium Web';
-  }
+    .authMenu{
+        a {
+            color: aliceblue;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Titillium Web';
+        }
+    }
+    h2{
+        color: aliceblue;
+        font-family: 'Titillium Web';
+        width: 250px;
+    }
 }
 </style>

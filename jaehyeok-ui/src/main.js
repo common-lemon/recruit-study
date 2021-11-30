@@ -11,6 +11,7 @@ import Slider from '@jeremyhamm/vue-slider'
 Vue.config.productionTip = false
 Vue.use(Slider);
 Vue.use(VueSimpleAlert);
+Vue.use(axios);
 new Vue({
   vuetify,
   store,
