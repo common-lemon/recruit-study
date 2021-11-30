@@ -127,7 +127,6 @@ export default {
     methods:{
         saveStatus(id) {
             let bookPrice = uncomma(this.bookPrice);
-
             let data = {
                 id : id,
                 deptName : this.deptName,
