@@ -8,7 +8,7 @@
     <div id="app">
         <div id="topBox">
             <div id="leftImage">
-                <a href="http://localhost:8080">
+                <a href="/">
                     <img th:src="@{/images/lemonLogo.png}" title="레몬헬스케어 로고 그림"
                          alt="레몬헬스케어 로고 그림" th:width="100px" id="lemonLogo"></a>&nbsp;&nbsp;&nbsp;
             </div>
@@ -56,8 +56,8 @@
                     <tr id="tableTitle">
                         <th id="bookId" nowrap>구분</th>
                         <th id="bookNo" nowrap>도서번호</th>
-                        <th nowrap>부서</th>
-                        <th class="orderMenu" v-on:click="sortTitle">
+                        <th id="bookTableDept" nowrap>부서</th>
+                        <th v-on:click="sortTitle">
                             제목<img id="orderImage" th:src="@{/images/default_arrow.png}"
                                    title="위아래 빈 화살표 그림" alt="정렬이 안되어 있는 것을 알려주는 화살표 그림"></th>
                         <th id="bookCount" nowrap>권수</th>
@@ -88,13 +88,17 @@
                 </div>
                 <div class="clearBox"></div>
             </div>
+            <button @click='scrollToTop' class="button-bottom">↑</button>
         </div>
 
         <div v-else-if="viewList.length === 0">
             <p id="noSearch">검색결과가 없습니다.</p>
         </div>
 
-        </br>
+        <div id="bottomSensor"></div>
+
+
+        <!--</br>
         <div v-if="total === limit">
             <table>
                 <td id="noPageButton">{{ pageText }}</td>
@@ -104,10 +108,10 @@
             <table>
                 <td id="pageButton" v-on:click="addPage">{{ pageText }}</td>
             </table>
-        </div>
+        </div>-->
     </div>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/scrollmonitor/1.2.0/scrollMonitor.js"></script>
     <script>
         let app = new Vue({
             el: '#app',
@@ -120,24 +124,45 @@
                 bookTitle: 'default',
                 deptSelected: '',
                 pageText: '',
+                page: 1,
                 limit: 10,
                 total: 0,
                 view: 'tableBoard'
             },
             methods: {
                 getBookListByAsyncAwait: async function () {
-                    const response = await axios.get('http://localhost:8080/rest/book/list');
+                    const response = await axios.get('/rest/book/list');
                     console.log(response.data.bookList);
                     this.bookList = response.data.bookList;
                     this.searchList = response.data.bookList;
                     this.viewList = response.data.bookList;
                     this.total = this.bookList.length;
-                    this.paging();
+                    /*this.paging();*/
                     this.getDept();
+                },
+                getBooks: function () {
+                    if (this.limit > this.total) {
+                        this.limit = this.total;
+                    }
+                    this.viewList = this.searchList.slice(0, this.page * this.limit);
+                    this.page++;
+                },
+                addScrollWatcher: function () {
+                    const bottomSensor = document.querySelector('#bottomSensor')
+                    const watcher = scrollMonitor.create(bottomSensor)
+                    watcher.enterViewport(() => {
+                        // console.log('____BOTTOM_____')
+                        setTimeout(() => (
+                            this.getBooks()
+                        ), 500)
+                        // this.getPhotos()
+                    })
                 },
                 OrderReverce: function (e) {
                     this.viewList = this.searchList.reverse();
-                    this.paging();
+                    this.page = 1;
+                    this.getBooks();
+                    /*this.paging();*/
                     if (e.target.value === "등록순") {
                         e.target.value = "최신순"
                     } else if (e.target.value === "최신순") {
@@ -145,7 +170,6 @@
                     }
                 },
                 searchBook: function () {
-                    this.limit = 10;
                     let filteredList = this.bookList.filter(item =>
                         item.title.includes(this.search) || item.deptName.includes(this.search));
                     if (filteredList) {
@@ -153,7 +177,9 @@
                         this.viewList = filteredList;
                         this.total = this.searchList.length;
                     }
-                    this.paging();
+                    this.page = 1;
+                    this.getBooks();
+                    /*this.paging();*/
                 },
                 sortTitle: function () {
                     if (this.bookTitle === 'default' || this.bookTitle === 'd') {
@@ -182,25 +208,26 @@
                     this.deptNameList = deduplication;
                 },
                 changeDept: function (e) {
-                    this.limit = 10;
                     const selectedList = this.bookList.filter(item => item.deptName.includes(e.target.value));
                     this.searchList = selectedList;
-                    this.viewList = selectedList;
                     this.total = this.searchList.length;
+                    this.page = 1;
+                    this.limit = 10;
+                    this.getBooks();
                     this.search = '';
-                    this.paging();
+                    /*this.paging();*/
                 },
-                addPage: function () {
+                /*addPage: function () {
                     this.limit += 10;
                     this.paging();
-                },
-                paging: function () {
+                },*/
+                /*paging: function () {
                     if (this.limit > this.total) {
                         this.limit = this.total;
                     }
                     this.viewList = this.searchList.slice(0, this.limit);
                     this.pageText = '더보기(' + this.limit + '/' + this.total + ') +';
-                },
+                },*/
                 changeView: function () {
                     if (this.view == 'tableBoard') {
                         this.view = 'checkerboard';
@@ -218,6 +245,9 @@
                 },
                 detailBook: function (id) {
                     location.href = "/book/detail/" + id;
+                },
+                scrollToTop: function () {
+                    scroll(0, 0);
                 }
             },
             computed: {},
@@ -235,6 +265,7 @@
                 // $el 을 사용할 수 있습니다.
                 // 모든 화면이 렌더링된 후 호출됩니다.
                 this.getBookListByAsyncAwait();
+                this.addScrollWatcher();
             }
         })
     </script>

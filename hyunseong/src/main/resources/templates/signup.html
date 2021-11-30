@@ -20,16 +20,20 @@
                         <td><input type="password" th:field="*{password}" id="password" required/></td>
                     </tr>
                     <tr>
-                        <td class="tdTitle"><label for="role">권한</label></td>
-                        <td><input type="text" th:field="*{role}" id="role" required/></td>
-                    </tr>
-                    <tr>
                         <td class="tdTitle"><label for="deptname">부서</label></td>
-                        <td><input type="text" th:field="*{deptname}" id="deptname" required/></td>
+                        <td><select id="deptname" class="selectBox" @change="changeDept($event)">
+                            <option v-for="item in deptNameList" :key="item">{{ item }}</option>
+                        </select><input type="hidden" th:field="*{deptname}" id="hDeptname"/></td>
                     </tr>
                     <tr>
                         <td class="tdTitle"><label for="erum">이름</label></td>
                         <td><input type="text" th:field="*{erum}" id="erum" required/></td>
+                    </tr>
+                    <tr>
+                        <td class="tdTitle"><label for="role">권한</label></td>
+                        <td><select id="role" class="selectBox" @change="changeRole($event)">
+                            <option v-for="item in roleList" :key="item">{{ item }}</option>
+                        </select><input type="hidden" th:field="*{role}" id="hRole"/></td>
                     </tr>
                 </table>
                 <div class="btnBox">
@@ -41,13 +45,39 @@
     </div>
     <script>
         let app = new Vue({
-                el: '#app',
-                methods: {
-                    back: function () {
-                        location.href = "/";
+            el: '#app',
+            data: {
+                bookList: [],
+                deptNameList: [],
+                roleList: ["user", "admin"]
+            },
+            methods: {
+                getBookListByAsyncAwait: async function () {
+                    const response = await axios.get('/rest/book/list');
+                    this.bookList = response.data.bookList;
+                    for (let i in this.bookList) {
+                        this.deptNameList.push(this.bookList[i].deptName);
                     }
+                    const deduplication = new Set(this.deptNameList);
+                    this.deptNameList = deduplication;
+                    document.getElementById("hDeptname").value = this.bookList[0].deptName;
+                    document.getElementById("hRole").value = this.roleList[0];
+                },
+                back: function () {
+                    location.href = "/";
+                },
+                changeDept: function (e) {
+                    document.getElementById("hDeptname").value = e.target.value;
+
+                },
+                changeRole: function (e) {
+                    document.getElementById("hRole").value = e.target.value;
                 }
-            })
+            },
+            mounted: function () {
+                this.getBookListByAsyncAwait();
+            }
+        })
     </script>
 </div>
 </html>

@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // web.ignoring().mvcMatchers("/favicon.ico");
 
         web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        web.ignoring().antMatchers("/h2-console/**");
+        web.ignoring().antMatchers("/h2-console/**", "/css/**", "/data/**", "/images/**", "/js/**");
     }
 
 
@@ -74,7 +74,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Custom Filter 적용
         // http.addFilterBefore(new LoggingFilter(), WebAsyncManagerIntegrationFilter.class);
 
-        // post 수행하기 위해 추가
+        // csrf
         http.csrf().disable();
 
         http.authorizeRequests()
@@ -84,7 +84,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .expressionHandler(expressionHandler());
 
-        http.formLogin().loginPage("/login").permitAll();
+        http.formLogin()
+                .loginPage("/login").defaultSuccessUrl("/book/list").permitAll()
+                .and()
+                .logout().logoutSuccessUrl("/login").permitAll();
 
         http.rememberMe().userDetailsService(accountService);
 

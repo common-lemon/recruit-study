@@ -4,49 +4,85 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
-      xmlns:v-bind="http://www.w3.org/1999/xhtml">
+      xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
     <div layout:fragment="content" class="container">
 
         <div id="app">
-            <form name="regForm" @submit="checkForm">
-                <p>
-                    <label>신청 부서</label>
-                    <input id="form.deptName" v-model="form.deptName" type="text" readonly>
-                </p>
+            <form name="regForm" @submit.prevent="checkForm" autocomplete="off">
+                <div class="deptNameAndregisterNmArea">
+                    <p>
+                        <label>신청 부서</label>
+                        <input id="form.deptName" v-model="form.deptName" type="text" readonly>
+                    </p>
 
-                <p>
-                    <label>신청자 이름</label>
-                    <input id="form.registerNm" v-model="form.registerNm" type="text" readonly>
-                </p>
+                    <p>
+                        <label>신청자 이름</label>
+                        <input id="form.registerNm" v-model="form.registerNm" type="text" readonly>
+                    </p>
+                </div>
 
                 <p>
                     <label for="form.title"><span>* 도서 이름</span></label>
-                    <textarea id="form.title" v-model="form.title" type="text" ref="title" maxlength="150" wrap="hard"
+                    <textarea id="form.title"
+                              v-bind:value="form.title"
+                              v-on:input="form.title = $event.target.value"
+                              v-bind:style="inputStyle"
+                              v-on:keydown="resize"
+                              type="text" ref="title" maxlength="150"
                               placeholder="도서 이름을 입력하세요"></textarea>
                 </p>
 
                 <p>
                     <label>* 출판사</label>
-                    <textarea id="form.publisher" v-model="form.publisher" type="text" ref="publisher" maxlength="25"
+                    <textarea id="form.publisher"
+                              v-bind:value="form.publisher"
+                              v-on:input="form.publisher = $event.target.value"
+                              type="text" ref="publisher" maxlength="25"
                               placeholder="출판사를 입력하세요"></textarea>
                 </p>
 
-                <p>
-                    <label>* 도서 금액</label>
-                    <input id="form.bookPrice" v-model="form.bookPrice" type="number" ref="bookPrice" min="0" max="100000"
-                           placeholder="도서 금액을 입력하세요">
-                </p>
+                <div class="bookPriceAndCountArea">
+                    <p>
+                        <label>* 도서 금액</label>
+                        <input id="form.bookPrice"
+                               v-bind:value="form.bookPrice"
+                               v-on:input="form.bookPrice = $event.target.value"
+                               type="text" ref="bookPrice" maxlength="6"
+                               placeholder="도서 금액">
+                    </p>
+
+                    <p>
+                        <label>권수</label>
+                        <input id="form.count" v-model.number="form.count" type="number" placeholder="권수">
+                    </p>
+
+                    <p>
+                        <label>도서 합계</label>
+                        <input v-bind:value="bookSum | comma" type="text" placeholder="합계" readonly>
+                    </p>
+                </div>
 
                 <p>
                     <label>신청 사유</label>
-                    <textarea id="form.regRsn" v-model="form.regRsn" type="text" placeholder="신청 사유를 입력하세요"></textarea>
+                    <textarea id="form.regRsn" v-bind:value="form.regRsn"
+                              v-on:input="form.regRsn = $event.target.value"
+                              type="text" placeholder="신청 사유를 입력하세요"></textarea>
+                </p>
+
+                <p>
+                    <label>도서 번호</label>
+                    <input id="form.bookNo" v-model="form.bookNo" type="text" placeholder="도서 번호를 입력하세요">
                 </p>
 
                 <div id="btnArea">
-                    <a th:href="@{/book/list}">목록</a>
-                    <input type="submit" v-model="submitBtn">
+                    <div v-if="meFlag" class="btnSubArea">
+                        <input type="button" v-if="submitBtn === '수정'" @click="deleteBook" value="삭제" class="deleteBtn">
+                        <input type="submit" v-model="submitBtn">
+                    </div>
+                    <a th:href="@{/book/list}">
+                        <i class="fas fa-bars"></i><span>목록으로</span>
+                    </a>
                 </div>
-                <button type="button" id="deleteBtn" v-if="submitBtn === '수정'" @click="deleteBook">삭제</button>
             </form>
 
             <div id="snackbar"></div>
@@ -55,9 +91,10 @@
 
 
         <script th:inline="javascript">
-
             const bookObj = /*[[ ${book} ]]*/ null;
+            const login = /*[[ ${login} ]]*/ null;
             console.log(bookObj);
+            console.log(login);
 
             var app = new Vue({
                 el: '#app',
@@ -69,49 +106,49 @@
                         title : null,
                         publisher : null,
                         bookPrice : null,
-                        regRsn : null
+                        regRsn : null,
+                        bookNo : null,
+                        count : null
                     },
-                    submitBtn : ""
+                    submitBtn : "신청",
+                    meFlag : false,
+                    inputHeight : '16'
                 },
                 computed: {
-
-                },
-                watch: {
-
-                },
-                beforeCreate: function () {
-                    // data와 이벤트($on, $once, $off, $emit), 감시자($watch)등이 설정 되기 전에 호출되는 라이프 사이클 훅입니다.
-                },
-                created: function () {
-                    // DOM이 마운팅 되기 전이기 때문에 $el은 사용할 수 없습니다.
-                    this.form.deptName = "공통개발팀";
-                    this.form.registerNm = "김소희";
-                    this.submitBtn = "신청";
-
-                    if( bookObj != null ){
-                        const bookEntity = bookObj.bookEntity;
-                        console.log(bookEntity);
-                        this.form = bookEntity;
-                        this.submitBtn = "수정";
+                    bookSum : function () {
+                        const bookPrice = this.form.bookPrice;
+                        const count = this.form.count;
+                        return !(bookPrice && count) ? 0 : bookPrice*count;
+                    },
+                    inputStyle : function () {
+                        return {'height': this.inputHeight }
                     }
                 },
-                beforeMount: function() {
-                    // $el은 아직 사용할 수 없습니다. 거의 사용되지않는 라이프사이클
+                filters: {
+                    comma : function (value) {
+                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    }
                 },
-                mounted: function () {
-                    // $el 을 사용할 수 있습니다.
-                    // 모든 화면이 렌더링된 후 호출됩니다.
+                created: function () {
+                    if(login != null) {
+                        this.form.deptName = login.deptName;
+                        this.form.registerNm = login.registerNm;
+                    }
+
+                    if( bookObj != null ){
+                        this.form = bookObj.bookEntity;
+                        this.submitBtn = "수정";
+                    }
+
+                    if(login.registerNm === this.form.registerNm && login.deptName === this.form.deptName) {
+                        this.meFlag = true;
+                    }
+                },
+                mounted () {
+
                 },
                 methods: {
                     checkForm : function (e) {
-                        // 출판사는 한글만 입력 가능
-                        // 도서 금액은 숫자만 입력, 값의 범위 0 ~ 100000
-                        // 필수 입력 값 (도서 이름, 출판사, 도서 금액)
-                        // 등록 전 유효성 검사 (유효성 검사에 걸린 애들 알럿 후 포커싱)
-                        // 유효성 검사 통과 시 등록 처리
-
-                        e.preventDefault();
-
                         let cnt = 0;
                         let regexp = /[a-z0-9]|[ \[\]{}()<>?|`~!@#$%^&*-_+=,.;:\"'\\]/g;
 
@@ -134,60 +171,35 @@
                         }
 
                         (cnt === 0) && this.saveBook();
-
                     },
                     saveBook : function () {
-                        // 1. axios
-    /*
-                        axios.post('http://localhost:8080/rest/book/save', this.form).then(response => {
+                        let msg = this.form.id == null ? "등록" : "수정";
+                        if(!confirm(`${msg} 하시겠습니까?`)) { return; }
+                        console.log(this.form)
+
+                        axios.post('http://localhost:8080/book/save', this.form).then(response => {
                             console.log(response.data);
-                            alert("정상적으로 등록되었습니다.");
-                            location.replace("/");
+                            alert(`정상적으로 ${msg}되었습니다.`);
+                            location.replace("/book/list");
                         }).catch(error => {
                             console.log(error);
                         });
-    */
-
-                        // 2. XMLHttpRequest()
-                        const xhr = new XMLHttpRequest();
-                        // xhr.open('POST', '/rest/book/save');
-                        xhr.open('POST', '/book/save');
-                        xhr.setRequestHeader('content-type', 'application/json');
-
-                        console.log(JSON.stringify(this.form));
-
-                        // 객체 -> json 포맷의 문자열로 변환 (serializing)
-                        xhr.send(JSON.stringify(this.form));
-                        xhr.onload = () => {
-                            if(xhr.status === 200 || xhr.status === 201) {
-                                console.log(xhr.response);
-                                let msg = this.form.id == null ? "등록" : "수정";
-                                alert(`정상적으로 ${msg}되었습니다.`);
-                                location.replace("/book/list");
-                            } else {
-                                console.error('Error', xhr.status, xhr.statusText);
-                            }
-                        }
                     },
                     deleteBook : function () {
-
                         if(!confirm("삭제 하시겠습니까?")) { return; }
-
                         console.log(this.form.id);
-                        const xhr = new XMLHttpRequest();
-                        //xhr.open('GET', '/rest/book/delete?id='+this.form.id);
-                        xhr.open('DELETE', '/book/' + this.form.id);
 
-                        xhr.send();
-                        xhr.onload = () => {
-                            if(xhr.status === 200) {
-                                console.log(xhr.response);
-                                alert("정상적으로 삭제되었습니다.");
-                                location.replace("/book/list");
-                            } else {
-                                console.error('Error', xhr.status, xhr.statusText);
-                            }
-                        }
+                        axios.get(`http://localhost:8080/book/${this.form.id}/delete`).then(response => {
+                            console.log(response.data);
+                            alert("정상적으로 삭제되었습니다.");
+                            location.replace("/book/list");
+                        }).catch(error => {
+                            console.log(error);
+                        });
+                    },
+                    resize : function (e) {
+                        console.log(e.target.scrollHeight-18);
+                        this.inputHeight = `${e.target.scrollHeight-18}px`
                     }
                 }
             });
