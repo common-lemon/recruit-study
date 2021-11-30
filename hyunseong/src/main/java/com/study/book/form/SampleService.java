@@ -30,12 +30,28 @@ public class SampleService {
         // 같은 스레드에서 account를 공유(SecurityContextHolder의 기본 전략)
         Account account = AccountContext.getAccount();
         model.addAttribute("role", account.getRole());
+        model.addAttribute("erum", account.getErum());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
     }
 
     @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    public void mypage(Model model) {
+        // 같은 스레드에서 account를 공유(SecurityContextHolder의 기본 전략)
+        Account account = AccountContext.getAccount();
+        model.addAttribute("id", account.getId());
+        model.addAttribute("username", account.getUsername());
+        model.addAttribute("password", account.getPassword());
+        model.addAttribute("deptname", account.getDeptname());
+        model.addAttribute("erum", account.getErum());
+        model.addAttribute("role", account.getRole());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+    }
+
+    /*@Secured({"ROLE_USER", "ROLE_ADMIN"})
     public void dashboard() {
         // 같은 스레드에서 account를 공유(SecurityContextHolder의 기본 전략)
         Account account = AccountContext.getAccount();
@@ -47,7 +63,7 @@ public class SampleService {
         System.out.println("======================");
         System.out.println(authentication);
         System.out.println(userDetails.getUsername());
-    }
+    }*/
 
     @Async
     public void asyncService() {

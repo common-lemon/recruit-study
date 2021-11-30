@@ -49,6 +49,7 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByUsername(username);
         map.put("deptName", account.getDeptName());
         map.put("registerNm", account.getRegisterNm());
+        map.put("role", account.getRole());
 
         return map;
     }

@@ -25,20 +25,7 @@ public class SampleController {
     AccountRepository accountRepository;
 
     @GetMapping("/")
-    public String index(Model model, Principal principal) {
-        model.addAttribute("pageName", "index");
-        if (principal == null) {
-            model.addAttribute("message", "Hello Spring Security");
-        } else {
-            model.addAttribute("message", "Hello " + principal.getName() + ", Spring Security");
-        }
-        return "index";
-    }
-
-    @GetMapping("/test")
-    public String test(Model model, Principal principal) {
-        return "test";
-    }
+    public String index(Model model, Principal principal) { return "index"; }
 
     @GetMapping("/book/insert")
     public String bookInsert(Model model, Principal principal) {
@@ -55,34 +42,13 @@ public class SampleController {
 
         return "detail";
     }
-
-    @GetMapping("/info")
-    public String info(Model model) {
-        model.addAttribute("pageName", "info");
-        model.addAttribute("message", "info");
-
-        return "info";
-    }
-
-
-
-    /*@GetMapping("/dashboard")
-    public String dashboard(Model model, Principal principal) {
-        model.addAttribute("pageName", "dashboard");
-        model.addAttribute("message", "Hello " + principal.getName());
+    @RequestMapping("/user/mypage")
+    public String mypage(Model model, Principal principal) {
         AccountContext.setAccount(accountRepository.findByUsername(principal.getName()));
-        sampleService.dashboard();
+        sampleService.mypage(model);
 
-        return "dashboard";
+        return "mypage";
     }
-
-    @GetMapping("/admin")
-    public String admin(Model model, Principal principal) {
-        model.addAttribute("pageName", "admin");
-        model.addAttribute("message", "Hello Admin, " + principal.getName());
-
-        return "admin";
-    }*/
 
     @GetMapping("/async-handler")
     @ResponseBody
@@ -102,4 +68,30 @@ public class SampleController {
         SecurityLogger.log("MVC, after async service");
         return "Async Service";
     }
+
+    /*@GetMapping("/info")
+    public String info(Model model) {
+        model.addAttribute("pageName", "info");
+        model.addAttribute("message", "info");
+
+        return "info";
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard(Model model, Principal principal) {
+        model.addAttribute("pageName", "dashboard");
+        model.addAttribute("message", "Hello " + principal.getName());
+        AccountContext.setAccount(accountRepository.findByUsername(principal.getName()));
+        sampleService.dashboard();
+
+        return "dashboard";
+    }
+
+    @GetMapping("/admin")
+    public String admin(Model model, Principal principal) {
+        model.addAttribute("pageName", "admin");
+        model.addAttribute("message", "Hello Admin, " + principal.getName());
+
+        return "admin";
+    }*/
 }

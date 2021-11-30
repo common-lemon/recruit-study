@@ -51,3 +51,8 @@ Accept: application/json
 ### 책 상세
 GET http://localhost:8080/rest/book/detail?id=2
 Accept: application/json
+
+### 제일 최근 책 검색
+GET http://localhost:8080/rest/book/findOne
+Accept: application/json
+

@@ -32,6 +32,11 @@ input
     background: white;
 }
 
+.loginArea {
+    display: flex;
+    justify-content: flex-end;
+}
+
 .search input {
     font-size: 16px;
 }
@@ -60,8 +65,13 @@ input
 input[type=text]
 ,textarea
 {
+    width: 95%;
+}
+
+.search input {
     width: 88%;
 }
+
 
 input[type=checkbox]
 {
@@ -203,9 +213,10 @@ input[type=submit]
 }
 
 textarea {
-    overflow: hidden;
-    overflow-wrap: break-word;
     height: 16px;
+  /*  box-sizing: border-box;*/
+    resize: none;
+    overflow: hidden;
 }
 
 .signup select {

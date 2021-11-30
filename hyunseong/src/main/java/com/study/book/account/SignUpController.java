@@ -28,9 +28,9 @@ public class SignUpController {
         System.err.println(account.getId());
         System.err.println(account.getUsername());
         System.err.println(account.getPassword());
-        System.err.println(account.getRole());
         System.err.println(account.getDeptname());
         System.err.println(account.getErum());
+        System.err.println(account.getRole());
         return "redirect:/";
     }
 }

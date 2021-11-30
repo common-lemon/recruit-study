@@ -39,17 +39,17 @@ public class BookSvrImpl implements BookSvrItf {
 
     }
 
-    /*@Override
-    public ResBook findFirstOne(ReqBookParams reqBookParams) {
+    @Override
+    public ResBook findOne(ReqBookParams reqBookParams) {
 
         ResBook resBook = new ResBook();
         resBook.setResCode("S-001");
         resBook.setResMsg("정상 처리 되었습니다.");
 
-        resBook.setBookEntity(this.bookRepository.findFirstByBookNoOrderByIdDesc());
+        resBook.setBookList(this.bookRepository.findTop1ByOrderByBookNoDesc());
 
         return resBook;
-    }*/
+    }
 
     @Override
     public ResBook save(ReqBookParams reqBookParams) {
@@ -103,4 +103,5 @@ public class BookSvrImpl implements BookSvrItf {
 
         return resBook;
     }
+
 }

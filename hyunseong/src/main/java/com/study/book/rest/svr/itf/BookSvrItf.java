@@ -6,7 +6,7 @@ import com.study.book.rest.dto.ResBook;
 public interface BookSvrItf {
 
     ResBook list(ReqBookParams reqBookParams);
-    /*ResBook findFirstOne(ReqBookParams reqBookParams);*/
+    ResBook findOne(ReqBookParams reqBookParams);
     ResBook save(ReqBookParams reqBookParams);
     ResBook delete(ReqBookParams reqBookParams);
     ResBook detail(ReqBookParams reqBookParams);
