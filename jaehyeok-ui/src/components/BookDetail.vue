@@ -142,12 +142,16 @@ export default {
             }else {
                 axios
                     .put("/api/book", data)
-                    .then(response => {
+                    .then(async response => {
                         console.log(response.data);
-                        this.$alert(response.data.resMsg,"","success");
-                        this.$router.push('/home');
-                    })
-                    .catch(error => {
+                        await this.$alert(response.data.resMsg,"","success");
+                        if (this.authority === "ROLE_ADMIN") {
+
+                            await this.$router.push('/applyList');
+                        }else{
+                            await this.$router.push('/home');
+                        }
+                    }).catch(error => {
                         console.log(error)
                         this.$alert("수정에 실패했습니다.","","error");
 

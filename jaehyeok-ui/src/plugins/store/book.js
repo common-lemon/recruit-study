@@ -104,6 +104,7 @@ export default {
                 bookList:result,
                 message: message
             })
+
             fn_sortBook(this.sort, result);
         },
         async statusList({commit, state}, payload){
