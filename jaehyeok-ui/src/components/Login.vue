@@ -1,4 +1,3 @@
-
 <template>
     <div class="container">
         <form>
@@ -34,6 +33,7 @@ export default {
         ]),
     },
     methods: {
+        // password 타입 변환
         switchVisibility(){
             if (this.passwordFieldType === "password"){
                 this.passwordFieldType = "text"
@@ -43,6 +43,7 @@ export default {
                 this.keyShow = "SHOW"
             }
         },
+        //로그인 버튼
         async login(){
             let data = {
                 userName: this.userName,
@@ -109,7 +110,7 @@ export default {
             margin-top: 15px;
             border: none;
             background: #134775;
-            color: #f4f2db;
+            color: #d8e2eb;
             font-size: 1.1rem;
             padding: 15px 60px;
             font-weight: bold;

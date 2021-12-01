@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
+
     private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
     private final MemberService memberService;
     private final RestAuthenticationProvider restAuthenticationProvider;
@@ -37,10 +37,10 @@ public class MemberController {
         ResMember resMember = memberService.join(member);
         return new ResponseEntity<>(resMember, HttpStatus.OK);
     }
+
     // 회원 중복체크
     @GetMapping(value = "/api/membercheck/{id}")
     public Result findOne(@PathVariable("id") String id){
-        System.err.println(id);
         Member findMember = memberService.findOne(id);
         return new Result(findMember);
     }
@@ -69,18 +69,16 @@ public class MemberController {
         Authentication authentication = restAuthenticationProvider.authenticate(account);
 
         String jwt = tokenProvider.createToken(authentication);
-        System.err.println("jwt==>"+jwt);
-        System.err.println("authentication==>"+authentication);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer" + jwt);
         return new ResponseEntity<>(new TokenDto(jwt,authentication), httpHeaders ,HttpStatus.OK );
     }
 
+    // 맴버 수정
     @PutMapping(value = "/api/member")
     public ResponseEntity<ResMember> UpdateMember(@RequestBody ReqMember reqMember){
 
         ResMember resMember = memberService.update(reqMember);
-        System.err.println(resMember.getResMsg());
         return new ResponseEntity<>(resMember, HttpStatus.OK);
     }
 

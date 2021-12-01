@@ -42,5 +42,6 @@ public class Book {
         this.bookPrice = book.bookPrice;
         this.count = book.count;
         this.status = book.status;
+        this.regRsn = book.regRsn;
     }
 }

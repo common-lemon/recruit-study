@@ -14,16 +14,16 @@
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
-                <input type="text" class="form-control" id="password" v-model="password" @blur="passwordMach" placeholder="비밀번호"  required>
+                <input type="password" class="form-control" id="password" v-model="password" @blur="passwordMach" placeholder="비밀번호"  required>
                 <div class="is-invalid" v-if="!passwordMatch" >비밀번호가 잘못되었습니다.</div>
             </div>
             <div class="form-group">
                 <label for="newPassword">새 비밀번호</label>
-                <input type="text" class="form-control" id="newPassword" v-model="NewPassword" placeholder="비밀번호 확인"   required>
+                <input type="password" class="form-control" id="newPassword" v-model="NewPassword" placeholder="비밀번호 확인"   required>
             </div>
             <div class="form-group">
                 <label for="NewPasswordCheck">새 비밀번호 확인</label>
-                <input type="text" class="form-control" id="NewPasswordCheck" v-model="NewPasswordCheck" placeholder="비밀번호 확인"  @keyup="passCheck"   required>
+                <input type="password" class="form-control" id="NewPasswordCheck" v-model="NewPasswordCheck" placeholder="비밀번호 확인"  @keyup="passCheck"   required>
                 <div :class="passCheckClass">비밀번호가 일치하지않습니다.</div>
             </div>
             <div class="form-group">
@@ -37,7 +37,6 @@
                         id="deptName"
                         v-model="deptName"
                         class="form-select"
-                        placeholder="deptName"
                     >
                         <option value="" disabled selected hidden>부서</option>
                         <option
@@ -121,6 +120,7 @@ export default {
                     this.id = response.data.data.id
                     this.name = response.data.data.name
                     this.deptName = response.data.data.deptName
+
                 })
                 .catch(error => {
                     console.log(error)
@@ -154,7 +154,9 @@ export default {
                     .then(response => {
                         console.log(response);
                         this.$alert(response.data.resMsg, "", "warning");
-
+                        this.password = ''
+                        this.NewPassword = ''
+                        this.NewPasswordCheck = ''
                     })
                     .catch(error =>{
                         console.log(error)

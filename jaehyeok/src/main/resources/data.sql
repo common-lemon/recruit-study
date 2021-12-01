@@ -42,4 +42,5 @@ INSERT INTO BOOKS (BOOK_NO, BOOK_PRICE, COUNT, DEPT_NAME, PUBLISHER, REG_RSN, RE
   ('T-050', 21000, 1, '프로젝트 PM그룹', '키출판사', '공부하기 위해 신청합니다.', '이재혁', '성공하는 프로그래밍 공부법', '2021-11-24', 'CANCEL');
 
 INSERT INTO MEMBERS (USER_NAME, PASSWORD, NAME, DEPT_NAME, AUTHORITY) VALUES
-  ('ADMIN', '$2a$10$.lHPNIOYuv1Z/zr.ZmumyeGypj4oFxEb4wOw/z0ng1/158vS0wEN2', '관리자', '', 'ROLE_ADMIN')
+  ('admin', '$2a$10$.lHPNIOYuv1Z/zr.ZmumyeGypj4oFxEb4wOw/z0ng1/158vS0wEN2', '관리자', '', 'ROLE_ADMIN'),
+('zcad12', '$2a$10$.lHPNIOYuv1Z/zr.ZmumyeGypj4oFxEb4wOw/z0ng1/158vS0wEN2', '이재혁', '', 'ROLE_USER')

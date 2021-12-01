@@ -14,11 +14,11 @@
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
-                <input type="text" class="form-control" id="password" v-model="password" placeholder="비밀번호"  required>
+                <input type="password" class="form-control" id="password" v-model="password" placeholder="비밀번호"  required>
             </div>
             <div class="form-group">
                 <label for="passwordCheck">비밀번호 확인</label>
-                <input type="text" class="form-control" id="passwordCheck" v-model="passwordCheck" placeholder="비밀번호 확인" @keyup="passCheck"  required>
+                <input type="password" class="form-control" id="passwordCheck" v-model="passwordCheck" placeholder="비밀번호 확인" @keyup="passCheck"  required>
                 <div :class="passCheckClass">비밀번호가 일치하지않습니다.</div>
             </div>
             <div class="form-group">
@@ -32,7 +32,6 @@
                         id="deptName"
                         v-model="deptName"
                         class="form-select"
-                        placeholder="deptName"
                     >
                         <option value="" disabled selected hidden>부서</option>
                         <option
@@ -52,7 +51,7 @@
                 <input type="checkbox" class="form-check-input" id="invalidCheck" v-model="invalidCheck" required>
             </div>
             <div class="btn-cover">
-                <button type="button" @click="signUp" >가입 완료</button>
+                <button type="button" @click="signUp" >회원가입</button>
             </div>
 
         </form>
@@ -154,11 +153,7 @@ export default {
             this.availableId = true;
             const response = await checkDuplicateId(this.userName);
             console.log(response)
-            if (!response){
-                this.availableId = true;
-            }else{
-                this.availableId = false;
-            }
+            this.availableId = !response;
         },
         passCheck(){
             if(this.password !== this.passwordCheck || this.password === ""){
@@ -263,6 +258,7 @@ function checkDuplicateId(id){
             text-align: center;
             button {
                 margin-top: 15px;
+                margin-bottom: 15px;
                 border: none;
                 background: #134775;
                 color: aliceblue;
@@ -273,12 +269,13 @@ function checkDuplicateId(id){
                 cursor: pointer;
                 width: 320px;
                 outline: none;
+
             }
         }
 
         display: flex;
         width: 100%;
-        height: 675px;
+        height: 700px;
         background-color: aliceblue;
         flex-direction: column;
         justify-content: center;

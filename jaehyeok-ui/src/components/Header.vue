@@ -6,7 +6,7 @@
             direction="left"
             :opacity="0.5"
             :links=this.links
-            v-if="authority === 'ROLE_USER'"
+            v-if="this.authority === 'ROLE_USER'"
         >
         </slider>
         <slider
@@ -15,7 +15,7 @@
             direction="left"
             :opacity="0.5"
             :links=this.linksAdmin
-            v-if="authority === 'ROLE_ADMIN'"
+            v-if="this.authority === 'ROLE_ADMIN'"
         >
         </slider>
         <h2>Lemon library</h2>
@@ -32,14 +32,7 @@
                 로그아웃
             </button>
         </div>
-<!--        <div class="authMenu" v-else-if="authority === 'ROLE_ADMIN'">
-            <RouterLink to="/adminpage" class="adminpage">
-                관리자페이지
-            </RouterLink>
-            <button class="logout" v-on:click="logout">
-                로그아웃
-            </button>
-        </div>-->
+
     </header>
 </template>
 
@@ -68,10 +61,6 @@ export default {
             'token',
             'authority',
         ]),
-    },
-    async mounted() {
-
-
     },
     methods:{
         logout(){
@@ -111,6 +100,7 @@ header{
             color: aliceblue;
             text-decoration: none;
             font-size: 14px;
+            margin-right: 5px;
             font-family: 'Titillium Web';
         }
         button{
@@ -120,7 +110,7 @@ header{
         }
     }
     .login{
-        width: 30%;
+        width: 40%;
         text-align: right;
         a {
             color: aliceblue;
@@ -132,7 +122,7 @@ header{
     h2{
         color: aliceblue;
         font-family: 'Titillium Web';
-        width: 200px;
+        width: 190px;
     }
 }
 </style>

@@ -30,7 +30,6 @@
                 id="categories"
                 v-model="sort"
                 class="form-select"
-                placeholder="sort"
                 @change="selectChangeSort()"
             >
                 <option value="" disabled selected hidden>정렬↓</option>
