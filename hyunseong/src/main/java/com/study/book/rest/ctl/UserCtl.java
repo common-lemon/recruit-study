@@ -37,4 +37,11 @@ public class UserCtl {
         return new ResponseEntity<>(this.userSvr.save(params), HttpStatus.OK);
     }
 
+    /*@RequestMapping(value = "/checkid", method = RequestMethod.GET)
+    public ResponseEntity<ResAccount> checkid(@RequestBody ReqUserParams params) {
+        System.err.println("asdfasdfadsf" + params);
+        log.info("[정보] params : {}", params.toString());
+        return new ResponseEntity<>(this.userSvr.save(params), HttpStatus.OK);
+    }*/
+
 }

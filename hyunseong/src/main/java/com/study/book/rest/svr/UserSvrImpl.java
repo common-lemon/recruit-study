@@ -55,4 +55,16 @@ public class UserSvrImpl implements UserSvrItf {
         return resAccount;
     }
 
+    /*@Override
+    public ResAccount checkid(ReqUserParams reqUserParams) {
+
+        ResAccount resAccount = new ResAccount();
+        resAccount.setResCode("S-001");
+        resAccount.setResMsg("정상 처리 되었습니다.");
+
+        resAccount.setUserEntity(this.accountRepository.findByUsername(reqUserParams.getUsername()));
+
+        return resAccount;
+    }*/
+
 }

@@ -46,8 +46,11 @@
                 </table>
                 <div v-if="role === 'admin' || registerNm === userErum" class="btnBox">
                     <input class="formBtn" type="button" value="뒤로가기" v-on:click="back"/>
-                    <input class="formBtn" type="button" value="삭제하기" v-on:click="deleteBook"/>
-                    <input class="formBtn" type="submit" value="도서수정"><br>
+                    <input class="formBtn" type="submit" value="도서수정">
+                    <input v-if="(role === 'admin' || registerNm === userErum) && isBook === 'N'"
+                           class="formBtn" type="button" value="신청취소" v-on:click="deleteBook('c')"/>
+                    <input v-if="role === 'admin' && isBook === 'Y'"
+                           class="formBtn" type="button" value="도서삭제" v-on:click="deleteBook('d')"/><br>
                     <input v-if="role === 'admin' && isBook === 'N'" class="formCBtn" type="button" value="신청완료"
                            v-on:click="completed"/>
                 </div>
@@ -135,22 +138,31 @@
                 back: function () {
                     location.href = "/";
                 },
-                deleteBook: function () {
-                    const result = confirm("정말로 도서를 삭제하시겠습니까?");
+                deleteBook: function (deleteText) {
+                    let result;
+                    if (deleteText === 'c') {
+                        result = confirm("정말로 도서 신청을 취소하시겠습니까?");
+                    } else if (deleteText === 'd') {
+                        result = confirm("정말로 도서를 삭제 하시겠습니까?");
+                    }
                     if (result) {
                         const url = "/rest/book/delete?id=" + this.id;
                         console.log(url)
                         axios.get(url)
                             .then(function (response) {
                                 console.log(response);
-                                alert('도서 삭제가 완료되었습니다.');
+                                if (deleteText === 'c') {
+                                    alert('도서 신청이 취소되었습니다.');
+                                } else if (deleteText === 'd') {
+                                    alert('도서가 삭제되었습니다.');
+                                }
                                 location.href = "/";
                             })
                             .catch(function (error) {
                                 console.log(error);
                             })
                     } else {
-                        alert('삭제가 취소되었습니다.')
+                        alert('취소되었습니다.')
                     }
                 },
                 completed: function () {

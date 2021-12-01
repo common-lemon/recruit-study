@@ -7,5 +7,6 @@ public interface UserSvrItf {
 
     /*ResAccount mypage(ReqUserParams reqUserParams);*/
     ResAccount save(ReqUserParams reqUserParams);
+    /*ResAccount checkid(ReqUserParams reqUserParams);*/
 
 }
