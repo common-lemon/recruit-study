@@ -122,7 +122,7 @@ header{
     h2{
         color: aliceblue;
         font-family: 'Titillium Web';
-        width: 190px;
+        width: 55%;
     }
 }
 </style>

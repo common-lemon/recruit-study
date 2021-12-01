@@ -4,9 +4,13 @@
         <div class="info">
             <input type="hidden" class="form-control" id="bookId" v-model="book.id" placeholder="" readonly />
             <div class="row title-row">
-                <div class="title" style="width: 55px; height: 10px;">책번호: &nbsp;</div>
+                <div class="title" style="width: 55px; height: 15px;">책번호: &nbsp;</div>
                 <div style="width: 210px">{{book.bookNo}}</div>
-                <button :id="book.id" class="btn btn-danger" @click="deleteBook(book.id)">X</button>
+                <button
+                    v-if="authority === 'ROLE_ADMIN'"
+                    :id="book.id" class="btn btn-danger"
+                    @click="deleteBook(book.id)"
+                >X</button>
             </div>
             <v-badge
                 v-if="authority === 'ROLE_ADMIN'"
@@ -165,6 +169,11 @@ export default {
                             console.log(response.data);
                             this.$store.dispatch('book/deleteUpdate', {
                                 searchText : ''
+                            })
+                            this.$store.dispatch('book/statusList',{
+                                cancel: 'CANCEL',
+                                apply: 'APPLY',
+                                finish: 'FINISH',
                             })
                             this.$alert(response.data.resMsg, "", "success");
                         })

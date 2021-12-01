@@ -23,7 +23,7 @@ public class BookController {
 
     //book list 조회
     @GetMapping("/api/book")
-    public Result bookList (){
+    public Result bookList(){
         List<Book> findBook = bookService.findBook();
         return new Result(findBook);
     }
@@ -48,9 +48,10 @@ public class BookController {
         ResBook resBook = bookService.update(reqbook);
         return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
+
     //book 삭제
     @DeleteMapping("/api/book/{id}")
-    public ResponseEntity<ResBook> deleteBook (@PathVariable long id){
+    public ResponseEntity<ResBook> deleteBook(@PathVariable long id){
         ResBook resBook = bookService.delete(id);
         return new ResponseEntity<>(resBook, HttpStatus.OK);
     }
