@@ -23,6 +23,10 @@
                         <td class="tdTitle" nowrap><label for="password">비밀번호</label></td>
                         <td><input type="password" th:field="*{password}" id="password" required/></td>
                     </tr>
+                    <!--<tr>
+                        <td class="tdTitle" nowrap><label for="checkPassword">비번확인</label></td>
+                        <td><input type="password" id="checkPassword" required/></td>
+                    </tr>-->
                     <tr>
                         <td class="tdTitle"><label for="deptname">부서</label></td>
                         <td><select id="deptname" class="selectBox" @change="changeDept($event)">
@@ -95,7 +99,18 @@
             },
             mounted: function () {
                 this.getBookListByAsyncAwait();
-            }
+            },
+            computed: {
+                sum: function () {
+                    if (!isNaN(this.bookPrice) && !isNaN(this.count)) {
+                        document.getElementById("wonText").style.display = '';
+                        return this.bookPrice * this.count;
+                    } else {
+                        document.getElementById("wonText").style.display = 'none';
+                        return "숫자만 입력해주세요.";
+                    }
+                }
+            },
         })
     </script>
 </div>

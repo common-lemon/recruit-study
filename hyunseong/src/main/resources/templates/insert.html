@@ -42,7 +42,7 @@
                     </tr>
                     <tr>
                         <td class="tdTitle">합계</td>
-                        <td id="totalCount">{{ sum | money }}<strong> 원</strong></td>
+                        <td id="totalCount">{{ sum | money }}<strong id="wonText"> 원</strong></td>
                     </tr>
                     <tr>
                         <td class="tdTitle"><label for="regRsn">신청 사유</label></td>
@@ -140,7 +140,13 @@
             },
             computed: {
                 sum: function () {
-                    return this.bookPrice * this.count;
+                    if (!isNaN(this.bookPrice) && !isNaN(this.count)) {
+                        document.getElementById("wonText").style.display = '';
+                        return this.bookPrice * this.count;
+                    } else {
+                        document.getElementById("wonText").style.display = 'none';
+                        return "숫자만 입력해주세요.";
+                    }
                 }
             },
             filters: {
