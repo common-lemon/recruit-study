@@ -2,7 +2,22 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
   <header th:fragment="typeHeaderFrag">
-    <h3>북 서비스 현황</h3>
+    <h3><a href="/book/list">북 서비스 현황</a></h3>
+
+    <!-- 로그인 -->
+    <div class="loginArea">
+      <div th:if="${#authorization.expr('isAuthenticated()')}">
+        <span th:text="${#authentication.name}">Name</span>
+        <a href="/logout" th:href="@{/logout}">로그아웃</a>
+      </div>
+      <div th:unless="${#authorization.expr('isAuthenticated()')}">
+        <a href="/login" th:href="@{/login}">로그인</a>
+        <a href="/signup" th:href="@{/signup}">회원가입</a>
+      </div>
+      <!--        <div sec:authorize="hasRole('ADMIN')">
+                  <a href="/admin" th:href="@{/admin}">관리자페이지</a>
+              </div>-->
+    </div>
   </header>
 </html>
 
