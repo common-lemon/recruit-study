@@ -67,7 +67,7 @@
             </button>
         </div>
 
-        <a th:href="@{/book/save}" class="goFormBtn">신청하기</a>
+        <a href="/book/save" class="goFormBtn">신청하기</a>
     </div>
 
     <script th:inline="javascript">
@@ -165,15 +165,6 @@
                 },
                 detailBook : function (id) {
                     location.href=`/book/${id}`;
-                },
-                getBookListByAsyncAwait : async function () {
-                    const response = await axios.get('http://localhost:8080/rest/book/list');
-                    // const response = await axios.get('http://localhost:8080/data/json_sample_bookList.json');
-                    console.log(response.data);
-                    console.log(response.data.bookList);
-                    this.bookList = response.data.bookList;
-                    this.items = this.bookList;
-                    this.items.sort((a, b) => b.id - a.id);
                 }
             }
         });

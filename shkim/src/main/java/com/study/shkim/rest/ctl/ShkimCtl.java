@@ -33,11 +33,10 @@ public class ShkimCtl {
 
     // 리스트로 이동
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public ModelAndView goList(ReqBookParams params, HttpServletResponse response){
+    public ModelAndView goList(ReqBookParams params){
         log.info("[정보] params : {}", params.toString());
         ModelAndView mav = new ModelAndView();
         mav.setViewName("index.html");
-        response.setStatus(200);
         mav.addObject("books", this.bookSvr.list(params));
         return mav;
     }
