@@ -1,6 +1,8 @@
 package com.study.jaehyeok.service;
 
+import com.study.jaehyeok.domain.Authority;
 import com.study.jaehyeok.domain.Book;
+import com.study.jaehyeok.domain.BookStatus;
 import com.study.jaehyeok.dto.ReqBook;
 import com.study.jaehyeok.dto.ResBook;
 import com.study.jaehyeok.repository.BookRepository;
@@ -35,7 +37,7 @@ public class BookService {
     public ResBook join(ReqBook reqbook) {
         Book book = new Book();
         ResBook resBook = new ResBook();
-
+        reqbook.setStatus(BookStatus.APPLY);
         BeanUtils.copyProperties(reqbook, book);
         try {
             resBook.setBook(bookRepository.save(book));

@@ -1,24 +1,29 @@
 <template>
     <div class="container">
-        <form >
+        <Loader v-if="loading"/>
+        <form>
             <div class="form-title">
-                <router-link to="/login" class="back-link">
+                <router-link to="/home" class="back-link">
                     <button class="btn btn-primary btn-back" >⭠</button>
                 </router-link>
-                <h2>회원가입</h2>
+                <h2>내 정보</h2>
             </div>
             <div class="form-group">
                 <label for="userName" >아이디</label>
-                <input type="text" class="form-control" id="userName" v-model="userName" placeholder="아이디" @blur="checkDuplicate"  required>
-                <div class="is-invalid" v-if="!availableId">이미 사용중인 아이디입니다.</div>
+                <input type="text" class="form-control" id="userName" v-model="userName" placeholder="아이디"  required readonly>
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
-                <input type="password" class="form-control" id="password" v-model="password" placeholder="비밀번호"  required>
+                <input type="password" class="form-control" id="password" v-model="password" @blur="passwordMach" placeholder="비밀번호"  required>
+                <div class="is-invalid" v-if="!passwordMatch" >비밀번호가 잘못되었습니다.</div>
             </div>
             <div class="form-group">
-                <label for="passwordCheck">비밀번호 확인</label>
-                <input type="password" class="form-control" id="passwordCheck" v-model="passwordCheck" placeholder="비밀번호 확인" @keyup="passCheck"  required>
+                <label for="newPassword">새 비밀번호</label>
+                <input type="password" class="form-control" id="newPassword" v-model="NewPassword" placeholder="비밀번호 확인"   required>
+            </div>
+            <div class="form-group">
+                <label for="NewPasswordCheck">새 비밀번호 확인</label>
+                <input type="password" class="form-control" id="NewPasswordCheck" v-model="NewPasswordCheck" placeholder="비밀번호 확인"  @keyup="passCheck"   required>
                 <div :class="passCheckClass">비밀번호가 일치하지않습니다.</div>
             </div>
             <div class="form-group">
@@ -44,34 +49,30 @@
                     </select>
                 </div>
             </div>
-            <div class="row">
-                <label class="form-check-label" for="invalidCheck">
-                    개인정보 수집 및 이용에 동의합니다.
-                </label>
-                <input type="checkbox" class="form-check-input" id="invalidCheck" v-model="invalidCheck" required>
-            </div>
             <div class="btn-cover">
-                <button type="button" @click="signUp" >회원가입</button>
+                <button type="button" @click="myInfoUpdate" >수정</button>
             </div>
-
         </form>
     </div>
 </template>
-
 <script>
+const storage = window.sessionStorage;
 import axios from "axios";
-
+import Loader from './Loader';
 export default {
-    name: "SignUp",
+    name: "MyInfo",
+    components:{
+        Loader
+    },
     data:()=>{
         return{
-            userName:'',
+            userName:JSON.parse(storage.getItem('authentication')).userName,
             name:'',
             password:'',
-            passwordCheck:'',
-            invalidCheck:'',
+            NewPassword:'',
+            NewPasswordCheck:'',
             deptName: '',
-            availableId:true,
+            loading: false,
             deptNameList:[
                 {
                     name:'공통개발팀',
@@ -102,88 +103,109 @@ export default {
                     key:'account'
                 }
             ],
+            passwordMatch:true,
             passCheckClass: 'invalid-feedback'
         }
     },
+    created() {
+        this.fetchData();
+    },
     methods:{
-        async signUp(){
-            let data={
-                userName: this.userName,
-                name: this.name,
-                password: this.password,
-                deptName: this.deptName,
-            }
-            if (this.userName === "") {
-                await this.$alert("아이디를 입력해주세요.", "", "warning");
-                return false;
-            }else if (this.availableId === false){
-                await this.$alert("이미 사용중인 아이디입니다.", "", "warning");
-                return false;
-            }else if (this.password === ""){
-                await this.$alert("비밀번호를 입력해주세요.", "", "warning");
-                return false;
-            }else if (this.passwordCheck === ""){
-                await this.$alert("비밀번호 확인을 입력해주세요.", "", "warning");
-                return false;
-            }else if (this.passwordCheck !== this.password){
-                await this.$alert("비밀번호가 일치하지않습니다.", "", "warning");
-                return false;
-            }else if (this.name === ""){
-                await this.$alert("이름을 입력해주세요.", "", "warning");
-                return false;
-            }else if(this.invalidCheck !== true){
-                await this.$alert("개인정보 수집을 동의해주세요.", "", "warning");
-                return false;
+        fetchData(){
+            this.loading = true;
+            let id = this.userName;
+            axios.get(`/api/membercheck/${id}`)
+                .then(response => {
+                    console.log(response.data.data);
+                    this.id = response.data.data.id
+                    this.name = response.data.data.name
+                    this.deptName = response.data.data.deptName
+
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+            this.loading = false;
+        },
+        myInfoUpdate(){
+            let data = {
+                id : this.id,
+                userName:this.userName,
+                password:this.NewPassword,
+                name:this.name,
+                deptName:this.deptName
+            };
+            if(this.passwordMatch === false) {
+                this.$alert("기존 비밀번호가 틀립니다.", "", "warning");
+                return false
+            }else if(this.password===""){
+                this.$alert("비밀번호를 입력해주세요.", "", "warning");
+                return false
+            }else if(this.NewPassword===""){
+                this.$alert("새비밀번호를 입력해주세요.", "", "warning");
+                return false
+            }else if(!this.passCheck()){
+                this.$alert("새비밀번호가 일치하지않습니다.", "", "warning");
+                return false
             }else{
+                console.log(data)
                 axios
-                    .post( "/api/auth/member", data)
+                    .put( "/api/member", data)
                     .then(response => {
                         console.log(response);
-                        this.$alert("회원가입에 성공했습니다.", "", "success");
-
-                        this.$router.push("/login");
+                        this.$alert(response.data.resMsg, "", "warning");
+                        this.password = ''
+                        this.NewPassword = ''
+                        this.NewPasswordCheck = ''
                     })
                     .catch(error =>{
                         console.log(error)
-                        this.$alert("회원가입에 실패했습니다.", "", "warning");
+                        this.$alert("수정에 실패했습니다.", "", "warning");
+
                     })
             }
         },
-        async checkDuplicate(){
-            this.availableId = true;
-            const response = await checkDuplicateId(this.userName);
-            console.log(response)
-            this.availableId = !response;
-        },
         passCheck(){
-            if(this.password !== this.passwordCheck || this.password === ""){
+            if(this.NewPassword !== this.NewPasswordCheck || this.NewPassword === ""){
                 this.passCheckClass = "is-invalid"
                 return false;
             }else{
                 this.passCheckClass = "invalid-feedback"
                 return true;
             }
+        },
+        async passwordMach(){
+            this.passwordMatch = true;
+            const response = await checkPasswordMach(this.userName,this.password);
+            console.log(response)
+            if (!response){
+                this.passwordMatch = false;
+            }else{
+                this.passwordMatch = true;
+            }
         }
     }
 }
-
-function checkDuplicateId(id){
-    const url = `/api/membercheck/${id}`
+function checkPasswordMach(id,password){
+    const data = {
+        userName:id,
+        password:password,
+    }
+    console.log(data)
     return new Promise((resolve, reject) => {
-        axios.get(url)
-            .then(res => {
-                console.log(res.data.data)
-                resolve(res.data.data)
+        axios.post("/api/passwordcheck",data)
+            .then(response => {
+                console.log(response.data)
+                resolve(response.data)
             })
-            .catch(err => {
-                reject(err.message)
+            .catch(error =>{
+                console.log(error)
+                reject(error.message)
             })
     });
 }
 </script>
-
 <style lang="scss" scoped>
-
 .container {
     form {
         .form-title {
@@ -258,7 +280,6 @@ function checkDuplicateId(id){
             text-align: center;
             button {
                 margin-top: 15px;
-                margin-bottom: 15px;
                 border: none;
                 background: #134775;
                 color: aliceblue;
@@ -269,21 +290,18 @@ function checkDuplicateId(id){
                 cursor: pointer;
                 width: 320px;
                 outline: none;
-
             }
         }
 
         display: flex;
         width: 100%;
-        height: 700px;
+        height: 675px;
         background-color: aliceblue;
         flex-direction: column;
-        justify-content: center;
+        //justify-content: center;
         align-items: center;
         color: #134775;
         font-size: 12px;
     }
 }
-
-
 </style>

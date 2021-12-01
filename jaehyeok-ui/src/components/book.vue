@@ -9,9 +9,17 @@
                 <button :id="book.id" class="btn btn-danger" @click="deleteBook(book.id)">X</button>
             </div>
             <v-badge
-                v-if="this.today === book.date"
-                content="new"
+                v-if="authority === 'ROLE_ADMIN'"
+                style="display: none"
+            ></v-badge>
+            <v-badge
+                v-else-if="book.status === 'APPLY'"
+                content="신청중"
                 ></v-badge>
+            <v-badge
+                v-else-if="book.status === 'CANCEL'"
+                content="취소"
+            ></v-badge>
             <RouterLink
                 :to="`/bookdetail/id=${book.id}`"
                 class="btn-link"
@@ -25,32 +33,129 @@
                     </div><div class="title">수량: &nbsp;
                     </div><div>{{book.count}}권</div>
                 </div>
-
             </RouterLink>
+            <div
+                v-if="authority === 'ROLE_ADMIN'"
+                class="admin-row"
+            >
+                <div  class="selects">
+                    <select
+                        id="status"
+                        v-model="status"
+                        class="form-select"
+                        placeholder="status"
+                    >
+                        <option
+                            v-for="item in statusList"
+                            :key="item.key"
+                            :value="item.key"
+                        >
+                            {{item.name}}
+                        </option>
+                    </select>
+                </div>
+                <button class="btn btn-primary"
+                        @click="saveStatus(book.id)">
+                    수정
+                </button>
+            </div>
         </div>
     </div>
 
 </template>
 <script>
+import {mapState} from 'vuex'
 import axios from "axios";
 export default {
     data(){
       return{
-          today: ''
+          today: '',
+          deptName: '',
+          registerNm:'',
+          title:'',
+          publisher:'',
+          bookPrice:'',
+          regRsn:'',
+          count:'',
+          status:this.book.status,
+          statusList:[
+              {
+                  name:'신청',
+                  key:'APPLY'
+              },
+              {
+                  name:'완료',
+                  key:'FINISH'
+              },
+              {
+                  name:'취소',
+                  key:'CANCEL'
+              }
+          ],
       }
     },
     props:{
         book:{
           type: Object,
           default:()=>({})
+        },
+        statusName:{
+            type: Object,
+            default:()=>({})
         }
     },
-    mounted() {
+    computed:{
+        ...mapState('member',[
+            'token',
+            'authority',
+        ])
+    },
+    created() {
         const date = new Date()
         const current = date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
         this.today = current
+        this.deptName = this.book.deptName;
+        this.registerNm = this.book.registerNm;
+        this.title = this.book.title;
+        this.publisher = this.book.publisher;
+        let bookPrice = comma(this.book.bookPrice);
+        this.bookPrice = bookPrice;
+        this.count = this.book.count;
+        this.status = this.book.status;
+        this.regRsn = this.book.regRsn;
     },
     methods:{
+        saveStatus(id) {
+            let bookPrice = uncomma(this.bookPrice);
+            let data = {
+                id : id,
+                deptName : this.deptName,
+                registerNm : this.registerNm,
+                title : this.title,
+                publisher : this.publisher,
+                bookPrice : bookPrice,
+                count: this.count,
+                status: this.status,
+                regRsn : this.regRsn
+            }
+            console.log(data)
+            axios
+                .put( "/api/book", data)
+                .then(response => {
+                    console.log(response);
+                    this.$alert(response.data.resMsg, "", "warning");
+                    this.$store.dispatch('book/statusList',{
+                        cancel: 'CANCEL',
+                        apply: 'APPLY',
+                        finish: 'FINISH',
+                    })
+                })
+                .catch(error =>{
+                    console.log(error)
+                    this.$alert("수정에 실패했습니다.", "", "warning");
+
+                })
+        },
         deleteBook(bookId){
             console.log(bookId);
             this.$confirm("삭제 하시겠습니까?", "", "", "question")
@@ -74,6 +179,17 @@ export default {
         }
     }
 }
+function comma(str) {
+    str = str.toString().replace(/[^0-9]/g,'');   // 입력값이 숫자가 아니면 공백
+    str = str.toString().replace(/,/g,'');          // ,값 공백처리
+    return str.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); // 정규식을 이용해서 3자리 마다 , 추가
+}
+
+//콤마풀기
+function uncomma(str) {
+    str = String(str);
+    return str.replace(/[^\d]+/g, '');
+}
 </script>
 <style lang="scss" >
 .v-badge__badge{
@@ -83,7 +199,7 @@ export default {
 }
 .book{
     width: 300px;
-    height: 140px;
+    height: 150px;
     margin: 5px;
     border-radius: 10px;
     background-color: grey;
@@ -127,6 +243,32 @@ export default {
             }
             .title {
                 font-weight: 500;
+            }
+        }
+        .admin-row{
+            display: flex;
+            select{
+                padding-left: 10px;
+                border-radius: 10px;
+                border: 2px solid #b4c1d5;
+                width: 100px;
+                height: 25px;
+                background-color: #e3e9ef;
+                color: #134775;
+                margin-top: 10px;
+                margin-right: 10px;
+                outline: none;
+            }
+            button{
+                border: none;
+                background: #b4c1d5;
+                color: #134775;
+                border: 2px solid #b4c1d5;
+                width: 40px;
+                height: 25px;
+                margin-top: 10px;
+                border-radius: 10px;
+                cursor: pointer;
             }
         }
         .btn-link {

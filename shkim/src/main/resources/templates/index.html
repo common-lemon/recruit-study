@@ -6,22 +6,6 @@
       layout:decorator="layout/default" xmlns:v-on="http://www.w3.org/1999/xhtml"
       xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div layout:fragment="content" class="container">
-
-    <!-- 로그인 -->
-    <div class="loginArea">
-        <div th:if="${#authorization.expr('isAuthenticated()')}">
-            <span th:text="${#authentication.name}">Name</span>
-            <a href="/logout" th:href="@{/logout}">로그아웃</a>
-        </div>
-        <div th:unless="${#authorization.expr('isAuthenticated()')}">
-            <a href="/login" th:href="@{/login}">로그인</a>
-            <a href="/signup" th:href="@{/signup}">회원가입</a>
-        </div>
-<!--        <div sec:authorize="hasRole('ADMIN')">
-            <a href="/admin" th:href="@{/admin}">관리자페이지</a>
-        </div>-->
-    </div>
-
     <div id="app">
         <!--search-->
         <div class="search">
@@ -37,7 +21,7 @@
             <div>총 {{ items.length }}권</div>
 
             <!--sort-->
-            <select v-model="selected" v-on:change="onChangeSort($event)" class="sort">
+            <select v-model="selected" v-on:change="onChangeSort" class="sort">
                 <option value="">기본순</option>
                 <option value="deptAsc">부서순 ↑</option>
                 <option value="deptDesc">부서순 ↓</option>
@@ -71,7 +55,7 @@
                 <i class="fas fa-chevron-left"></i>
             </button>
             <!--<span>{{ pageNum + 1 }} / {{ pageCount }}</span>-->
-            <div v-on:click="goPage($event)" class="pageNo">
+            <div v-on:click="goPage" class="pageNo">
                 <span v-for="no in endPage-startPage+1" v-bind:key="startPage+no-2"
                       v-bind:id="startPage+no-2"
                       v-bind:class="{ active : pageNum === startPage+no-2 }">
@@ -151,11 +135,8 @@
 
                     this.items = result;
                 },
-                onChangeSort : function (event) {
-                    const value = event.target.value;
-                    console.log(value);
-
-                    switch(value) {
+                onChangeSort : function () {
+                    switch(this.selected) {
                         case "deptAsc":
                             this.items.sort((a, b) => a.deptName.localeCompare(b.deptName));
                             break;
@@ -183,7 +164,7 @@
                     this.pageNum = parseInt(event.target.id);
                 },
                 detailBook : function (id) {
-                    location.replace('/book/'+ id);
+                    location.href=`/book/${id}`;
                 },
                 getBookListByAsyncAwait : async function () {
                     const response = await axios.get('http://localhost:8080/rest/book/list');

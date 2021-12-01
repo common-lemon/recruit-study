@@ -1,4 +1,3 @@
-
 <template>
     <div class="container">
         <form>
@@ -18,6 +17,7 @@
 
 <script>
 import axios from "axios";
+import {mapState} from 'vuex'
 export default {
     name: "Login",
     data: () => ({
@@ -26,7 +26,14 @@ export default {
         passwordFieldType : 'password',
         keyShow: 'SHOW'
     }),
+    computed:{
+        ...mapState('member',[
+            'token',
+            'authority',
+        ]),
+    },
     methods: {
+        // password 타입 변환
         switchVisibility(){
             if (this.passwordFieldType === "password"){
                 this.passwordFieldType = "text"
@@ -36,6 +43,7 @@ export default {
                 this.keyShow = "SHOW"
             }
         },
+        //로그인 버튼
         async login(){
             let data = {
                 userName: this.userName,
@@ -48,7 +56,11 @@ export default {
                         await this.$store.dispatch('member/login', {
                             data: response
                         })
-                        await this.$router.push('/home');
+                        if (this.authority === "ROLE_ADMIN") {
+                            await this.$router.push('/applyList');
+                        }else{
+                            await this.$router.push('/home');
+                        }
                     } else {
                         await this.$alert("로그인에 실패했습니다.", "", "warning");
                     }
@@ -98,7 +110,7 @@ export default {
             margin-top: 15px;
             border: none;
             background: #134775;
-            color: #f4f2db;
+            color: #d8e2eb;
             font-size: 1.1rem;
             padding: 15px 60px;
             font-weight: bold;

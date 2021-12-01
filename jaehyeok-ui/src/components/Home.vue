@@ -7,12 +7,12 @@
 <script>
 import BookList from "../components/BookList";
 import Search from "../components/Search";
-
 export default {
     components:{
         BookList,
         Search
     }
+
 }
 </script>
 <style lang="scss" scoped>

@@ -34,7 +34,27 @@ const routes = [
         path: "/signup",
         name: "SignUp",
         component: () => import("@/components/SignUp"),
-    }
+    },
+    {
+        path: "/myinfo",
+        name: "MyInfo",
+        component: () => import("@/components/MyInfo"),
+    },
+    {
+        path: "/applyList",
+        name: "ApplyList",
+        component: () => import("@/components/ApplyStatusList"),
+    },
+    {
+        path: "/finishList",
+        name: "FinishList",
+        component: () => import("@/components/FinishStatusList"),
+    },
+    {
+        path: "/cancelList",
+        name: "CancelList",
+        component: () => import("@/components/CancelStatusList"),
+    },
 ]
 const router = new VueRouter({
     mode: "history",
@@ -43,8 +63,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 
-
-    if(to.path === '/login'){
+    if(to.path === '/login' || to.path === '/signup'){
         return next();
     }
     if (storage.getItem('token') === null){

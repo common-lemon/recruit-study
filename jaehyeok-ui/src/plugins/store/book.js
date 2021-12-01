@@ -6,6 +6,9 @@ export default {
     // data, 상태 관리
     state:()=>({
         bookList:[],
+        applyList:[],
+        finishList:[],
+        cancelList:[],
         theBook:{},
         message: '',
         loading: false,
@@ -102,6 +105,31 @@ export default {
                 message: message
             })
             fn_sortBook(this.sort, result);
+        },
+        async statusList({commit, state}, payload){
+            const res = await _fetchBook(payload);
+
+            commit('updateState', {
+                bookList: res.data.data,
+            })
+
+            let cancel = payload.cancel;
+            let apply = payload.apply;
+            let finish = payload.finish;
+            let cancelResult = await fn_statusBook(cancel , state.bookList);
+            let applyResult = await fn_statusBook(apply , state.bookList);
+            let finishResult = await fn_statusBook(finish , state.bookList);
+
+            commit('updateState', {
+                cancelList: cancelResult
+            })
+            commit('updateState', {
+                applyList: applyResult
+            })
+            commit('updateState', {
+                finishList: finishResult
+            })
+
         }
     }
 
@@ -136,7 +164,18 @@ async function fn_searchBook (searchText , list) {
     })
     return result;
 }
-
+async function fn_statusBook(status , list){
+    console.log(list);
+    console.log(status);
+    let result = []
+    await list.forEach(function(item){
+        if (item.status.indexOf(status) >= 0){
+            result.push(item)
+        }
+    })
+    console.log(result);
+    return result;
+}
 function fn_sortBook (sort, list) {
 
     if(sort === "deptDesc") {

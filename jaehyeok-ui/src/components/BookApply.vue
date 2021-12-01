@@ -4,11 +4,11 @@
             <h2>도서 신청</h2>
             <div class="form-group">
                 <label for="deptName" >신청부서</label>
-                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" maxlength="30" required/>
+                <input type="text" id="deptName" v-model="deptName" placeholder="신청부서" maxlength="30" required readonly/>
             </div>
             <div class="form-group">
                 <label for="registerNm" >신청자</label>
-                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자" maxlength="30" required/>
+                <input type="text" id="registerNm" v-model="registerNm" placeholder="신청자" maxlength="30" required readonly/>
             </div>
             <div class="form-group">
                 <label for="title" >도서명</label>
@@ -42,7 +42,7 @@
 </template>
 <script>
 import axios from "axios";
-//import Loader from './Loader';
+const storage = window.sessionStorage;
 
 export default {
     components:{
@@ -50,6 +50,8 @@ export default {
     },
     data() {
         return {
+            userName:JSON.parse(storage.getItem('authentication')).userName,
+
             deptName:'',
             registerNm:'',
             title:'',
@@ -73,10 +75,26 @@ export default {
 
         }
     },
+    created() {
+        this.fetchData();
+    },
     methods:{
+        fetchData(){
+            let id = this.userName;
+            axios.get(`/api/membercheck/${id}`)
+                .then(response => {
+                    console.log(response.data.data);
+                    this.registerNm = response.data.data.name
+                    this.deptName = response.data.data.deptName
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
         async submitApply(){
             const date = new Date()
-            const current = date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
+            getFormatDate(date);
+            const current =  getFormatDate(date);  //date.getFullYear() + '-' + (date.getMonth()+1) + '-'+ date.getDate();
             let url = '/api/book';
             let bookPrice =  uncomma(this.bookPrice);
             const data = {
@@ -89,6 +107,7 @@ export default {
                 count: this.count,
                 regRsn: this.regRsn,
             }
+            console.log(data);
             if(this.title === ""){
                 await this.$alert("도서명을 입력해주세요.", "", "warning");
                 return false
@@ -111,8 +130,7 @@ export default {
             }
         },
         numberOnly(){
-            let result = comma(this.bookPrice);
-            this.bookPrice = result;
+            this.bookPrice = comma(this.bookPrice);
         }
 
     }
@@ -127,6 +145,15 @@ function comma(str) {
 function uncomma(str) {
     str = String(str);
     return str.replace(/[^\d]+/g, '');
+}
+//날짜 변환
+function getFormatDate(date){
+    let year = date.getFullYear();              //yyyy
+    let month = (1 + date.getMonth());          //M
+    month = month >= 10 ? month : '0' + month;  //month 두자리로 저장
+    let day = date.getDate();                   //d
+    day = day >= 10 ? day : '0' + day;          //day 두자리로 저장
+    return  year + '-' + month + '-' + day;       //'-' 추가하여 yyyy-mm-dd 형태 생성 가능
 }
 </script>
 <style lang="scss" scoped>

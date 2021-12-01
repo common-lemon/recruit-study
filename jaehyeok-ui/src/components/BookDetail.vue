@@ -3,8 +3,11 @@
         <Loader v-if="loading"/>
         <form >
             <div class="form-title">
-                <router-link to="/home" class="back-link">
-                    <button class="btn btn-primary btn-back" >⭠</button>
+                <router-link to="/home" class="back-link" v-if="this.authority === 'ROLE_USER'">
+                    <button class="btn btn-primary btn-back">⭠</button>
+                </router-link>
+                <router-link to="/applyList" class="back-link" v-if="this.authority === 'ROLE_ADMIN'">
+                    <button class="btn btn-primary btn-back">⭠</button>
                 </router-link>
                 <h2>도서 상세보기</h2>
             </div>
@@ -37,9 +40,10 @@
 
                 </div>
             </div>
+
             <div class="form-group">
                 <label>신청사유</label>
-                <textarea id="regRsn"  class="form-control" v-model="theBook.regRsn" maxlength="255"  placeholder="내용을 입력하세요" />
+                <textarea id="regRsn"  class="form-control" v-model="regRsn" maxlength="255"  placeholder="내용을 입력하세요" />
             </div>
             <div class="btn-cover">
                 <button type="button"  @click="udtSubmit">수정</button>
@@ -67,6 +71,7 @@ export default {
             regRsn:'',
             id:'',
             count:'',
+            status:'',
             loading: false,
             img : image
         }
@@ -81,15 +86,16 @@ export default {
          this.registerNm = this.theBook.registerNm;
          this.title = this.theBook.title;
          this.publisher = this.theBook.publisher;
-         let bookPrice = comma(this.theBook.bookPrice);
-         this.bookPrice = bookPrice;
+         this.bookPrice = comma(this.theBook.bookPrice);
          this.count = this.theBook.count;
+         this.status = this.theBook.status;
          this.regRsn = this.theBook.regRsn;
          this.loading = false;
     },
     watch: {
         count(){
-            return this.count = this.count.replace(/[^0-9]/g,'');
+            let count = this.count.toString()
+            return this.count = count.replace(/[^0-9]/g,'');
         },
         publisher(){
             return this.publisher = this.publisher.replace(/[0-9]/g,'');
@@ -104,11 +110,12 @@ export default {
         ...mapState('book',[
             'theBook'
         ]),
+        ...mapState('member',[
+            'token',
+            'authority',
+        ])
     },
     methods:{
-        goBack(){
-            this.$router.go(-1);
-        },
         udtSubmit(){
             let bookPrice = uncomma(this.bookPrice);
             let data = {
@@ -119,16 +126,18 @@ export default {
                 publisher : this.publisher,
                 bookPrice : bookPrice,
                 count: this.count,
+                status: this.status,
                 regRsn : this.regRsn
             };
+            console.log(data)
             if(this.title === ""){
-                alert("도서명을 입력해주세요.")
+                this.$alert("도서명을 입력해주세요.", "", "warning");
                 return false
             }else if(this.publisher === "") {
-                alert("출판사를 입력해주세요.")
+                this.$alert("출판사를 입력해주세요.", "", "warning");
                 return false
             }else if(this.bookPrice===""){
-                alert("도서 금액을 입력해주세요.");
+                this.$alert("도서 금액을 입력해주세요.", "", "warning");
                 return false
             }else {
                 axios
@@ -146,8 +155,7 @@ export default {
             }
         },
         numberOnly(){
-            let result = comma(this.bookPrice);
-            this.bookPrice = result;
+            this.bookPrice = comma(this.bookPrice);
         }
     }
 }
@@ -179,7 +187,7 @@ textarea{
             display: flex;
             position: relative;
             .back-link {
-                color: #134775;
+               color: #134775;
                 .btn-back {
                     position: absolute;
                     left: -100px;
